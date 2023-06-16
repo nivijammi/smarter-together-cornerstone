@@ -10,6 +10,7 @@ public class UserLoginRequest {
     @JsonProperty("username")
     private String username;
 
+    @NotEmpty
     @JsonProperty("password")
     private String password;
 
