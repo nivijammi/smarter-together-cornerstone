@@ -4,6 +4,7 @@ import com.kenzie.appserver.controller.model.StudyGroupRequest;
 import com.kenzie.appserver.controller.model.StudyGroupResponse;
 import com.kenzie.appserver.controller.model.User;
 import com.kenzie.appserver.exception.StudyGroupNotFoundException;
+import com.kenzie.appserver.exception.UserNotFoundException;
 import com.kenzie.appserver.service.StudyGroupService;
 import com.kenzie.appserver.service.UserService;
 import com.kenzie.appserver.service.model.StudyGroup;
@@ -83,10 +84,9 @@ public class StudyGroupController {
             return ResponseEntity.ok().build();
         } catch (StudyGroupNotFoundException e) {
             return ResponseEntity.notFound().build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.badRequest().build();
         }
-//        } catch (UserNotFoundException e) {
-//            return ResponseEntity.badRequest().build();
-//        }
     }
 
     // endpoint for retrieving a study group by ID
