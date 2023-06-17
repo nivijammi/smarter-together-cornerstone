@@ -1,19 +1,18 @@
-package com.kenzie.appserver.service.model;
+package com.kenzie.appserver.controller.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.validation.constraints.NotEmpty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserLoginResponse {
-    @NotEmpty
+
     @JsonProperty("userId")
     private String userId;
-    @NotEmpty
+
     @JsonProperty("username")
     private String username;
-    @NotEmpty
+
     @JsonProperty("token")
     private String token;
 

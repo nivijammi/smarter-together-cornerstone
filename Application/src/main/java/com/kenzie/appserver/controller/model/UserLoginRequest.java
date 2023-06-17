@@ -1,4 +1,4 @@
-package com.kenzie.appserver.service.model;
+package com.kenzie.appserver.controller.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
