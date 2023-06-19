@@ -1,9 +1,6 @@
 package com.kenzie.appserver.repositories.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIndexHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -22,11 +19,11 @@ public class StudyGroupRecord {
 
     private String topic;
 
-    private LocalDate creationDate;
+    private String creationDate;
 
-    private LocalDate endDate;
+    private String endDate;
 
-    private LocalTime meetingTime;
+    private String meetingTime;
 
     private int duration;
 
@@ -73,27 +70,28 @@ public class StudyGroupRecord {
         this.topic = topic;
     }
     @DynamoDBAttribute(attributeName = "CreationDate")
-    public LocalDate getCreationDate() {
+
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
     @DynamoDBAttribute(attributeName = "EndDate")
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
     @DynamoDBAttribute(attributeName = "Time")
-    public LocalTime getMeetingTime() {
+    public String getMeetingTime() {
         return meetingTime;
     }
 
-    public void setMeetingTime(LocalTime meetingTime) {
+    public void setMeetingTime(String meetingTime) {
         this.meetingTime = meetingTime;
     }
     @DynamoDBAttribute(attributeName = "Duration")

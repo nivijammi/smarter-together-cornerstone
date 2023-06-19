@@ -19,20 +19,20 @@ public class StudyGroup {
 
     private String topic;
 
-    private LocalDate creationDate;
+    private String creationDate;
 
 
-    private LocalDate endDate;
+    private String endDate;
 
-    private LocalTime meetingTime;
+    private String meetingTime;
 
     private int duration;
 
     private boolean successful;
 
     public StudyGroup(String groupId, String groupName, List<String> members,
-                      String subject, String topic, LocalDate creationDate,
-                      LocalDate endDate, LocalTime meetingTime, int duration, boolean successful) {
+                      String subject, String topic, String creationDate,
+                      String endDate, String meetingTime, int duration, boolean successful) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.members = members;
@@ -46,8 +46,8 @@ public class StudyGroup {
     }
 
     public StudyGroup(String groupName,
-                      String subject, String topic, LocalDate creationDate,
-                      LocalDate endDate, LocalTime meetingTime, int duration){
+                      String subject, String topic, String creationDate,
+                      String endDate, String meetingTime, int duration){
         this.groupName = groupName;
         this.subject = subject;
         this.topic = topic;
@@ -77,15 +77,15 @@ public class StudyGroup {
         return topic;
     }
 
-    public LocalDate getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public LocalTime getMeetingTime() {
+    public String getMeetingTime() {
         return meetingTime;
     }
 

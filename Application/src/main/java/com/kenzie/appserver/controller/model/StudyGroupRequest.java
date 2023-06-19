@@ -22,17 +22,14 @@ public class StudyGroupRequest {
     @JsonProperty("topic")
     private String topic;
     @NotEmpty
-    @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("creationDate")
-    private LocalDate creationDate;
+    private String creationDate;
     @NotEmpty
-    @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @JsonProperty("endDate")
-    private LocalDate endDate;
+    private String endDate;
     @NotEmpty
-    @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "HH:mm")
     @JsonProperty("meetingTime")
-    private LocalTime meetingTime;
+    private String meetingTime;
 
     @Min(0)
     @JsonProperty("duration")
@@ -62,27 +59,27 @@ public class StudyGroupRequest {
         this.topic = topic;
     }
 
-    public LocalDate getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
-    public LocalDate getEndDate() {
+    public String getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(String endDate) {
         this.endDate = endDate;
     }
 
-    public LocalTime getMeetingTime() {
+    public String getMeetingTime() {
         return meetingTime;
     }
 
-    public void setMeetingTime(LocalTime meetingTime) {
+    public void setMeetingTime(String meetingTime) {
         this.meetingTime = meetingTime;
     }
 
