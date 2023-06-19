@@ -27,12 +27,15 @@ public class StudyGroupResponse {
     private String topic;
 
     @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("creationDate")
     private LocalDate creationDate;
 
     @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("endDate")
     private LocalDate endDate;
 
     @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonProperty("meetingTime")
     private LocalTime meetingTime;
 
     @JsonProperty("duration")

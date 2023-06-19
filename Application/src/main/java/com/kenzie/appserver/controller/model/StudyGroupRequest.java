@@ -23,12 +23,15 @@ public class StudyGroupRequest {
     private String topic;
     @NotEmpty
     @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("creationDate")
     private LocalDate creationDate;
     @NotEmpty
     @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @JsonProperty("endDate")
     private LocalDate endDate;
     @NotEmpty
     @JsonFormat(shape =  JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonProperty("meetingTime")
     private LocalTime meetingTime;
 
     @Min(0)
