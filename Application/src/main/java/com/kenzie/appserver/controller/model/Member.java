@@ -2,18 +2,15 @@ package com.kenzie.appserver.controller.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class User {
+public class Member {
     @JsonProperty("email")
     public String email;
-
-    @JsonProperty("userName")
-    public String userName;
-
+    @JsonProperty("memberName")
+    public String memberName;
     @JsonProperty("password")
     public String password;
-
-    @JsonProperty("userId")
-    public String userId;
+    @JsonProperty("memberId")
+    public String memberId;
 
     public String getEmail() {
         return email;
@@ -23,12 +20,12 @@ public class User {
         this.email = email;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getMemberName() {
+        return memberName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setMemberName(String memberName) {
+        this.memberName = memberName;
     }
 
     public String getPassword() {
@@ -39,11 +36,11 @@ public class User {
         this.password = password;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getMemberId() {
+        return memberId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 }

@@ -9,4 +9,5 @@ import java.util.List;
 @EnableScan
 public interface StudyGroupRepository extends CrudRepository<StudyGroupRecord, String> {
     //List<StudyGroupRecord> findByTopic(String topic);
+
 }

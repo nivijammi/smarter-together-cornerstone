@@ -1,109 +1,188 @@
 package com.kenzie.appserver.service;
 
 
+import com.kenzie.appserver.exception.StudyGroupNotFoundException;
+import com.kenzie.appserver.exception.UserNotFoundException;
+import com.kenzie.appserver.repositories.StudyGroupMemberRepository;
 import com.kenzie.appserver.repositories.StudyGroupRepository;
+import com.kenzie.appserver.repositories.model.StudyGroupMemberId;
+import com.kenzie.appserver.repositories.model.StudyGroupMemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupRecord;
 import com.kenzie.appserver.service.model.StudyGroup;
+import com.kenzie.appserver.service.model.StudyGroupMember;
 import com.kenzie.appserver.service.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class StudyGroupService {
+    @Autowired
     private StudyGroupRepository studyGroupRepository;
-    List<String> members;
-    List<StudyGroup> groups;
+    @Autowired
+    private StudyGroupMemberRepository studyGroupMemberRepository;
 
-    public StudyGroupService(StudyGroupRepository studyGroupRepository) {
+    public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupMemberRepository studyGroupMemberRepository) {
         this.studyGroupRepository = studyGroupRepository;
-        this.members = new ArrayList<>();
-        this.groups = new ArrayList<>();
+        this.studyGroupMemberRepository = studyGroupMemberRepository;
     }
 
-    public StudyGroup addNewStudyGroup(StudyGroup studyGroup) {
+    public StudyGroup addNewStudyGroup(StudyGroup group) {
         // add to the repo
-        StudyGroupRecord record = getStudyGroupRecord(studyGroup);
-        //studyGroupRepository.save(record);
+        StudyGroupRecord record = buildStudyGroupRecord(group);
+        studyGroupRepository.save(record);
         StudyGroup newStudyGroup = buildStudyGroup(record);
         return newStudyGroup;
     }
 
     // helper method
     private StudyGroup buildStudyGroup(StudyGroupRecord record) {
-        StudyGroup newStudyGroup = new StudyGroup(record.getGroupId(),
-                record.getGroupName(), record.getMembers(),
-                record.getSubject(), record.getTopic(), record.getCreationDate(),
-                record.getEndDate(), record.getMeetingTime(), record.getDuration(),
-                true);
-        return newStudyGroup;
+        StudyGroup studyGroup = new StudyGroup(record.getGroupId(), record.getGroupName(),
+                                                record.getDiscussionTopic(), record.getCreationDate(),
+                                                record.isActive());
+        return studyGroup;
     }
 
     // helper method
-    private StudyGroupRecord getStudyGroupRecord(StudyGroup studyGroup) {
+    private StudyGroupRecord buildStudyGroupRecord(StudyGroup studyGroup) {
         StudyGroupRecord record = new StudyGroupRecord();
         record.setGroupId(UUID.randomUUID().toString());
         record.setGroupName(studyGroup.getGroupName());
-        record.setMembers(studyGroup.getMembers());
-        record.setSubject(studyGroup.getSubject());
-        record.setTopic(studyGroup.getTopic());
+        record.setDiscussionTopic(studyGroup.getDiscussionTopic());
         record.setCreationDate(studyGroup.getCreationDate());
-        record.setEndDate(studyGroup.getEndDate());
-        record.setMeetingTime(studyGroup.getMeetingTime());
-        record.setDuration(studyGroup.getDuration());
-        record.setSuccessful(studyGroup.isSuccessful());
-
+        record.setActive(true);
         return record;
     }
 
     public StudyGroup findByGroupId(String groupId) {
-        Optional<StudyGroupRecord> byId = studyGroupRepository.findById(groupId);
-
-        if(byId.isPresent()){
-            StudyGroupRecord studyGroupRecord = byId.get();
-            return buildStudyGroup(studyGroupRecord);
+        Optional<StudyGroupRecord> groupById = studyGroupRepository.findById(groupId);
+        if(!groupById.isPresent()) {
+            return null;
         }
-        return null;
+
+        StudyGroupRecord studyGroupRecord = groupById.get();
+        // convert from record to study group(domain object)
+        StudyGroup studyGroup = buildStudyGroup(studyGroupRecord);
+        return studyGroup;
     }
 
 
-    public User addUserToStudyGroup(String groupID, com.kenzie.appserver.controller.model.User user) {
+    public StudyGroupMember addUserToStudyGroup(StudyGroup studyGroup, String userId) {
+        if (studyGroup == null) {
+            throw new StudyGroupNotFoundException("Study group is null...");
+        }
+        if (userId == null) {
+            throw new UserNotFoundException("userId is null...");
+        }
 
-        // generate userId and add user to the db
+        //StudyGroupMemberRecord record = buildStudyGroupMemberRecord(studyGroup, userId);
+        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(studyGroup.getGroupId(), userId);
+        StudyGroupMemberRecord studyGroupRecord = new StudyGroupMemberRecord(studyGroupMemberId, studyGroup.getGroupName(), studyGroup.getDiscussionTopic(), studyGroup.getCreationDate(), studyGroup.isActive());
+        studyGroupMemberRepository.save(studyGroupRecord);
+        StudyGroupMember studyGroupMember = buildStudyGroupMember(studyGroupRecord);
+        return studyGroupMember;
+    }
 
-        //return user
-        User record = new User(UUID.randomUUID().toString(), user.email, user.userName, null);
+    private static StudyGroupMember buildStudyGroupMember(StudyGroupMemberRecord record) {
+        StudyGroupMember studyGroupMember = new StudyGroupMember(record.getGroupId(),
+                record.getUserId(), record.getGroupName(),
+                record.getDiscussionTopic(),
+                record.getCreationDate(),
+                record.isActive());
+        return studyGroupMember;
+    }
+
+    private static StudyGroupMemberRecord buildStudyGroupMemberRecord(StudyGroup studyGroup, String userId) {
+        StudyGroupMemberRecord record = new StudyGroupMemberRecord();
+        record.setGroupId(studyGroup.getGroupId());
+        record.setUserId(userId);
+        record.setGroupName(studyGroup.getGroupName());
+        record.setDiscussionTopic(studyGroup.getDiscussionTopic()); // ???
+        record.setCreationDate(studyGroup.getCreationDate());       // TODO: Current data time needs to be set
+        record.setActive(studyGroup.isActive());                    // TODO: Redundant. Can be removed
         return record;
     }
 
-    public void updateStudyGroup(StudyGroup studyGroup) {
+    // TODO: WORKED ON BY NIVI
+    public void updateStudyGroup(StudyGroupMember updatedStudyGroupMember) {
+        Optional<StudyGroupRecord> existingStudyGroup = studyGroupRepository.findById(updatedStudyGroupMember.getGroupId());
+        if (existingStudyGroup.isEmpty()) {
+            throw new StudyGroupNotFoundException("Study group not found for groupId: " + updatedStudyGroupMember.getGroupId());
+        }
+        StudyGroupRecord studyGroupRecord = existingStudyGroup.get();
+        studyGroupRecord.setGroupId(UUID.randomUUID().toString());
+        studyGroupRecord.setGroupName(updatedStudyGroupMember.getGroupName());
+        studyGroupRecord.setDiscussionTopic(updatedStudyGroupMember.getDiscussionTopic());
+        studyGroupRecord.setCreationDate(updatedStudyGroupMember.getCreationDate());
+        studyGroupRecord.setActive(updatedStudyGroupMember.isActive());
+        studyGroupRepository.save(studyGroupRecord);
     }
 
+
+     //TODO
     public void removeUserFromStudyGroup(String groupId, String userId) {
-        boolean groupExist = studyGroupRepository.existsById(groupId);
-        if(groupExist){
-            // bring in the userRepo
 
+        if(!studyGroupMemberRepository.existsById(groupId)){
+            throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
+        }else if(!studyGroupMemberRepository.existsById(userId)){
+            throw new UserNotFoundException("User not found for the group " + userId);
+        }
+        Optional<StudyGroupMemberRecord> userById = studyGroupMemberRepository.findById(userId);
+        StudyGroupMemberRecord studyGroupMemberRecord = userById.get();
 
+        studyGroupMemberRepository.delete(studyGroupMemberRecord);
+
+    }
+
+    //todo
+    public void deleteStudyGroup(String groupId) {
+        studyGroupRepository.deleteById(groupId);
+    }
+
+    //TODO: NIVI
+    public List<StudyGroup> getAllStudyGroups() {
+        Iterable<StudyGroupRecord> studyGroupRecords = studyGroupRepository.findAll();
+        List<StudyGroup> studyGroups = new ArrayList<>();
+
+        for (StudyGroupRecord studyGroupRecord : studyGroupRecords) {
+            StudyGroup studyGroup = buildStudyGroup(studyGroupRecord);
+            studyGroups.add(studyGroup);
         }
 
+        return studyGroups;
     }
 
-    public void deleteStudyGroup(String groupId) {
-    }
+    public List<StudyGroupMember> getStudyGroupMembers(String groupId) {
+        Iterable<String> groupIds =  Arrays.asList(groupId);
 
-    public List<StudyGroup> getAllStudyGroups() {
-        return null;
-    }
+        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, "1234");
+        //StudyGroupMemberRecord studyGroupRecord = new StudyGroupMemberRecord(studyGroupMemberId, studyGroup.getGroupName(), studyGroup.getDiscussionTopic(), studyGroup.getCreationDate(), studyGroup.isActive());
 
-    public List<String> getStudyGroupMembers(String groupId) {
+        Optional<StudyGroupMemberRecord> studyGroupMembers = studyGroupMemberRepository.findById(studyGroupMemberId);
+        //if (studyGroupOptional.isEmpty()) {
+        //    return Collections.emptyList();
+        //}
+        //StudyGroupRecord studyGroupRecord = studyGroupOptional.get();
 
-        members.add("johnDoe");
-        members.add("janeDoe");
+        // TODO: Convert to List<StudyGroupMember>
+        List<StudyGroupMember> members = new ArrayList<>();
+        //for(StudyGroupMemberRecord groupMemberRecord: studyGroupMembers){
+        //    StudyGroupMember member = buildStudyGroupMember(groupMemberRecord);
+        //    members.add(member);
+        //}
         return members;
     }
 
+    public User findUserById(String userId) {
+        //        Optional<User> user = userRepository.findById(userId);
+        //        if(!user.isPresent()) {
+        //            return null;
+        //        }
+        //
+        //        UserRecord userRecord = user.get();
+        //        // convert from record to study group(domain object)
+        //        User user = buildStudyGroup(userRecord);
+        return new User(userId, "", "", "") ;
+    }
 }

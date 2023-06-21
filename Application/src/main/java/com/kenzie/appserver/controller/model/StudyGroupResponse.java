@@ -1,10 +1,9 @@
 package com.kenzie.appserver.controller.model;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDate;
-import java.time.LocalTime;
+
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -28,11 +27,11 @@ public class StudyGroupResponse {
 
 
     @JsonProperty("creationDate")
-    private String creationDate;
+    private ZonedDateTime creationDate;
 
 
     @JsonProperty("endDate")
-    private String endDate;
+    private ZonedDateTime endDate;
 
 
     @JsonProperty("meetingTime")
@@ -85,19 +84,19 @@ public class StudyGroupResponse {
         this.topic = topic;
     }
 
-    public String getCreationDate() {
+    public ZonedDateTime getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(String creationDate) {
+    public void setCreationDate(ZonedDateTime creationDate) {
         this.creationDate = creationDate;
     }
 
-    public String getEndDate() {
+    public ZonedDateTime getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(ZonedDateTime endDate) {
         this.endDate = endDate;
     }
 
