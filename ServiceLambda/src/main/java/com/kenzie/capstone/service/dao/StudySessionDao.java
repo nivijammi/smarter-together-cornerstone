@@ -2,6 +2,7 @@ package com.kenzie.capstone.service.dao;
 
 import com.kenzie.capstone.service.model.StudySession;
 import com.kenzie.capstone.service.model.StudySessionRecord;
+import dagger.Provides;
 
 import java.util.List;
 

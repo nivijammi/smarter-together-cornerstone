@@ -12,7 +12,7 @@ import java.util.List;
 public class StudySessionServiceClient {
 
     private static final String LOG_SESSION_ENDPOINT = "studysession/log";
-    private static final String CREATE_SESSION_BY_SESSIONID_ENDPOINT = "studysession/create/{sessionId}";
+    private static final String CREATE_SESSION_ENDPOINT = "studysession/create/";  //removed BySessionId /{sessionId}
     private static final String GET_SESSION_BY_SESSIONID_ENDPOINT = "studysession/{sessionId}";
     private static final String GET_SESSIONS_BY_SUBJECT_ENDPOINT = "studysession/bysubject/{subject}";
     private static final String GET_ALL_SESSIONS_ENDPOINT = "studysession/"; //all?
@@ -52,7 +52,7 @@ public class StudySessionServiceClient {
         } catch (JsonProcessingException e) {
             throw new ApiGatewayException("Unable to serialize request: " + e);
         }
-        String response = endpointUtility.postEndpoint(CREATE_SESSION_BY_SESSIONID_ENDPOINT, request);
+        String response = endpointUtility.postEndpoint(CREATE_SESSION_ENDPOINT, request);
         StudySessionResponse studySessionResponse;
         try{
             studySessionResponse = mapper.readValue(response, StudySessionResponse.class);

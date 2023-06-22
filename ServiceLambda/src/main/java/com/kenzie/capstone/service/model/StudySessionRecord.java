@@ -7,32 +7,35 @@ import java.time.ZonedDateTime;
 @DynamoDBTable(tableName = "StudySession")
 public class StudySessionRecord {
 
-    private String sessionId;
+
     private String userId;
     private String subject;
+    private String sessionId;
     private int duration;
     private ZonedDateTime date; //zonedDateTime here, and string elsewhere because this is a table?
     private String notes;
 
     //TODO: GSIs?
 
-    @DynamoDBHashKey(attributeName = "SessionId")
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    @DynamoDBAttribute(attributeName = "UserId")
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "UserIdIndex", attributeName = "UserId")
+    @DynamoDBHashKey(attributeName = "UserId")
+//    @DynamoDBIndexHashKey(globalSecondaryIndexName = "UserIdIndex", attributeName = "UserId")
     public String getUserId() {
         return userId;
     }
+
     @DynamoDBAttribute(attributeName = "Subject")
-    @DynamoDBIndexHashKey(globalSecondaryIndexName = "SubjectIndex", attributeName = "Subject")
+//    @DynamoDBIndexHashKey(globalSecondaryIndexName = "SubjectIndex", attributeName = "Subject")
     public String getSubject() {
         return subject;
     }
 
+    @DynamoDBAttribute(attributeName = "SessionId")
+    public String getSessionId() {
+        return sessionId;
+    }
+
     @DynamoDBAttribute(attributeName = "Duration")
+
     public int getDuration() {
         return duration;
     }

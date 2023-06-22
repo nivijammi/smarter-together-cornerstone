@@ -3,6 +3,7 @@ package com.kenzie.capstone.service.dependency;
 
 import com.kenzie.capstone.service.dao.ExampleDao;
 import com.kenzie.capstone.service.dao.NonCachingStudySessionDao;
+import com.kenzie.capstone.service.dao.StudySessionDao;
 import com.kenzie.capstone.service.util.DynamoDbClientProvider;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
@@ -35,8 +36,17 @@ public class DaoModule {
         return new NonCachingStudySessionDao(mapper);
     }
 
-}
+    @Singleton
+    @Provides
+    @Named("StudySessionDao")
+    @Inject
+    public StudySessionDao provideStudySessionDao(
+            @Named("DynamoDBMapper") DynamoDBMapper mapper) {
+        return new NonCachingStudySessionDao(mapper);
+    }
 
+
+}
 
 //@Module
 //public class DaoModule {
