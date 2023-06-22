@@ -17,6 +17,17 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * The application caches the study groups to improve performance and reduce the load on your backend database.
+ * The study groups are frequently accessed and queried by multiple users,
+ * retrieving the study group data from the database every time can introduce latency
+ * and impact the overall response time of the application.
+ * By using in-memory caching, the application can store the study group data in memory
+ * and serve subsequent requests directly from the cache.
+ *
+ * Also, the application uses in-memory caching as study group does not require frequent updates
+ */
+
 @Service
 public class StudyGroupService {
     @Autowired
@@ -69,6 +80,31 @@ public class StudyGroupService {
         StudyGroup studyGroup = buildStudyGroup(studyGroupRecord);
         return studyGroup;
     }
+
+    public StudyGroup findByCachedGroupId(String groupId) {
+        StudyGroup cachedStudyGroup = cache.get(groupId);
+        // Check if studyGroup is cached and return it if true
+        if (cachedStudyGroup != null) {
+            return cachedStudyGroup;
+        }
+        // if not cached, find the study group
+        StudyGroup studyGroupFromBackendService = studyGroupRepository
+                .findById(groupId)
+                .map(studyGroup-> new StudyGroup(studyGroup.getGroupId(),
+                        studyGroup.getGroupName(),
+                        studyGroup.getDiscussionTopic(),
+                        studyGroup.getCreationDate(),
+                        studyGroup.isActive()))
+                .orElse(null);
+
+        // if study group found, cache it
+        if (studyGroupFromBackendService != null) {
+            cache.add(studyGroupFromBackendService.getGroupId(),studyGroupFromBackendService);
+        }
+        return studyGroupFromBackendService;
+    }
+
+
     public StudyGroupMember addUserToStudyGroup(StudyGroup studyGroup, String userId) {
         if (studyGroup == null) {
             throw new StudyGroupNotFoundException("Study group is null...");
@@ -167,19 +203,20 @@ public class StudyGroupService {
         }
         // Update the properties of the existing study group with the new values
         StudyGroupRecord studyGroupRecord = existingStudyGroup.get();
-
         studyGroupRecord.setGroupId(UUID.randomUUID().toString());
         studyGroupRecord.setGroupName(studyGroup.getGroupName());
         studyGroupRecord.setDiscussionTopic(studyGroup.getDiscussionTopic());
         studyGroupRecord.setCreationDate(studyGroup.getCreationDate());
         studyGroupRecord.setActive(studyGroup.isActive());
         studyGroupRepository.save(studyGroupRecord);
+        cache.evict(studyGroup.getGroupId());
     }
 
     //todo
 
     public void deleteStudyGroup(String groupId) {
         studyGroupRepository.deleteById(groupId);
+        cache.evict(groupId);
     }
 
 }

@@ -121,8 +121,9 @@ public class StudyGroupController {
 
      */
     @GetMapping("/groups/{groupId}")
+    // CONFIRM
     public ResponseEntity<AddStudyGroupResponse> getStudyGroupById(@PathVariable String groupId) {
-        StudyGroup studyGroup = studyGroupService.findByGroupId(groupId);
+        StudyGroup studyGroup = studyGroupService.findByCachedGroupId(groupId);
         //todo??? if bad request
         if(studyGroup == null){
             return ResponseEntity.notFound().build();
@@ -134,8 +135,6 @@ public class StudyGroupController {
 
     /**
      * Endpoint for retrieving all study groups
-     *
-     *
      */
     @GetMapping("/groups")
     public ResponseEntity<List<AddStudyGroupResponse>> getAllStudyGroups() {

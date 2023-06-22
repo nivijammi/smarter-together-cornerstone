@@ -4,6 +4,7 @@ import com.kenzie.appserver.repositories.UserLoginRepository;
 import com.kenzie.appserver.repositories.model.UserLoginRecord;
 import com.kenzie.appserver.service.model.UserDetail;
 import com.kenzie.appserver.service.model.UserValidationStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -15,6 +16,8 @@ public class UserLoginService {
 
     // source: https://stackoverflow.com/questions/8204680/java-regex-email
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+
+    @Autowired
     private UserLoginRepository userLoginRepository;
 
 
@@ -92,15 +95,17 @@ public class UserLoginService {
         // hash the pass word and save it in the database
 
         // Retrieve the storedUser by email from the repository
-        UserDetail storedUser = userLoginRepository.findByEmail(email);
+        UserLoginRecord storedUser = userLoginRepository.findByUserEmail(email);
         // Scenario #1: user not found
+        // convert it into userDetail
         if (storedUser == null) {
             return new UserValidationStatus(false, false);
         }
 
         // Check if a storedUser with the given email exists and if the password matches
         // Scenario #2: found the record,
-        String hashedStoredPassword = storedUser.getHashedPassword();
+
+        String hashedStoredPassword = storedUser.getUserPassword();
         String hashedUserProvidedPassword = hashPassword(password);
 
         // Scenario #2.1 check stored password [hashed] does not match the storedUser provided password [to be hashed]
@@ -115,7 +120,7 @@ public class UserLoginService {
     }
 
     public boolean doesUserExist(String userEmail) {
-        UserDetail user = userLoginRepository.findByEmail(userEmail);
+        UserLoginRecord user = userLoginRepository.findByUserEmail(userEmail);
         if(user != null){
             return true;
         }

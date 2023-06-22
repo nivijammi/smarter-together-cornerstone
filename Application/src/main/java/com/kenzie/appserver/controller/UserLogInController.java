@@ -25,7 +25,7 @@ public class UserLogInController {
     @Autowired
     UserLoginService userLoginService;
 
-
+    // loged in or unsuccessful
     @PostMapping("/login")
     public ResponseEntity<AddUserLoginResponse> login(@RequestBody UserLoginRequest request) {
 
@@ -52,7 +52,7 @@ public class UserLogInController {
             return ResponseEntity.created(URI.create("/user/" + userNotFoundResponse.getUserEmail())).body(userNotFoundResponse);
         }
 
-        // Password does not match
+        // Password does not match -
         else if (status.isUserFound() && !status.isPasswordMatched()){
             AddUserLoginResponse passwordNotMatchedResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.PASSWORD_NOT_MATCHED);
             return ResponseEntity.created(URI.create("/user/" + passwordNotMatchedResponse.getUserEmail())).body(passwordNotMatchedResponse);
