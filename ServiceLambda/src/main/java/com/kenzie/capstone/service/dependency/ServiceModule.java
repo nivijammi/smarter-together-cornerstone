@@ -1,8 +1,10 @@
 package com.kenzie.capstone.service.dependency;
 
 import com.kenzie.capstone.service.LambdaService;
+import com.kenzie.capstone.service.StudySessionService;
 import com.kenzie.capstone.service.dao.ExampleDao;
 
+import com.kenzie.capstone.service.dao.StudySessionDao;
 import dagger.Module;
 import dagger.Provides;
 
@@ -18,8 +20,8 @@ public class ServiceModule {
     @Singleton
     @Provides
     @Inject
-    public LambdaService provideLambdaService(@Named("ExampleDao") ExampleDao exampleDao) {
-        return new LambdaService(exampleDao);
+    public StudySessionService provideStudySessionService(@Named("StudySessionDao")StudySessionDao sessionDao) {
+        return new StudySessionService(sessionDao);
     }
 }
 
