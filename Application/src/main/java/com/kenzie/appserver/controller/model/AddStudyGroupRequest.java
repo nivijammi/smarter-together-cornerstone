@@ -13,7 +13,7 @@ public class AddStudyGroupRequest {
     @JsonProperty("groupName")
     private String groupName;
     @NotEmpty
-    @JsonProperty("topic")
+    @JsonProperty("discussionTopic")
     private String discussionTopic;
     @JsonProperty("creationDate")
     private ZonedDateTime creationDate;
@@ -23,22 +23,32 @@ public class AddStudyGroupRequest {
     public String getGroupName() {
         return groupName;
     }
+
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
+
     public String getDiscussionTopic() {
         return discussionTopic;
     }
+
     public void setDiscussionTopic(String discussionTopic) {
         this.discussionTopic = discussionTopic;
     }
+
     public ZonedDateTime getCreationDate() {
         return creationDate;
     }
+
     public void setCreationDate(ZonedDateTime creationDate) {
         this.creationDate = creationDate;
     }
+
     public boolean isActive() {
         return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }

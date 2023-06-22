@@ -1,21 +1,28 @@
 package com.kenzie.appserver.service.model;
 
 public class UserDetail {
+
     private String userEmail;
-    private String userPassWord;
+    private String hashedPassword;
 
-    public UserDetail(String userEmail, String userPassWord) {
+    public UserDetail( String userEmail, String hashedPassword) {
         this.userEmail = userEmail;
-        this.userPassWord = userPassWord;
-
+        this.hashedPassword = hashedPassword;
     }
 
     public String getUserEmail() {
         return userEmail;
     }
 
-    public String getUserPassWord() {
-        return userPassWord;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
 }

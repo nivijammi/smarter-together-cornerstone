@@ -32,3 +32,38 @@
    <   PrimaryKey   >
    PartKey   RangeKey
    topicId    GroupId 
+
+
+++++++++++++++++++++++++++++++++++++++++++++
+Login
+
+
+  Client                         Server
+WebBrowser                        API 
+
+             user, pwd & email
+HTML/JS  --------------------->   /login 
+               Over SSL 
+            [Secured/Encrypted Channel] 
+
+#### User Registration fLow
+- The api receives the Email/Pwd  [Other profile attributes - FirstName, LastName, Age...]
+- Does Email/HashedPwd combination exists in the system?
+  - Yes: You cannot register another user with the same email/username
+  - No: 
+    - Create the hash of the pwd and 
+    - store it in the db.
+         Email/Username [HashKey] HashedPwd attribute
+
+#### User Login Flow
+- Does User  profile exists in the system?
+   - Check if username/email exists in the db?
+      - Yes - User exits in db 
+        - Get the Email/HashedPwd from the db
+        - Hash the user provided pwd. 
+        - Does user provided hashed pwd match the stored hashed pwd for the username/email
+          - Yes: login successful
+          - No: Login failure
+      - No [User does not exist in db]
+        - Send the appropriate response back
+        

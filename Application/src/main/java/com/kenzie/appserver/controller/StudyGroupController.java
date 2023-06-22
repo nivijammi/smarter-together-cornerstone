@@ -3,6 +3,9 @@ package com.kenzie.appserver.controller;
 import com.kenzie.appserver.controller.model.AddStudyGroupRequest;
 import com.kenzie.appserver.controller.model.AddStudyGroupResponse;
 import com.kenzie.appserver.controller.model.StudyGroupMemberId;
+import com.kenzie.appserver.controller.model.StudyGroupResponse;
+import com.kenzie.appserver.exception.StudyGroupNotFoundException;
+import com.kenzie.appserver.exception.UserNotFoundException;
 import com.kenzie.appserver.service.StudyGroupService;
 import com.kenzie.appserver.service.UserService;
 import com.kenzie.appserver.service.model.StudyGroup;
@@ -15,23 +18,21 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
 public class StudyGroupController {
-
     @Autowired
     private StudyGroupService studyGroupService;
 
     private UserService userService;
-
-
     StudyGroupController(StudyGroupService studyGroupService){
         this.studyGroupService = studyGroupService;
     }
 
-    // endpoint for creating a study group
+    // Route to the groups [study groups] endpoint, for creating a new study group
     @PostMapping("/groups")
     public ResponseEntity<AddStudyGroupResponse> addNewStudyGroup(@RequestBody AddStudyGroupRequest request) {
         if (request.getGroupName() == null || request.getGroupName().length() == 0) {
@@ -49,11 +50,9 @@ public class StudyGroupController {
         return ResponseEntity.created(URI.create("/group/" + studyGroupResponse.getGroupId())).body(studyGroupResponse);
     }
 
-
-
-    // Endpoint for adding a user to a study group
-    @PostMapping("/groups/{groupId}/{userId}" )
-    public ResponseEntity<StudyGroupMember> addUserToStudyGroup(String groupId, String userId ) {
+    // Route to the groups [study groups] endpoint, for adding a user to a study group
+    @PostMapping("/groups/{groupId}/users/{userId}" )
+    public ResponseEntity<StudyGroupMember> addUserToStudyGroup(@PathVariable String groupId, @PathVariable String userId ) {
         System.out.println(groupId);
         // Create User - get userId
 
@@ -75,7 +74,19 @@ public class StudyGroupController {
     }
 
 
-    // endpoint for getting all members in a study group-???
+    /**
+     * Endpoint to get all members in a study group
+     *      /groups/                                [Returns all Groups]
+     *      /groups/{groupId}                       [Returns a group]
+     *
+     *      /groups/{groupId}/users/                [Returns all Users]
+     *      /groups/{groupId}/users/{userId}        [Returns a user within a group]
+     *
+     * Note:
+     * ResponseEntity can return a list of objects or a single object.
+     * A list of objects will be converted to JSON Array output by ResponseEntity.
+     * source: https://technicalsand.com/using-responseentity-in-spring/
+     */
     @GetMapping("/groups/{groupId}/users/")
     public ResponseEntity<List<StudyGroupMember>> getStudyGroupMembers(@PathVariable String groupId){
 
@@ -89,13 +100,15 @@ public class StudyGroupController {
 
     }
 
-    /*
-    // endpoint to remove user from study Group
-    @DeleteMapping("/{groupId}/users/{userId}")
+    /**
+     * Endpoint to remove user from study Group
+     * */
+    @DeleteMapping("/groups/{groupId}/users/{userId}")
     public ResponseEntity<Void> removeUserFromStudyGroup(@PathVariable String groupId, @PathVariable String userId) {
         try {
             studyGroupService.removeUserFromStudyGroup(groupId, userId);
             return ResponseEntity.ok().build();
+
         } catch (StudyGroupNotFoundException e) {
             return ResponseEntity.notFound().build();
         } catch (UserNotFoundException e) {
@@ -103,64 +116,77 @@ public class StudyGroupController {
         }
     }
 
-    // endpoint for retrieving a study group by ID
-    @GetMapping("/{groupId}")
-    public ResponseEntity<StudyGroupResponse> getStudyGroupById(@PathVariable String groupId) {
-        StudyGroupMembers studyGroupMembers = studyGroupService.findByGroupId(groupId);
+    /**
+     *  endpoint for retrieving a study group by ID
+
+     */
+    @GetMapping("/groups/{groupId}")
+    public ResponseEntity<AddStudyGroupResponse> getStudyGroupById(@PathVariable String groupId) {
+        StudyGroup studyGroup = studyGroupService.findByGroupId(groupId);
         //todo??? if bad request
-        if(studyGroupMembers == null){
+        if(studyGroup == null){
             return ResponseEntity.notFound().build();
         }
-        StudyGroupResponse studyGroupResponse = convertToStudyGroupResponse(studyGroupMembers);
+        AddStudyGroupResponse studyGroupResponse = convertToStudyGroupResponse(studyGroup);
         return ResponseEntity.ok(studyGroupResponse);
     }
 
-    // endpoint for retrieving all study groups
-    @GetMapping
-    public ResponseEntity<List<StudyGroupMembers>> getAllStudyGroups() {
-        List<StudyGroupMembers> studyGroupMembers = studyGroupService.getAllStudyGroups();
+
+    /**
+     * Endpoint for retrieving all study groups
+     *
+     *
+     */
+    @GetMapping("/groups")
+    public ResponseEntity<List<AddStudyGroupResponse>> getAllStudyGroups() {
+        List<StudyGroup> studyGroups = studyGroupService.getAllStudyGroups();
         // if no studyGroups found return 204
-        if(studyGroupMembers == null || studyGroupMembers.isEmpty()){
+        if(studyGroups == null || studyGroups.isEmpty()){
             return ResponseEntity.noContent().build();
         }
         // Otherwise, convert the List of StudyGroup objects into a List of StudyGroupResponse and return it
-        List<StudyGroupResponse> response = new ArrayList<>();
-        for (StudyGroupMembers studyGroupMembers : studyGroupMembers) {
-            response.add(this.convertToStudyGroupResponse(studyGroupMembers));
+        List<AddStudyGroupResponse> response = new ArrayList<>();
+        for (StudyGroup studyGroup : studyGroups) {
+            response.add(convertToStudyGroupResponse(studyGroup));
         }
-        return ResponseEntity.ok(studyGroupMembers);
+        return ResponseEntity.ok(response);
     }
 
+
+
     // endpoint to update a study group
-    @PutMapping("/{groupId}")
-    public ResponseEntity<StudyGroupResponse> updateStudyGroup(@PathVariable String groupId, @RequestBody AddStudyGroupRequest addStudyGroupRequest) {
-        if (addStudyGroupRequest.getGroupName() == null || addStudyGroupRequest.getGroupName().isEmpty()) {
+    @PutMapping("/groups/{groupId}")
+    public ResponseEntity<AddStudyGroupResponse> updateStudyGroup(@PathVariable String groupId, @RequestBody AddStudyGroupRequest updateRequest) {
+        if (updateRequest.getGroupName() == null || updateRequest.getGroupName().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Group Name is required");
         }
 
-        StudyGroupMembers existingStudyGroupMembers = studyGroupService.findByGroupId(groupId);
-        if (existingStudyGroupMembers == null) {
+        StudyGroup existingStudyGroup = studyGroupService.findByGroupId(groupId);
+        if (existingStudyGroup == null) {
             return ResponseEntity.notFound().build();
         }
-        StudyGroupMembers updatedStudyGroupMembers = convertToStudyGroupRequest(addStudyGroupRequest);
-        studyGroupService.updateStudyGroup(updatedStudyGroupMembers);
+        existingStudyGroup.setGroupName(updateRequest.getGroupName());
+        existingStudyGroup.setDiscussionTopic(updateRequest.getDiscussionTopic());
+        existingStudyGroup.setCreationDate(updateRequest.getCreationDate());
+        existingStudyGroup.setActive(updateRequest.isActive());
 
-        StudyGroupResponse studyGroupResponse = convertToStudyGroupResponse(updatedStudyGroupMembers);
+        studyGroupService.updateStudyGroup(existingStudyGroup);
+
+        AddStudyGroupResponse studyGroupResponse = convertToStudyGroupResponse(existingStudyGroup);
         return ResponseEntity.ok(studyGroupResponse);
 
 
     }
-    @DeleteMapping("/{groupId}")
+    @DeleteMapping("/groups/{groupId}")
     public ResponseEntity deleteStudyGroup(@PathVariable String groupId) {
 
-        StudyGroupMembers existingStudyGroupMembers = studyGroupService.findByGroupId(groupId);
-        if (existingStudyGroupMembers == null) {
+        StudyGroup existingStudyGroup = studyGroupService.findByGroupId(groupId);
+        if (existingStudyGroup == null) {
             return ResponseEntity.notFound().build();
         }
         studyGroupService.deleteStudyGroup(groupId);
         return ResponseEntity.noContent().build();
     }
-    */
 
 
     // helper methods
@@ -184,6 +210,5 @@ public class StudyGroupController {
         response.setActive(studyGroup.isActive());
         return response;
     }
-
 
 }

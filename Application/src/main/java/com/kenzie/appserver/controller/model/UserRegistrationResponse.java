@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotEmpty;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AddUserLoginResponse {
+public class UserRegistrationResponse {
 
     @NotEmpty
     @JsonProperty("userEmail")
@@ -15,7 +15,7 @@ public class AddUserLoginResponse {
     @JsonProperty("registrationStatus")
     private RegistrationStatus registrationStatus;
 
-    public AddUserLoginResponse(String userEmail, RegistrationStatus registrationStatus) {
+    public UserRegistrationResponse(String userEmail, RegistrationStatus registrationStatus) {
         this.userEmail = userEmail;
         this.registrationStatus = registrationStatus;
     }

@@ -8,9 +8,12 @@ import java.util.Objects;
 
 @DynamoDBTable(tableName = "UserLogin")
 public class UserLoginRecord {
+
     private String userEmail;
+
+    private String userName;
     private String userPassword;
-    private String logInAuthorizationCode;
+    private String authToken;
 
     @DynamoDBHashKey(attributeName = "UserEmail")
     public String getUserEmail() {
@@ -20,7 +23,14 @@ public class UserLoginRecord {
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
     }
+    @DynamoDBAttribute(attributeName = "UserName")
+    public String getUserName() {
+        return userName;
+    }
 
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
     @DynamoDBAttribute(attributeName = "UserPassword")
     public String getUserPassword() {
         return userPassword;
@@ -29,15 +39,15 @@ public class UserLoginRecord {
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
     }
-
-    @DynamoDBAttribute(attributeName = "LogInAuthorizationCode")
-    public String getLogInAuthorizationCode() {
-        return logInAuthorizationCode;
+    @DynamoDBAttribute(attributeName = "AuthToken")
+    public String getAuthToken() {
+        return authToken;
     }
 
-    public void setLogInAuthorizationCode(String logInAuthorizationCode) {
-        this.logInAuthorizationCode = logInAuthorizationCode;
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

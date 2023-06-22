@@ -34,4 +34,24 @@ public class StudyGroup {
     public boolean isActive() {
         return active;
     }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
+
+    public void setDiscussionTopic(String discussionTopic) {
+        this.discussionTopic = discussionTopic;
+    }
+
+    public void setCreationDate(ZonedDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 }
