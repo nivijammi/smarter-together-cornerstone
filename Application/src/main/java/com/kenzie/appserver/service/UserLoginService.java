@@ -15,8 +15,6 @@ public class UserLoginService {
 
     // source: https://stackoverflow.com/questions/8204680/java-regex-email
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private static final String ERROR_CODE = "4000";
-    private static final String APPROVAL_CODE = "2000";
     private UserLoginRepository userLoginRepository;
 
 

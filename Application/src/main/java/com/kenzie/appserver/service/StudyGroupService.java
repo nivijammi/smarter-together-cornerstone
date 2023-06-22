@@ -1,6 +1,7 @@
 package com.kenzie.appserver.service;
 
 
+import com.kenzie.appserver.config.CacheStore;
 import com.kenzie.appserver.exception.StudyGroupNotFoundException;
 import com.kenzie.appserver.exception.UserNotFoundException;
 import com.kenzie.appserver.repositories.StudyGroupMemberRepository;
@@ -22,6 +23,8 @@ public class StudyGroupService {
     private StudyGroupRepository studyGroupRepository;
     @Autowired
     private StudyGroupMemberRepository studyGroupMemberRepository;
+
+    private CacheStore cache;
 
     public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupMemberRepository studyGroupMemberRepository) {
         this.studyGroupRepository = studyGroupRepository;
