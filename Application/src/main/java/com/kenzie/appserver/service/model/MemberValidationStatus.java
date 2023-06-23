@@ -1,9 +1,9 @@
 package com.kenzie.appserver.service.model;
 
-public class UserValidationStatus {
+public class MemberValidationStatus {
     boolean userFound;
     boolean passwordMatched;
-    public UserValidationStatus(boolean userFound, boolean passwordMatched) {
+    public MemberValidationStatus(boolean userFound, boolean passwordMatched) {
         this.userFound = userFound;
         this.passwordMatched = passwordMatched;
     }

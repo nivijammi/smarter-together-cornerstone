@@ -20,6 +20,8 @@ public interface StudyGroupMemberRepository extends CrudRepository<StudyGroupMem
 
     // Returns all the records/rows within the partition
     Optional<List<StudyGroupMemberRecord>> findByGroupId(String groupId);
+    Optional<StudyGroupMemberRecord> findByMemberId(String userId);
+
 
     //Iterable<StudyGroupMemberRecord> findAllById(Iterable<String> groupIds);
 }

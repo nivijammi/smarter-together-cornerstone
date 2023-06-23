@@ -3,15 +3,17 @@ package com.kenzie.appserver.service;
 
 import com.kenzie.appserver.config.CacheStore;
 import com.kenzie.appserver.exception.StudyGroupNotFoundException;
-import com.kenzie.appserver.exception.UserNotFoundException;
+import com.kenzie.appserver.exception.MemberNotFoundException;
 import com.kenzie.appserver.repositories.StudyGroupMemberRepository;
 import com.kenzie.appserver.repositories.StudyGroupRepository;
+import com.kenzie.appserver.repositories.MemberRepository;
+import com.kenzie.appserver.repositories.model.MemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupMemberId;
 import com.kenzie.appserver.repositories.model.StudyGroupMemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupRecord;
+import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.StudyGroup;
 import com.kenzie.appserver.service.model.StudyGroupMember;
-import com.kenzie.appserver.service.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +21,7 @@ import java.util.*;
 
 /**
  * The application caches the study groups to improve performance and reduce the load on your backend database.
- * The study groups are frequently accessed and queried by multiple users,
+ * The study groups are frequently accessed and queried by multiple members,
  * retrieving the study group data from the database every time can introduce latency
  * and impact the overall response time of the application.
  * By using in-memory caching, the application can store the study group data in memory
@@ -34,22 +36,44 @@ public class StudyGroupService {
     private StudyGroupRepository studyGroupRepository;
     @Autowired
     private StudyGroupMemberRepository studyGroupMemberRepository;
-
+    @Autowired
     private CacheStore cache;
+    @Autowired
+    private MemberRepository memberRepository;
 
-    public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupMemberRepository studyGroupMemberRepository) {
+    public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupMemberRepository studyGroupMemberRepository,CacheStore cache) {
         this.studyGroupRepository = studyGroupRepository;
         this.studyGroupMemberRepository = studyGroupMemberRepository;
     }
 
-    // addNewStudyGroup
+    /** addNewStudyGroup
+     *
+     * made it idempotent
+     */
     public StudyGroup addNewStudyGroup(StudyGroup group) {
+
+        // Check if the study group already exists
+        StudyGroup existingGroup = getExistingStudyGroup(group);
+        if (existingGroup != null) {
+            // If the study group exists, return it
+            return existingGroup;
+        }
         // add to the repo
         StudyGroupRecord record = buildStudyGroupRecord(group);
         studyGroupRepository.save(record);
-        StudyGroup newStudyGroup = buildStudyGroup(record);
-        return newStudyGroup;
+        return buildStudyGroup(record);
     }
+
+    private StudyGroup getExistingStudyGroup(StudyGroup group) {
+        for (StudyGroup existingGroup : getAllStudyGroups()) {
+            if (existingGroup.getGroupName().equals(group.getGroupName())
+                    && existingGroup.getDiscussionTopic().equals(group.getDiscussionTopic())) {
+                return existingGroup;
+            }
+        }
+        return null;
+    }
+
     // helper method
     private StudyGroup buildStudyGroup(StudyGroupRecord record) {
         StudyGroup studyGroup = new StudyGroup(record.getGroupId(), record.getGroupName(),
@@ -69,8 +93,8 @@ public class StudyGroupService {
     }
 
 
-    // addUserToStudyGroup
-    public StudyGroup findByGroupId(String groupId) {
+    // addMemberToStudyGroup
+    public StudyGroup findStudyGroupById(String groupId) {
         Optional<StudyGroupRecord> groupById = studyGroupRepository.findById(groupId);
         if(!groupById.isPresent()) {
             return null;
@@ -105,46 +129,58 @@ public class StudyGroupService {
     }
 
 
-    public StudyGroupMember addUserToStudyGroup(StudyGroup studyGroup, String userId) {
+    public StudyGroupMember addMemberToStudyGroup(StudyGroup studyGroup, String memberId) {
         if (studyGroup == null) {
             throw new StudyGroupNotFoundException("Study group is null...");
         }
-        if (userId == null) {
-            throw new UserNotFoundException("userId is null...");
+        if (memberId == null) {
+            throw new MemberNotFoundException("memberId is null...");
         }
-
-        //StudyGroupMemberRecord record = buildStudyGroupMemberRecord(studyGroup, userId);
-        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(studyGroup.getGroupId(), userId);
-        StudyGroupMemberRecord studyGroupRecord = new StudyGroupMemberRecord(studyGroupMemberId, studyGroup.getGroupName(), studyGroup.getDiscussionTopic(), studyGroup.getCreationDate(), studyGroup.isActive());
-        studyGroupMemberRepository.save(studyGroupRecord);
-        StudyGroupMember studyGroupMember = buildStudyGroupMember(studyGroupRecord);
-        return studyGroupMember;
+        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(studyGroup.getGroupId(), memberId);
+        if (isStudyGroupMemberExists(studyGroupMemberId)) {
+            // If the study group member exists, retrieve and return it
+            return getExistingStudyGroupMember(studyGroupMemberId);
+        } else {
+            StudyGroupMemberRecord studyGroupRecord = new StudyGroupMemberRecord(studyGroupMemberId, studyGroup.getGroupName(), studyGroup.getDiscussionTopic(), studyGroup.getCreationDate(), studyGroup.isActive());
+            studyGroupMemberRepository.save(studyGroupRecord);
+            StudyGroupMember studyGroupMember = buildStudyGroupMember(studyGroupRecord);
+            return studyGroupMember;
+        }
     }
-    public User findUserById(String userId) {
-        //        Optional<User> user = userRepository.findById(userId);
-        //        if(!user.isPresent()) {
-        //            return null;
-        //        }
-        //
-        //        UserRecord userRecord = user.get();
-        //        // convert from record to study group(domain object)
-        //        User user = buildStudyGroup(userRecord);
-        return new User(userId, "", "", "") ;
+    private boolean isStudyGroupMemberExists(StudyGroupMemberId studyGroupMemberId) {
+        return studyGroupMemberRepository.existsById(studyGroupMemberId);
+    }
+    private StudyGroupMember getExistingStudyGroupMember(StudyGroupMemberId studyGroupMemberId) {
+        Optional<StudyGroupMemberRecord> byMemberId = studyGroupMemberRepository.findByMemberId(studyGroupMemberId.getMemberId());
+        StudyGroupMemberRecord record = byMemberId.get();
+        return buildStudyGroupMember(record);
+    }
+
+    public Member findMemberById(String memberId) {
+        Optional<MemberRecord> findById = memberRepository.findById(memberId);
+        // convert from record to study group(domain object)
+        MemberRecord memberRecord = findById.get();
+        return buildMember(memberRecord);
+    }
+
+    private Member buildMember(MemberRecord record) {
+        Member member = new Member(record.getEmail(), record.getPassword());
+        return member;
     }
 
 
     private static StudyGroupMember buildStudyGroupMember(StudyGroupMemberRecord record) {
         StudyGroupMember studyGroupMember = new StudyGroupMember(record.getGroupId(),
-                record.getUserId(), record.getGroupName(),
+                record.getMemberId(), record.getGroupName(),
                 record.getDiscussionTopic(),
                 record.getCreationDate(),
                 record.isActive());
         return studyGroupMember;
     }
-    private static StudyGroupMemberRecord buildStudyGroupMemberRecord(StudyGroup studyGroup, String userId) {
+    private static StudyGroupMemberRecord buildStudyGroupMemberRecord(StudyGroup studyGroup, String memberId) {
         StudyGroupMemberRecord record = new StudyGroupMemberRecord();
         record.setGroupId(studyGroup.getGroupId());
-        record.setUserId(userId);
+        record.setMemberId(memberId);
         record.setGroupName(studyGroup.getGroupName());
         record.setDiscussionTopic(studyGroup.getDiscussionTopic()); // ???
         record.setCreationDate(studyGroup.getCreationDate());       // TODO: Current data time needs to be set
@@ -169,8 +205,8 @@ public class StudyGroupService {
     }
 
     //TODO
-    public void removeUserFromStudyGroup(String groupId, String userId) {
-        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, userId);
+    public void removeMemberFromStudyGroup(String groupId, String memberId) {
+        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, memberId);
 
         if(!studyGroupMemberRepository.existsById(studyGroupMemberId)) {
             throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
@@ -203,7 +239,7 @@ public class StudyGroupService {
         }
         // Update the properties of the existing study group with the new values
         StudyGroupRecord studyGroupRecord = existingStudyGroup.get();
-        studyGroupRecord.setGroupId(UUID.randomUUID().toString());
+        studyGroupRecord.setGroupId(studyGroup.getGroupId());
         studyGroupRecord.setGroupName(studyGroup.getGroupName());
         studyGroupRecord.setDiscussionTopic(studyGroup.getDiscussionTopic());
         studyGroupRecord.setCreationDate(studyGroup.getCreationDate());

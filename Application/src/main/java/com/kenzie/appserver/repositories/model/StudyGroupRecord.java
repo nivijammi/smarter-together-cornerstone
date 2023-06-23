@@ -12,6 +12,7 @@ public class StudyGroupRecord {
     private String discussionTopic;
     private ZonedDateTime creationDate;
     private boolean active;
+
     @DynamoDBHashKey(attributeName = "GroupId")
     public String getGroupId() {
         return groupId;
@@ -28,7 +29,7 @@ public class StudyGroupRecord {
         this.groupName = groupName;
     }
 
-    @DynamoDBAttribute(attributeName = "discussionTopic")
+    @DynamoDBAttribute(attributeName = "DiscussionTopic")
     public String getDiscussionTopic() {
         return discussionTopic;
     }
@@ -45,7 +46,7 @@ public class StudyGroupRecord {
     public void setCreationDate(ZonedDateTime creationDate) {
         this.creationDate = creationDate;
     }
-    @DynamoDBAttribute(attributeName = "active")
+    @DynamoDBAttribute(attributeName = "Active")
     public boolean isActive() {
         return active;
     }

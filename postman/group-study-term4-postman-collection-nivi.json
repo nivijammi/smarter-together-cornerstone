@@ -1,0 +1,261 @@
+{
+	"info": {
+		"_postman_id": "217ecbe5-31a5-4536-bcd7-f87e3ef6037e",
+		"name": "group-study-term4",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "23716578",
+		"_collection_link": "https://web.postman.co/workspace/My-Workspace~52756030-c205-45f8-8a49-f55362be3926/collection/23716578-217ecbe5-31a5-4536-bcd7-f87e3ef6037e?action=share&creator=23716578&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "/groups/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"groupName\": \"mnp\",\n    \"discussionTopic\": \"algorithm\",\n    \"creationDate\" :\"2016-08-22T14:30+02:00\",\n    \"active\":false\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5001/groups/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/users/register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \n    \"email\": \"nivi.jammi@aol.com\",\n    \"password\": \"Algoritm1!\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5001/users/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"users",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/groups/{groupid}/users/{userId}/",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"nivi.jammi@aol.com\",\n    \"userName\": \"nivi\",\n    \"password\": \"Algoritm!\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5001/groups/3fd2c5cf-0872-4545-8ccd-cea55703b9e4/members/nivi2@aol.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						"3fd2c5cf-0872-4545-8ccd-cea55703b9e4",
+						"members",
+						"nivi2@aol.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "groups/{groupId}/members/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/groups/3fd2c5cf-0872-4545-8ccd-cea55703b9e4/members/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						"3fd2c5cf-0872-4545-8ccd-cea55703b9e4",
+						"members",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/groups/{groupId}/members/{userId}",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/groups/3fd2c5cf-0872-4545-8ccd-cea55703b9e4/members/nivi2@aol.com",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						"3fd2c5cf-0872-4545-8ccd-cea55703b9e4",
+						"members",
+						"nivi2@aol.com"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/groups/82881ad1-ee15-484c-b2b8-6354f2c64a48/",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/groups/97590296-147c-4a6f-bf2b-e6bbd4fbb6cf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						"97590296-147c-4a6f-bf2b-e6bbd4fbb6cf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/groups/814cf954-2df0-4d52-bd7a-b549b61322d7",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"groupName\": \"XYZ\",\n    \"discussionTopic\": \"algorithm3\",    \n    \"active\": true\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5001/groups/a4c315c0-1ac4-4d47-bfd5-f976d445e490",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						"a4c315c0-1ac4-4d47-bfd5-f976d445e490"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/groups",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/groups",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/user/login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"nivi\",\n    \"email\": \"nivi.jammi@aol.com\",\n    \"password\": \"Algoritm1!\"\n\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5001/users/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:5001/groups/e0701f8b-e934-4d3b-85c0-d88434d63623",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5001/groups/e0701f8b-e934-4d3b-85c0-d88434d63623",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"groups",
+						"e0701f8b-e934-4d3b-85c0-d88434d63623"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
