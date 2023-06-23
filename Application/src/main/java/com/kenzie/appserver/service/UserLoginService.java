@@ -1,27 +1,25 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.repositories.UserLoginRepository;
-import com.kenzie.appserver.repositories.model.UserLoginRecord;
-import com.kenzie.appserver.service.model.UserDetail;
-import com.kenzie.appserver.service.model.UserValidationStatus;
+import com.kenzie.appserver.repositories.MemberRepository;
+import com.kenzie.appserver.repositories.model.MemberRecord;
+import com.kenzie.appserver.service.model.Member;
+import com.kenzie.appserver.service.model.MemberValidationStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 @Service
 public class UserLoginService {
 
-
     // source: https://stackoverflow.com/questions/8204680/java-regex-email
     private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-    private static final String ERROR_CODE = "4000";
-    private static final String APPROVAL_CODE = "2000";
-    private UserLoginRepository userLoginRepository;
-
-
-    public UserLoginService(UserLoginRepository userLoginRepository) {
-        this.userLoginRepository = userLoginRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+    public UserLoginService(MemberRepository memberRepository) {
+        this.memberRepository = memberRepository;
     }
 
     public boolean isValidEmail(String email) {
@@ -89,46 +87,55 @@ public class UserLoginService {
 
     // have time hash it on front end
     // backend should always just see a hash.
-    public UserValidationStatus authenticateUser(String email, String password) {
+    public MemberValidationStatus authenticateUser(String email, String password) {
         // "test@example.com".equals(email) && "password123".equals(password)
         // hash the pass word and save it in the database
 
         // Retrieve the storedUser by email from the repository
-        UserDetail storedUser = userLoginRepository.findByEmail(email);
+        //MemberRecord storedUser = memberRepository.findMemberById(email);
+        Optional<MemberRecord> findById = memberRepository.findById(email);
+        MemberRecord storedUser = findById.get();
         // Scenario #1: user not found
+        // convert it into userDetail
         if (storedUser == null) {
-            return new UserValidationStatus(false, false);
+            return new MemberValidationStatus(false, false);
         }
 
         // Check if a storedUser with the given email exists and if the password matches
         // Scenario #2: found the record,
-        String hashedStoredPassword = storedUser.getHashedPassword();
+
+        String hashedStoredPassword = storedUser.getPassword();
         String hashedUserProvidedPassword = hashPassword(password);
 
         // Scenario #2.1 check stored password [hashed] does not match the storedUser provided password [to be hashed]
         if(!hashedStoredPassword.equals(hashedUserProvidedPassword)){
             System.out.println("Password does not match");
-            return new UserValidationStatus(true, false);
+            return new MemberValidationStatus(true, false);
         }
 
         // Scenario #2.2 stored password [hashed] matches the storedUser provided password [to be hashed]
         System.out.println("User found and password matches");
-        return new UserValidationStatus(true, true);
+        return new MemberValidationStatus(true, true);
     }
 
-    public boolean doesUserExist(String userEmail) {
-        UserDetail user = userLoginRepository.findByEmail(userEmail);
-        if(user != null){
+    public boolean doesUserExist(String email) {
+        //MemberRecord user = memberRepository.findMemberById(userEmail);
+        Optional<MemberRecord> findById = memberRepository.findById(email);
+        if (!findById.isPresent())
+            return false;
+
+        MemberRecord storedUser = findById.get();
+        if(storedUser != null){
             return true;
         }
         return false;
     }
 
-    public UserDetail registerUser(UserDetail user) {
-        UserLoginRecord record = new UserLoginRecord();
-        record.setUserEmail(user.getUserEmail());
-        record.setUserPassword(user.getHashedPassword());
-        userLoginRepository.save(record);
+    public Member registerUser(Member user) {
+        MemberRecord record = new MemberRecord();
+        record.setEmail(user.getEmail());
+        record.setPassword(user.getPassword());
+        memberRepository.save(record);
         return user;
     }
 

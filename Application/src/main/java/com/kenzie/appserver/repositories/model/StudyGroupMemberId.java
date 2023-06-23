@@ -5,14 +5,14 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 
 public class StudyGroupMemberId {
     private String groupId;
-    private String userId;
+    private String memberId;
 
     public StudyGroupMemberId() {
     }
 
-    public StudyGroupMemberId(String groupId, String userId) {
+    public StudyGroupMemberId(String groupId, String memberId) {
         this.groupId = groupId;
-        this.userId = userId;
+        this.memberId = memberId;
     }
 
     @DynamoDBHashKey(attributeName = "GroupId")
@@ -24,13 +24,13 @@ public class StudyGroupMemberId {
         this.groupId = groupId;
     }
 
-    @DynamoDBRangeKey(attributeName = "UserId")
-    public String getUserId() {
-        return userId;
+    @DynamoDBRangeKey(attributeName = "MemberId")
+    public String getMemberId() {
+        return memberId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
 }

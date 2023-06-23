@@ -1,20 +1,13 @@
-package com.kenzie.appserver.controller.model;
+package com.kenzie.appserver.service.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotEmpty;
-
-public class UserLoginRequest {
-
-    @NotEmpty
-    @JsonProperty("email")
+public class Member {
     private String email;
-
-    @NotEmpty
-    @JsonProperty("password")
     private String password;
 
-    // getter and setters
+    public Member(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
     public String getEmail() {
         return email;

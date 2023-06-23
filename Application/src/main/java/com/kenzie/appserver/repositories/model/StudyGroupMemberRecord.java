@@ -9,10 +9,6 @@ import java.util.Objects;
 
 @DynamoDBTable(tableName = "StudyGroupMember")
 public class StudyGroupMemberRecord {
-
-//    private String groupId;
-//    private String userId;
-
    @Id
     private StudyGroupMemberId studyGroupMemberId;
     private String groupName;
@@ -41,16 +37,15 @@ public class StudyGroupMemberRecord {
         studyGroupMemberId.setGroupId(groupId);
     }
 
-    @DynamoDBRangeKey(attributeName = "UserId")
-    //@DynamoDBAttribute(attributeName = "UserId")
-    public String getUserId() {
-        return studyGroupMemberId != null ? studyGroupMemberId.getUserId() : null;
+    @DynamoDBRangeKey(attributeName = "MemberId")
+    public String getMemberId() {
+        return studyGroupMemberId != null ? studyGroupMemberId.getMemberId() : null;
     }
-    public void setUserId(String userId) {
+    public void setMemberId(String memberId) {
         if(studyGroupMemberId == null){
             studyGroupMemberId = new StudyGroupMemberId();
         }
-        studyGroupMemberId.setUserId(userId);
+        studyGroupMemberId.setMemberId(memberId);
     }
 //    @DynamoDBHashKey(attributeName = "GroupId")
 //    public String getGroupId() {

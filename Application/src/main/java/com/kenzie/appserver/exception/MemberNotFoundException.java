@@ -3,8 +3,8 @@ package com.kenzie.appserver.exception;
 import java.util.HashMap;
 import java.util.Map;
 
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String msg) {
+public class MemberNotFoundException extends RuntimeException {
+    public MemberNotFoundException(String msg) {
         super(msg);
     }
     public Map<String, Object> errorPayload() {

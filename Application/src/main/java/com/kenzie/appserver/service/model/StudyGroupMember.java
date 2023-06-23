@@ -1,19 +1,18 @@
 package com.kenzie.appserver.service.model;
 
 import java.time.ZonedDateTime;
-import java.util.List;
 
 public class StudyGroupMember {
     private String groupId;
-    private String userId;
+    private String memberId;
     private String groupName;
     private String discussionTopic;
     private ZonedDateTime creationDate;
     private boolean active;
 
-    public StudyGroupMember(String groupId, String userId, String groupName, String discussionTopic, ZonedDateTime creationDate, boolean active) {
+    public StudyGroupMember(String groupId, String memberId, String groupName, String discussionTopic, ZonedDateTime creationDate, boolean active) {
         this.groupId = groupId;
-        this.userId = userId;
+        this.memberId = memberId;
         this.groupName = groupName;
         this.discussionTopic = discussionTopic;
         this.creationDate = creationDate;
@@ -27,12 +26,12 @@ public class StudyGroupMember {
         this.groupId = groupId;
     }
 
-    public String getUserId() {
-        return userId;
+    public String getMemberId() {
+        return memberId;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
     }
 
     public String getGroupName() {
