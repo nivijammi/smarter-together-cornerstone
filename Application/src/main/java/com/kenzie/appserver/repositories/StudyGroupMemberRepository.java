@@ -22,6 +22,4 @@ public interface StudyGroupMemberRepository extends CrudRepository<StudyGroupMem
     Optional<List<StudyGroupMemberRecord>> findByGroupId(String groupId);
     Optional<StudyGroupMemberRecord> findByMemberId(String userId);
 
-
-    //Iterable<StudyGroupMemberRecord> findAllById(Iterable<String> groupIds);
 }
