@@ -6,6 +6,7 @@ import com.kenzie.appserver.exception.StudyGroupNotFoundException;
 import com.kenzie.appserver.repositories.MemberRepository;
 import com.kenzie.appserver.repositories.StudyGroupMemberRepository;
 import com.kenzie.appserver.repositories.StudyGroupRepository;
+import com.kenzie.appserver.repositories.model.MemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupMemberId;
 import com.kenzie.appserver.repositories.model.StudyGroupMemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupRecord;
@@ -393,7 +394,6 @@ public class StudyGroupServiceTest {
     }
     @Test
     public void getStudyGroupMembers_withNoMembers_ReturnsEmptyList() {
-        // Create a group ID
         String groupId = "1";
 
         List<StudyGroupMemberRecord> memberRecords = new ArrayList<>();
@@ -406,6 +406,86 @@ public class StudyGroupServiceTest {
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+    // todo: can't solve
+ //   @Test
+//    void removeMemberFromStudyGroup_ExistingGroupAndMember_RemovesMember() {
+//        ZonedDateTime date = ZonedDateTime.now();
+//        String groupId = "1";
+//        String memberId = "abc@aol.com";
+//        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, memberId);
+//        StudyGroupMemberRecord studyGroupMemberRecord = new StudyGroupMemberRecord(studyGroupMemberId, "group1", "API", date, true);
+//        MemberRecord memberRecord = new MemberRecord();
+//        memberRecord.setEmail("abc@aol.com");
+//
+//        when(studyGroupMemberRepository.existsById(studyGroupMemberId)).thenReturn(true);
+//        when(studyGroupMemberRepository.findById(studyGroupMemberId)).thenReturn(Optional.of(studyGroupMemberRecord));
+//        when(memberRepository.findById(memberId)).thenReturn(Optional.of(memberRecord));
+//
+//        studyGroupService.removeMemberFromStudyGroup(groupId, memberId);
+//
+//        verify(studyGroupMemberRepository).delete(studyGroupMemberRecord);
+//    }
+
+    @Test
+    void removeMemberFromStudyGroup_nonExistingGroup_exceptionThrown() {
+
+        String groupId = "1";
+        String memberId = "abc@aol.com";
+
+        StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, memberId);
+
+        when(studyGroupMemberRepository.existsById(studyGroupMemberId)).thenReturn(false);
+
+        // Act and Assert
+        assertThrows(StudyGroupNotFoundException.class, () -> {
+            studyGroupService.removeMemberFromStudyGroup(groupId, memberId);
+        });
+    }
+
+    @Test
+    void updateStudyGroup_existingStudyGroup_groupUpdated() {
+        // Arrange
+        String groupId = "group1";
+        ZonedDateTime date = ZonedDateTime.now();
+        StudyGroup studyGroup = new StudyGroup();
+        studyGroup.setGroupId(groupId);
+        studyGroup.setGroupName("Updated Group Name");
+        studyGroup.setDiscussionTopic("Updated Topic");
+        studyGroup.setCreationDate(date);
+        studyGroup.setActive(true);
+
+        StudyGroupRecord existingStudyGroupRecord = new StudyGroupRecord();
+        existingStudyGroupRecord.setGroupId(groupId);
+
+        when(studyGroupRepository.findById(groupId)).thenReturn(Optional.of(existingStudyGroupRecord));
+
+        // Class under test
+        studyGroupService.updateStudyGroup(studyGroup);
+
+        verify(studyGroupRepository).save(existingStudyGroupRecord);
+        assertEquals("Updated Group Name", existingStudyGroupRecord.getGroupName());
+        assertEquals("Updated Topic", existingStudyGroupRecord.getDiscussionTopic());
+        assertEquals(date, existingStudyGroupRecord.getCreationDate());
+        assertTrue(existingStudyGroupRecord.isActive());
+        verify(cache).evict(groupId);
+    }
+
+    @Test
+    void updateStudyGroup_nonExistingStudyGroup_exceptionThrown() {
+        // Arrange
+        String groupId = "group1";
+        StudyGroup studyGroup = new StudyGroup();
+        studyGroup.setGroupId(groupId);
+
+        when(studyGroupRepository.findById(groupId)).thenReturn(Optional.empty());
+
+        // Act and Assert
+        assertThrows(StudyGroupNotFoundException.class, () -> {
+            studyGroupService.updateStudyGroup(studyGroup);
+        });
+        verify(studyGroupRepository, never()).save(any());
+        verify(cache, never()).evict(any());
     }
 
 

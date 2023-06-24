@@ -169,7 +169,11 @@ public class StudyGroupService {
     }
 
     public Member findMemberById(String memberId) {
+        //todo
         Optional<MemberRecord> findById = memberRepository.findById(memberId);
+        if(!findById.isPresent()){
+            return null;
+        }
         // convert from record to study group(domain object)
         MemberRecord memberRecord = findById.get();
         return buildMember(memberRecord);
@@ -220,16 +224,30 @@ public class StudyGroupService {
     public void removeMemberFromStudyGroup(String groupId, String memberId) {
         StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, memberId);
 
-        if(!studyGroupMemberRepository.existsById(studyGroupMemberId)) {
+        boolean doesExist = studyGroupMemberRepository.existsById(studyGroupMemberId);
+        if(!doesExist) {
             throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
         }
 
         Optional<StudyGroupMemberRecord> studyGroupMemberRecordById = studyGroupMemberRepository.findById(studyGroupMemberId);
+
         StudyGroupMemberRecord studyGroupMemberRecord = studyGroupMemberRecordById.get();
         studyGroupMemberRepository.delete(studyGroupMemberRecord);
     }
 
+    // remove all members from study group
+    public void removeAllMembersFromStudyGroup(String groupId) {
+        Optional<List<StudyGroupMemberRecord>> recordsOfMembers = studyGroupMemberRepository.findByGroupId(groupId);
+        List<StudyGroupMemberRecord> membersToRemove = recordsOfMembers.get();
 
+        if (membersToRemove.isEmpty()) {
+            throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
+        }
+
+        for (StudyGroupMemberRecord memberRecord : membersToRemove) {
+            studyGroupMemberRepository.delete(memberRecord);
+        }
+    }
 
     public List<StudyGroup> getAllStudyGroups() {
         Iterable<StudyGroupRecord> studyGroupRecords = studyGroupRepository.findAll();
@@ -262,10 +280,11 @@ public class StudyGroupService {
         cache.evict(studyGroup.getGroupId());
     }
 
-    //todo
+    //todo - get it checked
 
     public void deleteStudyGroup(String groupId) {
         studyGroupRepository.deleteById(groupId);
+        removeAllMembersFromStudyGroup(groupId);
         cache.evict(groupId);
     }
 

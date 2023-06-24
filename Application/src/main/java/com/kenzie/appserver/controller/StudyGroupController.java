@@ -64,7 +64,7 @@ public class StudyGroupController {
 
         Member member = studyGroupService.findMemberById(memberId);
         if(member == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Member not found for memberId " + memberId);
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Member is already part of the group " + memberId);
         }
 
         // Add the member to the study group
@@ -94,8 +94,8 @@ public class StudyGroupController {
         if (studyGroupMembers == null || studyGroupMembers.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        //List<String> members = new ArrayList<>();
-        //members.addAll(studyGroupMembers);
+//        List<StudyGroupMember> members = new ArrayList<>();
+//        members.addAll(studyGroupMembers);
         return ResponseEntity.ok(studyGroupMembers);
 
     }
@@ -115,6 +115,21 @@ public class StudyGroupController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/groups/{groupId}/members")
+    public ResponseEntity<Void> removeAllMemberFromStudyGroup(@PathVariable String groupId) {
+        try {
+            studyGroupService.removeAllMembersFromStudyGroup(groupId);
+            return ResponseEntity.ok().build();
+
+        } catch (StudyGroupNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (MemberNotFoundException e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+
 
     /**
      *  endpoint for retrieving a study group by ID
