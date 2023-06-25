@@ -91,7 +91,6 @@ public class UserLogInServiceTest {
 
     @Test
     public void authenticateUser_validatePassword_PasswordMatches() {
-        // Arrange
         String email = "person@aol.com";
         String password = "amethyst";
         String hashedPassword = "88670bf6f7563a74404a67a9f22b0c09d6fe5e458e0a7568aa6efa73baf8825e";
@@ -110,7 +109,7 @@ public class UserLogInServiceTest {
     }
     @Test
     public void authenticateUser_validatePassword_PasswordDoesNotMatches() {
-        // Arrange
+
         String email = "person@aol.com";
         String password = "amethyst";
         String hashedPassword = "wrongPassword";
@@ -130,7 +129,7 @@ public class UserLogInServiceTest {
 
     @Test
     public void authenticateUser_UserNotFound() {
-        // Arrange
+
         String email = "notThere@aol.com";
         String password = "amethyst";
 

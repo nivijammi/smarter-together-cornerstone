@@ -62,10 +62,8 @@ public class StudyGroupServiceTest {
         // class under test
         StudyGroup newStudyGroup = studyGroupService.addNewStudyGroup(group);
 
-        // Verify that the studyGroupRepository.save method was called once
         verify(studyGroupRepository, times(1)).save(record);
 
-        // Verify that the returned newStudyGroup is the expected one
         assertEquals(record.getGroupId(), newStudyGroup.getGroupId());
         assertEquals(record.getGroupName(), newStudyGroup.getGroupName());
         assertEquals(record.getDiscussionTopic(), newStudyGroup.getDiscussionTopic());
@@ -209,7 +207,6 @@ public class StudyGroupServiceTest {
 
         verify(studyGroupRepository).findById("1");
 
-        // group is not null
         assertNotNull(result);
         assertEquals(groupRecord.getGroupId(), result.getGroupId());
         assertEquals(groupRecord.getGroupName(), result.getGroupName());
@@ -331,10 +328,9 @@ public class StudyGroupServiceTest {
 
         when(studyGroupMemberRepository.findByMemberId(studyGroupMemberId.getMemberId())).thenReturn(Optional.of(existingRecord));
 
-        // Call the method
+        // Class under test
         StudyGroupMember result = studyGroupService.addMemberToStudyGroup(group, "abc@aol.com");
 
-        // Assertion or verification code to check the result
         assertNotNull(result);
         assertEquals(existingMember.getGroupId(), result.getGroupId());
         assertEquals(existingMember.getGroupName(), result.getGroupName());
@@ -437,7 +433,6 @@ public class StudyGroupServiceTest {
 
         when(studyGroupMemberRepository.existsById(studyGroupMemberId)).thenReturn(false);
 
-        // Act and Assert
         assertThrows(StudyGroupNotFoundException.class, () -> {
             studyGroupService.removeMemberFromStudyGroup(groupId, memberId);
         });
@@ -445,7 +440,6 @@ public class StudyGroupServiceTest {
 
     @Test
     void updateStudyGroup_existingStudyGroup_groupUpdated() {
-        // Arrange
         String groupId = "group1";
         ZonedDateTime date = ZonedDateTime.now();
         StudyGroup studyGroup = new StudyGroup();
@@ -473,14 +467,12 @@ public class StudyGroupServiceTest {
 
     @Test
     void updateStudyGroup_nonExistingStudyGroup_exceptionThrown() {
-        // Arrange
         String groupId = "group1";
         StudyGroup studyGroup = new StudyGroup();
         studyGroup.setGroupId(groupId);
 
         when(studyGroupRepository.findById(groupId)).thenReturn(Optional.empty());
 
-        // Act and Assert
         assertThrows(StudyGroupNotFoundException.class, () -> {
             studyGroupService.updateStudyGroup(studyGroup);
         });
