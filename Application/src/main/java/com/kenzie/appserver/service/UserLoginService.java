@@ -15,12 +15,14 @@ import java.util.regex.Pattern;
 public class UserLoginService {
 
     // source: https://stackoverflow.com/questions/8204680/java-regex-email
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+
     @Autowired
     private MemberRepository memberRepository;
     public UserLoginService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
+
+    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
 
     public boolean isValidEmail(String email) {
         return EMAIL_PATTERN.matcher(email).matches();
@@ -88,7 +90,6 @@ public class UserLoginService {
     // have time hash it on front end
     // backend should always just see a hash.
     public MemberValidationStatus authenticateUser(String email, String password) {
-        // "test@example.com".equals(email) && "password123".equals(password)
         // hash the pass word and save it in the database
 
         // Retrieve the storedUser by email from the repository
@@ -132,12 +133,20 @@ public class UserLoginService {
     }
 
     public Member registerUser(Member user) {
+        if (user.getEmail() == null || user.getEmail().isEmpty()) {
+            throw new IllegalArgumentException("Email cannot be empty or null");
+        }
+
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            throw new IllegalArgumentException("Password cannot be empty or null");
+        }
         MemberRecord record = new MemberRecord();
         record.setEmail(user.getEmail());
         record.setPassword(user.getPassword());
         memberRepository.save(record);
         return user;
     }
+
 
 
 
