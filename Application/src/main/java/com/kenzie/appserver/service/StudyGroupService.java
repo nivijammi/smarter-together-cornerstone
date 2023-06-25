@@ -17,6 +17,7 @@ import com.kenzie.appserver.service.model.StudyGroupMember;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
@@ -38,12 +39,15 @@ public class StudyGroupService {
     private StudyGroupMemberRepository studyGroupMemberRepository;
     @Autowired
     private CacheStore cache;
+
     @Autowired
     private MemberRepository memberRepository;
 
-    public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupMemberRepository studyGroupMemberRepository,CacheStore cache) {
+    public StudyGroupService(StudyGroupRepository studyGroupRepository, StudyGroupMemberRepository studyGroupMemberRepository,MemberRepository memberRepository,CacheStore cache) {
         this.studyGroupRepository = studyGroupRepository;
         this.studyGroupMemberRepository = studyGroupMemberRepository;
+        this.memberRepository = memberRepository;
+        this.cache = cache;
     }
 
     /** addNewStudyGroup
@@ -64,8 +68,16 @@ public class StudyGroupService {
         return buildStudyGroup(record);
     }
 
-    private StudyGroup getExistingStudyGroup(StudyGroup group) {
-        for (StudyGroup existingGroup : getAllStudyGroups()) {
+    public StudyGroup getExistingStudyGroup(StudyGroup group) {
+        Iterable<StudyGroupRecord> records = studyGroupRepository.findAll();
+        List<StudyGroup> allStudyGroups = new ArrayList<>();
+        if (records != null) {
+            for (StudyGroupRecord record : records) {
+                StudyGroup studyGroup = buildStudyGroup(record);
+                allStudyGroups.add(studyGroup);
+            }
+        }
+        for (StudyGroup existingGroup : allStudyGroups) {
             if (existingGroup.getGroupName().equals(group.getGroupName())
                     && existingGroup.getDiscussionTopic().equals(group.getDiscussionTopic())) {
                 return existingGroup;
@@ -82,9 +94,9 @@ public class StudyGroupService {
         return studyGroup;
     }
     // helper method
-    private StudyGroupRecord buildStudyGroupRecord(StudyGroup studyGroup) {
+    private StudyGroupRecord buildStudyGroupRecord(StudyGroup studyGroup) {        ;
         StudyGroupRecord record = new StudyGroupRecord();
-        record.setGroupId(UUID.randomUUID().toString());
+        record.setGroupId(studyGroup.getGroupId());
         record.setGroupName(studyGroup.getGroupName());
         record.setDiscussionTopic(studyGroup.getDiscussionTopic());
         record.setCreationDate(studyGroup.getCreationDate());
@@ -157,7 +169,11 @@ public class StudyGroupService {
     }
 
     public Member findMemberById(String memberId) {
+        //todo
         Optional<MemberRecord> findById = memberRepository.findById(memberId);
+        if(!findById.isPresent()){
+            return null;
+        }
         // convert from record to study group(domain object)
         MemberRecord memberRecord = findById.get();
         return buildMember(memberRecord);
@@ -204,25 +220,41 @@ public class StudyGroupService {
         return members;
     }
 
-    //TODO
+
     public void removeMemberFromStudyGroup(String groupId, String memberId) {
         StudyGroupMemberId studyGroupMemberId = new StudyGroupMemberId(groupId, memberId);
 
-        if(!studyGroupMemberRepository.existsById(studyGroupMemberId)) {
+        boolean doesExist = studyGroupMemberRepository.existsById(studyGroupMemberId);
+        if(!doesExist) {
             throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
         }
 
         Optional<StudyGroupMemberRecord> studyGroupMemberRecordById = studyGroupMemberRepository.findById(studyGroupMemberId);
+
         StudyGroupMemberRecord studyGroupMemberRecord = studyGroupMemberRecordById.get();
         studyGroupMemberRepository.delete(studyGroupMemberRecord);
     }
 
-    //TODO: NIVI
+    // remove all members from study group
+    public void removeAllMembersFromStudyGroup(String groupId) {
+        Optional<List<StudyGroupMemberRecord>> recordsOfMembers = studyGroupMemberRepository.findByGroupId(groupId);
+        List<StudyGroupMemberRecord> membersToRemove = recordsOfMembers.get();
+
+        if (membersToRemove.isEmpty()) {
+            throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
+        }
+
+        for (StudyGroupMemberRecord memberRecord : membersToRemove) {
+            studyGroupMemberRepository.delete(memberRecord);
+        }
+    }
 
     public List<StudyGroup> getAllStudyGroups() {
         Iterable<StudyGroupRecord> studyGroupRecords = studyGroupRepository.findAll();
         List<StudyGroup> studyGroups = new ArrayList<>();
-
+        if(studyGroupRecords == null){
+            return null;
+        }
         for (StudyGroupRecord studyGroupRecord : studyGroupRecords) {
             StudyGroup studyGroup = buildStudyGroup(studyGroupRecord);
             studyGroups.add(studyGroup);
@@ -248,10 +280,11 @@ public class StudyGroupService {
         cache.evict(studyGroup.getGroupId());
     }
 
-    //todo
+    //todo - get it checked
 
     public void deleteStudyGroup(String groupId) {
         studyGroupRepository.deleteById(groupId);
+        removeAllMembersFromStudyGroup(groupId);
         cache.evict(groupId);
     }
 

@@ -19,6 +19,11 @@ public class StudyGroup {
         this.creationDate = creationDate;
         this.active = active;
     }
+
+    public StudyGroup() {
+
+    }
+
     public String getGroupId() {
         return groupId;
     }

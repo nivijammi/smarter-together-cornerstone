@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface StudyGroupMemberRepository extends CrudRepository<StudyGroupMemberRecord,StudyGroupMemberId> {
 
     // boolean existsById(String groupId);
-    @Override
+//    @Override
     boolean existsById(StudyGroupMemberId studyGroupMemberId);
 
     // Returns a single record/row within the partition
@@ -22,6 +22,4 @@ public interface StudyGroupMemberRepository extends CrudRepository<StudyGroupMem
     Optional<List<StudyGroupMemberRecord>> findByGroupId(String groupId);
     Optional<StudyGroupMemberRecord> findByMemberId(String userId);
 
-
-    //Iterable<StudyGroupMemberRecord> findAllById(Iterable<String> groupIds);
 }
