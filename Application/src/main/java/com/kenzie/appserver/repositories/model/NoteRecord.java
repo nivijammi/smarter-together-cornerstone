@@ -53,12 +53,10 @@ public class NoteRecord {
         if (this == o) return true;
         if (!(o instanceof NoteRecord)) return false;
         NoteRecord that = (NoteRecord) o;
-        return noteId.equals(that.noteId) && userId.equals(that.userId)
-                && content.equals(that.content) && createdDateTime.equals(that.createdDateTime)
-                && updatedDateTime.equals(that.updatedDateTime);
+        return noteId.equals(that.noteId);
     }
     @Override
     public int hashCode() {
-        return Objects.hash(noteId, userId, content, createdDateTime, updatedDateTime);
+        return Objects.hash(noteId);
     }
 }

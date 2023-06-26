@@ -7,11 +7,17 @@ public class User {
 
     private String password;
 
+    private String lastName;
+
+    private String firstName;
+
     private ZonedDateTime creationDate;
 
-    public User(String email, String password, ZonedDateTime creationDate) {
+    public User(String email, String password, String lastName, String firstName, ZonedDateTime creationDate) {
         this.email = email;
         this.password = password;
+        this.lastName = lastName;
+        this.firstName = firstName;
         this.creationDate = creationDate;
     }
 
@@ -21,6 +27,14 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getFirstName() {
+        return firstName;
     }
 
     public ZonedDateTime getCreationDate() {
@@ -33,6 +47,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
     public void setCreationDate(ZonedDateTime creationDate) {

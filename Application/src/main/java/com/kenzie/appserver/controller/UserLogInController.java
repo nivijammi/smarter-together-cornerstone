@@ -24,9 +24,6 @@ public class UserLogInController {
     @Autowired
     UserLoginService userLoginService;
 
-//    @Autowired
-//    UserProfileService userProfileService;
-
     // loged in or unsuccessful
     @PostMapping("/login")
     public ResponseEntity<AddUserLoginResponse> login(@RequestBody UserLoginRequest request) {
@@ -94,53 +91,8 @@ public class UserLogInController {
         String hashedPassword = userLoginService.hashPassword(request.getPassword());
         Member user = new Member(request.getEmail(),hashedPassword);
         Member newUser = userLoginService.registerUser(user);
-//
-//        User userProfile = new User(request.getEmail(),hashedPassword,ZonedDateTime.now());
-//        User newUserProfile = userProfileService.createUserProfile(userProfile);
 
         UserRegistrationResponse loginSuccessfullResponse = new UserRegistrationResponse(newUser.getEmail(), RegistrationStatus.USER_REGISTERED);
         return ResponseEntity.created(URI.create("/users/" + loginSuccessfullResponse.getUserEmail())).body(loginSuccessfullResponse);
     }
-
-//    @PutMapping("/{userId}")
-//    public ResponseEntity<UserProfileResponse> updateUserProfile(@PathVariable String email, @RequestBody UserProfileRequest userProfileRequest) {
-//        if (userProfileRequest.getEmail() == null || userProfileRequest.getEmail().isEmpty()) {
-//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Email is required");
-//        }
-//
-//        User existingUserProfile = userProfileService.findUserProfileByEmail(email);
-//        if (existingUserProfile == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        existingUserProfile.setEmail(userProfileRequest.getEmail());
-//        existingUserProfile.setPassword(userProfileRequest.getPassword());
-//        existingUserProfile.setCreationDate(userProfileRequest.getCreationDate());
-//
-//        userProfileService.updateUserProfile(existingUserProfile);
-//
-//        UserProfileResponse userProfileResponse = convertToUserProfileResponse(existingUserProfile);
-//        return ResponseEntity.ok(userProfileResponse);
-//
-//
-//    }
-//
-//    @DeleteMapping("/{userID}")
-//    public ResponseEntity deleteUserProfile(@PathVariable String email) {
-//
-//        User existingUserProfile = userProfileService.findUserProfileByEmail(email);
-//        if (existingUserProfile == null) {
-//            return ResponseEntity.notFound().build();
-//        }
-//        userProfileService.deleteUserProfile(email);
-//        return ResponseEntity.noContent().build();
-//    }
-//
-//    private UserProfileResponse convertToUserProfileResponse(User user) {
-//        UserProfileResponse response = new UserProfileResponse();
-//        response.setEmail(user.getEmail());
-//        response.setPassword(user.getPassword());
-//        response.setCreationDate(user.getCreationDate());
-//
-//        return response;
-//    }
 }

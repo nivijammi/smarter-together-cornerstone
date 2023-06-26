@@ -1,6 +1,7 @@
 package com.kenzie.appserver.service;
 
 import com.kenzie.appserver.config.CacheStore;
+import com.kenzie.appserver.exception.NoteNotFoundException;
 import com.kenzie.appserver.exception.StudyGroupNotFoundException;
 import com.kenzie.appserver.repositories.MemberRepository;
 import com.kenzie.appserver.repositories.NoteRepository;
@@ -98,7 +99,7 @@ public class NoteService {
     public void updateNote(Note note) {
         Optional<NoteRecord> existingNote = noteRepository.findById(note.getNoteId());
         if (existingNote.isEmpty()) {
-            throw new StudyGroupNotFoundException("Note not found for noteId: " + note.getNoteId());
+            throw new NoteNotFoundException("Note not found for noteId: " + note.getNoteId());
         }
         // Update the properties of the existing note with the new values
         NoteRecord noteRecord = existingNote.get();
