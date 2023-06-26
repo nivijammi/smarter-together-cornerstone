@@ -22,6 +22,23 @@ public class AddStudyGroupResponse {
     public String getGroupId() {
         return groupId;
     }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public String getDiscussionTopic() {
+        return discussionTopic;
+    }
+
+    public ZonedDateTime getCreationDate() {
+        return creationDate;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }

@@ -235,14 +235,15 @@ public class StudyGroupService {
         studyGroupMemberRepository.delete(studyGroupMemberRecord);
     }
 
+
     // remove all members from study group
     public void removeAllMembersFromStudyGroup(String groupId) {
         Optional<List<StudyGroupMemberRecord>> recordsOfMembers = studyGroupMemberRepository.findByGroupId(groupId);
-        List<StudyGroupMemberRecord> membersToRemove = recordsOfMembers.get();
 
-        if (membersToRemove.isEmpty()) {
+        if (recordsOfMembers.isEmpty()) {
             throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
         }
+        List<StudyGroupMemberRecord> membersToRemove = recordsOfMembers.get();
 
         for (StudyGroupMemberRecord memberRecord : membersToRemove) {
             studyGroupMemberRepository.delete(memberRecord);
