@@ -1,20 +1,19 @@
 package com.kenzie.appserver.controller;
 
-import com.kenzie.appserver.controller.model.AddUserLoginResponse;
-import com.kenzie.appserver.controller.model.RegistrationStatus;
-import com.kenzie.appserver.controller.model.UserLoginRequest;
-import com.kenzie.appserver.controller.model.UserRegistrationResponse;
+import com.kenzie.appserver.controller.model.*;
 import com.kenzie.appserver.service.UserLoginService;
+//import com.kenzie.appserver.service.UserProfileService;
 import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.MemberValidationStatus;
+import com.kenzie.appserver.service.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 
 /**
  * https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow
@@ -24,6 +23,9 @@ import java.net.URI;
 public class UserLogInController {
     @Autowired
     UserLoginService userLoginService;
+
+//    @Autowired
+//    UserProfileService userProfileService;
 
     // loged in or unsuccessful
     @PostMapping("/login")
@@ -92,8 +94,53 @@ public class UserLogInController {
         String hashedPassword = userLoginService.hashPassword(request.getPassword());
         Member user = new Member(request.getEmail(),hashedPassword);
         Member newUser = userLoginService.registerUser(user);
+//
+//        User userProfile = new User(request.getEmail(),hashedPassword,ZonedDateTime.now());
+//        User newUserProfile = userProfileService.createUserProfile(userProfile);
 
         UserRegistrationResponse loginSuccessfullResponse = new UserRegistrationResponse(newUser.getEmail(), RegistrationStatus.USER_REGISTERED);
         return ResponseEntity.created(URI.create("/users/" + loginSuccessfullResponse.getUserEmail())).body(loginSuccessfullResponse);
     }
+
+//    @PutMapping("/{userId}")
+//    public ResponseEntity<UserProfileResponse> updateUserProfile(@PathVariable String email, @RequestBody UserProfileRequest userProfileRequest) {
+//        if (userProfileRequest.getEmail() == null || userProfileRequest.getEmail().isEmpty()) {
+//            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User Email is required");
+//        }
+//
+//        User existingUserProfile = userProfileService.findUserProfileByEmail(email);
+//        if (existingUserProfile == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        existingUserProfile.setEmail(userProfileRequest.getEmail());
+//        existingUserProfile.setPassword(userProfileRequest.getPassword());
+//        existingUserProfile.setCreationDate(userProfileRequest.getCreationDate());
+//
+//        userProfileService.updateUserProfile(existingUserProfile);
+//
+//        UserProfileResponse userProfileResponse = convertToUserProfileResponse(existingUserProfile);
+//        return ResponseEntity.ok(userProfileResponse);
+//
+//
+//    }
+//
+//    @DeleteMapping("/{userID}")
+//    public ResponseEntity deleteUserProfile(@PathVariable String email) {
+//
+//        User existingUserProfile = userProfileService.findUserProfileByEmail(email);
+//        if (existingUserProfile == null) {
+//            return ResponseEntity.notFound().build();
+//        }
+//        userProfileService.deleteUserProfile(email);
+//        return ResponseEntity.noContent().build();
+//    }
+//
+//    private UserProfileResponse convertToUserProfileResponse(User user) {
+//        UserProfileResponse response = new UserProfileResponse();
+//        response.setEmail(user.getEmail());
+//        response.setPassword(user.getPassword());
+//        response.setCreationDate(user.getCreationDate());
+//
+//        return response;
+//    }
 }
