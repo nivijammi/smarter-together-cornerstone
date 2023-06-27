@@ -1,20 +1,19 @@
 package com.kenzie.appserver.controller;
 
-import com.kenzie.appserver.controller.model.AddUserLoginResponse;
-import com.kenzie.appserver.controller.model.RegistrationStatus;
-import com.kenzie.appserver.controller.model.UserLoginRequest;
-import com.kenzie.appserver.controller.model.UserRegistrationResponse;
+import com.kenzie.appserver.controller.model.*;
 import com.kenzie.appserver.service.UserLoginService;
+//import com.kenzie.appserver.service.UserProfileService;
 import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.MemberValidationStatus;
+import com.kenzie.appserver.service.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 
 /**
  * https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow
