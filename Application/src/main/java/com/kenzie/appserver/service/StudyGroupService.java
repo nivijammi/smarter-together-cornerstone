@@ -94,7 +94,7 @@ public class StudyGroupService {
         return studyGroup;
     }
     // helper method
-    private StudyGroupRecord buildStudyGroupRecord(StudyGroup studyGroup) {        ;
+    private StudyGroupRecord buildStudyGroupRecord(StudyGroup studyGroup) {
         StudyGroupRecord record = new StudyGroupRecord();
         record.setGroupId(studyGroup.getGroupId());
         record.setGroupName(studyGroup.getGroupName());
@@ -193,16 +193,7 @@ public class StudyGroupService {
                 record.isActive());
         return studyGroupMember;
     }
-    private static StudyGroupMemberRecord buildStudyGroupMemberRecord(StudyGroup studyGroup, String memberId) {
-        StudyGroupMemberRecord record = new StudyGroupMemberRecord();
-        record.setGroupId(studyGroup.getGroupId());
-        record.setMemberId(memberId);
-        record.setGroupName(studyGroup.getGroupName());
-        record.setDiscussionTopic(studyGroup.getDiscussionTopic()); // ???
-        record.setCreationDate(studyGroup.getCreationDate());       // TODO: Current data time needs to be set
-        record.setActive(studyGroup.isActive());                    // TODO: Redundant. Can be removed
-        return record;
-    }
+
     public List<StudyGroupMember> getStudyGroupMembers(String groupId) {
 
         Optional<List<StudyGroupMemberRecord>> studyGroupMembers = studyGroupMemberRepository.findByGroupId(groupId);
@@ -235,14 +226,15 @@ public class StudyGroupService {
         studyGroupMemberRepository.delete(studyGroupMemberRecord);
     }
 
+
     // remove all members from study group
     public void removeAllMembersFromStudyGroup(String groupId) {
         Optional<List<StudyGroupMemberRecord>> recordsOfMembers = studyGroupMemberRepository.findByGroupId(groupId);
-        List<StudyGroupMemberRecord> membersToRemove = recordsOfMembers.get();
 
-        if (membersToRemove.isEmpty()) {
+        if (recordsOfMembers.isEmpty()) {
             throw new StudyGroupNotFoundException("Study group not found for groupId: " + groupId);
         }
+        List<StudyGroupMemberRecord> membersToRemove = recordsOfMembers.get();
 
         for (StudyGroupMemberRecord memberRecord : membersToRemove) {
             studyGroupMemberRepository.delete(memberRecord);
@@ -263,7 +255,6 @@ public class StudyGroupService {
         return studyGroups;
     }
 
-
     public void updateStudyGroup(StudyGroup studyGroup) {
         Optional<StudyGroupRecord> existingStudyGroup = studyGroupRepository.findById(studyGroup.getGroupId());
         if (existingStudyGroup.isEmpty()) {
@@ -279,8 +270,6 @@ public class StudyGroupService {
         studyGroupRepository.save(studyGroupRecord);
         cache.evict(studyGroup.getGroupId());
     }
-
-    //todo - get it checked
 
     public void deleteStudyGroup(String groupId) {
         studyGroupRepository.deleteById(groupId);
