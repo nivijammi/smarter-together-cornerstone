@@ -20,13 +20,13 @@ import java.net.URI;
  * https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/v1")
 public class UserLogInController {
     @Autowired
     UserLoginService userLoginService;
 
     // loged in or unsuccessful
-    @PostMapping("/login")
+    @PostMapping("/users/login")
     public ResponseEntity<AddUserLoginResponse> login(@RequestBody UserLoginRequest request) {
 
         String email = request.getEmail();
@@ -66,7 +66,7 @@ public class UserLogInController {
 
     }
 
-    @PostMapping("/register")
+    @PostMapping("/users/register")
     public ResponseEntity<UserRegistrationResponse> registerUser(@RequestBody UserLoginRequest request) {
 
         // Scenario #1: User Exists

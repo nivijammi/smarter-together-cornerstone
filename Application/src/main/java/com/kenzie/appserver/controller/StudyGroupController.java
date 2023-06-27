@@ -2,8 +2,10 @@ package com.kenzie.appserver.controller;
 
 import com.kenzie.appserver.controller.model.AddStudyGroupRequest;
 import com.kenzie.appserver.controller.model.AddStudyGroupResponse;
+import com.kenzie.appserver.controller.model.StudyGroupMemberResponse;
 import com.kenzie.appserver.exception.StudyGroupNotFoundException;
 import com.kenzie.appserver.exception.MemberNotFoundException;
+import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.service.StudyGroupService;
 import com.kenzie.appserver.service.MemberService;
 import com.kenzie.appserver.service.model.StudyGroup;
@@ -17,11 +19,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/v1")
 public class StudyGroupController {
     @Autowired
     private StudyGroupService studyGroupService;
@@ -36,6 +40,7 @@ public class StudyGroupController {
      *  Route to the groups [study groups] endpoint, for creating a new study group
      */
 
+    // make it idempotent
     @PostMapping("/groups")
     public ResponseEntity<AddStudyGroupResponse> addNewStudyGroup(@RequestBody AddStudyGroupRequest request) {
         if (request.getGroupName() == null || request.getGroupName().length() == 0) {
@@ -55,7 +60,7 @@ public class StudyGroupController {
 
     // Route to the groups [study groups] endpoint, for adding a member to a study group
     @PostMapping("/groups/{groupId}/members/{memberId}" ) // Pass email as the memberId to this
-    public ResponseEntity<StudyGroupMember> addMemberToStudyGroup(@PathVariable String groupId, @PathVariable String memberId ) {
+    public ResponseEntity<StudyGroupMemberResponse> addMemberToStudyGroup(@PathVariable String groupId, @PathVariable String memberId ) {
         // Retrieve the studyGroup from the database using the memberId
         StudyGroup studyGroup = studyGroupService.findByCachedGroupId(groupId);
         if(studyGroup == null) {
@@ -69,8 +74,25 @@ public class StudyGroupController {
 
         // Add the member to the study group
         StudyGroupMember studyGroupMember = studyGroupService.addMemberToStudyGroup(studyGroup, memberId);
+
         // create the Response
-        return ResponseEntity.ok(studyGroupMember);
+        StudyGroupMemberResponse studyGroupMemberResponse = convertToStudyGroupMemberResponse(studyGroupMember);
+        return ResponseEntity
+                .status(200)
+                .body(studyGroupMemberResponse);
+    }
+
+    private StudyGroupMemberResponse convertToStudyGroupMemberResponse(StudyGroupMember studyGroupMember) {
+        StudyGroupMemberResponse response = new StudyGroupMemberResponse();
+        response.setGroupId(studyGroupMember.getGroupId());
+        response.setMemberId(studyGroupMember.getMemberId());
+        response.setGroupName(studyGroupMember.getGroupName());
+        response.setDiscussionTopic(studyGroupMember.getDiscussionTopic());
+        ZonedDateTime creationDate = studyGroupMember.getCreationDate();
+        response.setCreationDate(creationDate.format(DateTimeFormatter.ISO_ZONED_DATE_TIME));
+        //response.setCreationDate(new ZonedDateTimeConverter().convert(studyGroupMember.getCreationDate()));
+        response.setActive(studyGroupMember.isActive());
+        return response;
     }
 
 
@@ -88,15 +110,19 @@ public class StudyGroupController {
      * source: https://technicalsand.com/using-responseentity-in-spring/
      */
     @GetMapping("/groups/{groupId}/members/")
-    public ResponseEntity<List<StudyGroupMember>> getStudyGroupMembers(@PathVariable String groupId){
+    public ResponseEntity<List<StudyGroupMemberResponse>> getStudyGroupMembers(@PathVariable String groupId){
 
         List<StudyGroupMember> studyGroupMembers = studyGroupService.getStudyGroupMembers(groupId);
         if (studyGroupMembers == null || studyGroupMembers.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-//        List<StudyGroupMember> members = new ArrayList<>();
-//        members.addAll(studyGroupMembers);
-        return ResponseEntity.ok(studyGroupMembers);
+        List<StudyGroupMemberResponse> responses = new ArrayList<>();
+        for(StudyGroupMember member:studyGroupMembers) {
+            responses.add(convertToStudyGroupMemberResponse(member));
+        }
+        return ResponseEntity
+                .status(200)
+                .body(responses);
 
     }
 
@@ -211,7 +237,7 @@ public class StudyGroupController {
                 UUID.randomUUID().toString(),
                 request.getGroupName(),
                 request.getDiscussionTopic(),
-                request.getCreationDate(),
+                new ZonedDateTimeConverter().unconvert(request.getCreationDate()),
                 request.isActive()
         );
 
@@ -222,7 +248,7 @@ public class StudyGroupController {
         response.setGroupId(studyGroup.getGroupId());
         response.setGroupName(studyGroup.getGroupName());
         response.setDiscussionTopic(studyGroup.getDiscussionTopic());
-        response.setCreationDate(studyGroup.getCreationDate());
+        response.setCreationDate(new ZonedDateTimeConverter().convert(studyGroup.getCreationDate()));
         response.setActive(studyGroup.isActive());
         return response;
     }

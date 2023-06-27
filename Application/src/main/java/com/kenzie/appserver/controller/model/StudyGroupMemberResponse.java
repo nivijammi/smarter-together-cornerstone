@@ -1,24 +1,41 @@
 package com.kenzie.appserver.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import javax.validation.constraints.NotEmpty;
 
 import java.time.ZonedDateTime;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class StudyGroupMemberResponse {
 
-public class AddStudyGroupRequest {
-
-    @NotEmpty
+    @JsonProperty("groupId")
+    private String groupId;
+    @JsonProperty("memberId")
+    private String memberId;
     @JsonProperty("groupName")
     private String groupName;
-    @NotEmpty
     @JsonProperty("discussionTopic")
     private String discussionTopic;
     @JsonProperty("creationDate")
     private String creationDate;
     @JsonProperty("active")
     private boolean active;
+
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(String groupId) {
+        this.groupId = groupId;
+    }
+
+    public String getMemberId() {
+        return memberId;
+    }
+
+    public void setMemberId(String memberId) {
+        this.memberId = memberId;
+    }
 
     public String getGroupName() {
         return groupName;

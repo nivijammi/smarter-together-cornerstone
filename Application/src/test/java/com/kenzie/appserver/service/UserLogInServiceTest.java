@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.BooleanSupplier;
 
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,6 +51,21 @@ public class UserLogInServiceTest {
         boolean isValid = subject.isPasswordStrengthGood(password);
         assertTrue(isValid);
     }
+
+    @Test
+    public void isValidPassword_validPasswordLength_returnTrue() {
+        String password = "Algorithm1!";
+        boolean isValid = subject.isPasswordStrengthGood(password);
+        assertTrue(isValid);
+    }
+
+    @Test
+    public void isValidPassword_inValidPasswordLength_returnTrue() {
+        String password = "Algo1!";
+        boolean isValid = subject.isPasswordStrengthGood(password);
+        assertFalse(isValid,"Length of password is less than 8");
+    }
+
     @Test
     public void isValidPassword_passwordWithNoUpperCase_returnFalse() {
         String password = "algorithm1!";
@@ -195,9 +211,30 @@ public class UserLogInServiceTest {
         });
     }
     @Test
+    public void registerUser_withNullEmail_doesNotRegistersUser() {
+        String email = null;
+        String password = "amethyst";
+        Member user = new Member(email, password);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            subject.registerUser(user);
+        });
+    }
+    @Test
     public void registerUser_withNoPassword_doesNotRegistersUser() {
         String email = "person@aol.com";
         String password = "";
+        Member user = new Member(email,password);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            subject.registerUser(user);
+        });
+    }
+
+    @Test
+    public void registerUser_withNullPassword_doesNotRegistersUser() {
+        String email = "person@aol.com";
+        String password = null;
         Member user = new Member(email,password);
 
         Assertions.assertThrows(IllegalArgumentException.class, () -> {

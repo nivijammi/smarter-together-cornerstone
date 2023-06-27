@@ -6,9 +6,11 @@ import com.kenzie.appserver.exception.StudyGroupNotFoundException;
 import com.kenzie.appserver.repositories.MemberRepository;
 import com.kenzie.appserver.repositories.StudyGroupMemberRepository;
 import com.kenzie.appserver.repositories.StudyGroupRepository;
+import com.kenzie.appserver.repositories.model.MemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupMemberId;
 import com.kenzie.appserver.repositories.model.StudyGroupMemberRecord;
 import com.kenzie.appserver.repositories.model.StudyGroupRecord;
+import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.StudyGroup;
 import com.kenzie.appserver.service.model.StudyGroupMember;
 import org.junit.jupiter.api.Assertions;
@@ -71,6 +73,7 @@ public class StudyGroupServiceTest {
         assertEquals(record.isActive(), newStudyGroup.isActive());
 
     }
+
 
     @Test
     void addNewStudyGroup_failsToAddStudyGroup() {
@@ -339,6 +342,32 @@ public class StudyGroupServiceTest {
         assertEquals(existingMember.getDiscussionTopic(), result.getDiscussionTopic());
         assertEquals(existingMember.getCreationDate(), result.getCreationDate());
         assertEquals(existingMember.isActive(), result.isActive());
+    }
+
+    @Test
+    void findMemberById_MemberExists() {
+        String memberId = "abc@aol.com";
+
+        MemberRecord memberRecord = new MemberRecord();
+        memberRecord.setEmail(memberId);
+        memberRecord.setPassword("Password123!");
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.of(memberRecord));
+        Member member = subject.findMemberById(memberId);
+
+        assertNotNull(member);
+        assertEquals("abc@aol.com", member.getEmail());
+        assertEquals("Password123!", member.getPassword());
+    }
+
+    @Test
+    void findMemberById_MemberDoesNotExist() {
+        String memberId = "xyz@aol.com";
+
+        when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
+        Member member = subject.findMemberById(memberId);
+
+        assertNull(member);
     }
 
     @Test

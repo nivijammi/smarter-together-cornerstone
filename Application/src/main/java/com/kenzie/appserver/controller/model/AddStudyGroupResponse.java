@@ -15,7 +15,7 @@ public class AddStudyGroupResponse {
     @JsonProperty("discussionTopic")
     private String discussionTopic;
     @JsonProperty("creationDate")
-    private ZonedDateTime creationDate;
+    private String creationDate;
     @JsonProperty("active")
     private boolean active;
 
@@ -31,7 +31,7 @@ public class AddStudyGroupResponse {
         return discussionTopic;
     }
 
-    public ZonedDateTime getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
@@ -50,7 +50,7 @@ public class AddStudyGroupResponse {
     public void setDiscussionTopic(String discussionTopic) {
         this.discussionTopic = discussionTopic;
     }
-    public void setCreationDate(ZonedDateTime creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 
