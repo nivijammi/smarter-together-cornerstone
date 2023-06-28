@@ -27,7 +27,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 
 
 /**
@@ -62,7 +64,11 @@ public class StudyGroupControllerTest {
     private final MockNeat mockNeat = MockNeat.threadLocal();
     private final ObjectMapper mapper = new ObjectMapper();
 
-    /**
+
+    /** ------------------------------------------------------------------------
+     *  Add Study Group
+     *  ------------------------------------------------------------------------
+
      * Acceptance criteria: a new study group is added
      * Endpoint(s) tested: "/v1/groups/{groupId}"
      * GIVEN (Preconditions): a study group is added
@@ -127,7 +133,11 @@ public class StudyGroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());// action
     }
-    /**
+
+    /** ------------------------------------------------------------------------
+     *  Add Member To Study Group
+     *  ------------------------------------------------------------------------
+
      * Acceptance criteria: a new member is added to study group
      * Endpoint(s) tested: "/v1"/groups/{groupId}/members/{memberId}"
      * GIVEN (Preconditions): a study group is added, member is added
@@ -214,7 +224,10 @@ public class StudyGroupControllerTest {
 
 
     }
-    /**
+    /** ------------------------------------------------------------------------
+     *  Find Study Group Members
+     *  ------------------------------------------------------------------------
+     *
      * Acceptance criteria: get all members in a group
      * Endpoint(s) tested: "/v1"/groups/{groupId}/members/"
      * GIVEN (Preconditions): a study group is added, list of members is added
@@ -342,7 +355,10 @@ public class StudyGroupControllerTest {
                 .andExpect(status().is4xxClientError());
     }
 
-    /**
+    /** ------------------------------------------------------------------------
+     *  Delete A Member From Study Group
+     *  ------------------------------------------------------------------------
+
      * Acceptance criteria: removes member from group
      * Endpoint(s) tested: "/v1/groups/{groupId}/members/{memberId}"
      * GIVEN (Preconditions): a study group is added/ member is added/ get the member
@@ -430,8 +446,10 @@ public class StudyGroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
     }
+    /** ------------------------------------------------------------------------
+     *  Delete All Members From Study Group
+     *  ------------------------------------------------------------------------
 
-    /**
      * Acceptance criteria: removes all member from group
      * Endpoint(s) tested: "/v1/groups/{groupId}/members/"
      * GIVEN (Preconditions): a study group is added/ members are added/
@@ -537,7 +555,10 @@ public class StudyGroupControllerTest {
         assertThat(member.getEmail()).isEqualTo(memberId2);
 
     }
-    /**
+    /** ------------------------------------------------------------------------
+     *  Get Study Group by id
+     *  ------------------------------------------------------------------------
+
      * Acceptance criteria: finds study group by id
      * Endpoint(s) tested: "/v1/groups/{groupId}/"
      * GIVEN (Preconditions): a study group is added
@@ -573,7 +594,7 @@ public class StudyGroupControllerTest {
         assertThat(response.isActive()).isTrue();
     }
     /**
-     * Acceptance criteria: find no study group by id
+     * Acceptance criteria: finds no study group by id
      * Endpoint(s) tested: "/v1/groups/{groupId}/"
      * GIVEN (Preconditions): study group is not added
      * WHEN (Action(s)): get request
@@ -589,9 +610,184 @@ public class StudyGroupControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
+    /** ------------------------------------------------------------------------
+     *  Get All Study Groups
+     *  ------------------------------------------------------------------------
+
+     * Acceptance criteria: find all study groups
+     * Endpoint(s) tested: "/v1/groups/"
+     * GIVEN (Preconditions): study group is added
+     * WHEN (Action(s)): get request
+     * THEN (Verification steps): 200, group id, name and other are populated
+     */
+    @Test
+    public void getAllStudyGroups_Successful() throws Exception {
+        String groupId1= "1";
+        String groupId2= "2";
+        String groupName1 = "groupName1";
+        String groupName2 = "groupName2";
+        String discussionTopic1 = "discussionTopic1";
+        String discussionTopic2 = "discussionTopic2";
+        ZonedDateTime date = ZonedDateTime.now();
+        boolean active = false;
+
+        List<StudyGroup> groups = new ArrayList<>();
+        StudyGroup studyGroup1 = new StudyGroup(groupId1, groupName1, discussionTopic1, date, active);
+        groups.add(studyGroup1);
+        StudyGroup studyGroup2 = new StudyGroup(groupId2, groupName2, discussionTopic2, date, active);
+        groups.add(studyGroup2);
+
+        for(StudyGroup group : groups){
+            studyGroupService.addNewStudyGroup(group);
+        }
+
+        //WHEN
+        ResultActions actions = mvc.perform(get("/v1/groups/")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        // THEN
+        String responseBody = actions.andReturn().getResponse().getContentAsString();
+        System.out.println(responseBody);
+        List<AddStudyGroupResponse> responses = mapper.readValue(responseBody, new TypeReference<>() {
+        });
+
+            assertThat(responses.size()).isGreaterThan(0).as("There are responses");
+            for(AddStudyGroupResponse response:responses){
+                assertThat(response.getGroupId()).isNotEmpty().as("The ID is populated");
+                assertThat(response.getGroupName()).isNotEmpty().as("The name is populated");
+        }
+    }
+
+    /** ------------------------------------------------------------------------
+     *  Update Study Group
+     *  ------------------------------------------------------------------------
+
+     * Acceptance criteria: updates the study group
+     * Endpoint(s) tested: "/v1/groups/{groupId}"
+     * GIVEN (Preconditions): study group is added
+     * WHEN (Action(s)): put request
+     * THEN (Verification steps): 200, group id, name and other are populated
+     */
 
     @Test
-    public void getAllStudyGroup_Successful() throws Exception {
+    public void updateStudyGroup_success() throws Exception{
+        String groupId = "1";
+        String groupName = mockNeat.strings().valStr();
+        String discussionTopic = "discussionTopic";
+        ZonedDateTime date = ZonedDateTime.now();
+        boolean active = false;
+
+        StudyGroup studyGroup = new StudyGroup(groupId, groupName, discussionTopic, date, active);
+
+        studyGroupService.addNewStudyGroup(studyGroup);
+
+        AddStudyGroupRequest studyGroupRequest = new AddStudyGroupRequest();
+        studyGroupRequest.setGroupName(groupName);
+        studyGroupRequest.setDiscussionTopic(discussionTopic);
+        studyGroupRequest.setCreationDate(new ZonedDateTimeConverter().convert(date));
+        studyGroupRequest.setActive(true);
+
+        ResultActions actions = mvc.perform(put("/v1/groups/{groupId}",groupId)
+                        .content(mapper.writeValueAsString(studyGroupRequest))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        String responseBody = actions.andReturn().getResponse().getContentAsString();
+        AddStudyGroupResponse response = mapper.readValue(responseBody, AddStudyGroupResponse.class);
+        assertThat(response.getGroupId()).isEqualTo(groupId).as("The group id is populated");
+        assertThat(response.getGroupName()).isEqualTo(studyGroupRequest.getGroupName()).as("The name is correct");
+        assertThat(response.isActive()).isTrue();
+    }
+
+    /**
+     * Acceptance criteria: update not successful
+     * Endpoint(s) tested: "/v1/groups/{groupId}"
+     * GIVEN (Preconditions): study group is added
+     * WHEN (Action(s)): put request
+     * THEN (Verification steps): 200, group id, name and other are populated
+     */
+
+    @Test
+    public void updateStudyGroup_unsuccessful() throws Exception{
+
+        AddStudyGroupRequest studyGroupRequest = new AddStudyGroupRequest();
+        studyGroupRequest.setGroupName("groupName");
+        studyGroupRequest.setDiscussionTopic("discussionTopic");
+        studyGroupRequest.setCreationDate(new ZonedDateTimeConverter().convert(ZonedDateTime.now()));
+        studyGroupRequest.setActive(true);
+
+        String groupId = "1";
+        mvc.perform(put("/v1/groups/{groupId}",groupId)
+                        .content(mapper.writeValueAsString(studyGroupRequest))
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
+
+    }
+
+    /** ------------------------------------------------------------------------
+     *  Delete Study Group
+     *  ------------------------------------------------------------------------
+
+     * Acceptance criteria: deletes study group
+     * Endpoint(s) tested: "/v1/groups/{groupId}"
+     * GIVEN (Preconditions): study group is added
+     * WHEN (Action(s)): delete request
+     * THEN (Verification steps): 200, no study group with id exists
+     */
+
+    @Test
+    public void deleteCustomer_success() throws Exception {
+        String groupId = UUID.randomUUID().toString();
+        String groupName = mockNeat.strings().valStr();
+        String discussionTopic = "discussionTopic";
+        ZonedDateTime date = ZonedDateTime.now();
+        boolean active = false;
+
+        StudyGroup studyGroup = new StudyGroup(groupId, groupName, discussionTopic, date, active);
+
+        studyGroupService.addNewStudyGroup(studyGroup);
+
+        AddStudyGroupRequest studyGroupRequest = new AddStudyGroupRequest();
+        studyGroupRequest.setGroupName(groupName);
+        studyGroupRequest.setDiscussionTopic(discussionTopic);
+        studyGroupRequest.setCreationDate(new ZonedDateTimeConverter().convert(date));
+        studyGroupRequest.setActive(active);
+
+        // WHEN
+        mvc.perform(delete("/v1/groups/{groupId}",groupId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+        // THEN
+        mvc.perform(get("/v1/groups/{groupId}", groupId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+
+    }
+
+    /**
+     * Acceptance criteria:  deletes study group unsuccessful
+     * Endpoint(s) tested: "/v1/groups/{groupId}"
+     * GIVEN (Preconditions): study group is added
+     * WHEN (Action(s)): delete request
+     * THEN (Verification steps): 400
+     */
+
+    @Test
+    public void deleteCustomer_unsuccessful() throws Exception {
+
+        String groupId = "1";
+
+        mvc.perform(delete("/v1/groups/{groupId}", groupId)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError());
 
     }
 
