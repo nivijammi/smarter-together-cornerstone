@@ -23,9 +23,7 @@ public class NoteRecord {
     public void setNoteId(String noteId) {
         this.noteId = noteId;
     }
-
-    // todo
-    //@DynamoDBRangeKey(attributeName = "UserId")
+    @DynamoDBAttribute(attributeName = "UserId")
     public String getUserId() { return userId; }
     public void setUserId(String userId) {this.userId = userId;}
     @DynamoDBAttribute(attributeName = "Content")

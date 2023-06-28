@@ -65,6 +65,7 @@ public class NoteController {
         NoteResponse noteResponse = convertToNoteResponse(note);
         return ResponseEntity.ok(noteResponse);
     }
+    // get all notes
 
     @PutMapping("/notes/{noteId}")
     public ResponseEntity<NoteResponse> updateNote(@PathVariable String noteId, @RequestBody NoteRequest noteRequest) {

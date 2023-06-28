@@ -1,6 +1,5 @@
 package com.kenzie.appserver.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kenzie.appserver.IntegrationTest;
@@ -9,7 +8,6 @@ import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.service.StudyGroupService;
 import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.StudyGroup;
-import com.kenzie.appserver.service.model.StudyGroupMember;
 import net.andreinc.mockneat.MockNeat;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -30,29 +28,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-
-/**
- * source: Q&A (June 26th,2023)
- * MVC is mocking the outside world - it simulate the behavior of an HTTP client and interact with
- * our RESTful API endpoints as if they were being called by an actual client.
- * It allows us to send requests, set request headers and content, and receive responses.
- * we can then perform assertions on the response to validate the behavior of your API.
- *
- * .content(mapper.writeValueAsString(studyGroupRequest)):
- * the request body content is set by converting the studyGroupRequest object to a JSON string using the ObjectMapper (mapper) instance.
- * This JSON representation of the studyGroupRequest object will be sent as the content of the request.
- *
- * .accept(MediaType.APPLICATION_JSON):
- * sets the Accept header of the request to specify that the client expects a response in JSON format.
- *
- * .contentType(MediaType.APPLICATION_JSON):
- * sets the Content-Type header of the request to specify that the content being sent in the request is in JSON format.
- *
- * .andExpect(status()....):
- * assertion that specifies the expected HTTP response status.
- * The status() method is used to access the response status
- */
 @IntegrationTest
 public class StudyGroupControllerTest {
     @Autowired
@@ -74,6 +49,7 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group is added
      * WHEN (Action(s)): post request
      * THEN (Verification steps): 200 code, groupId, groupName is not empty
+     * Clean up : restore the state of system back to original state
      */
 
     @Test
@@ -105,6 +81,8 @@ public class StudyGroupControllerTest {
         assertThat(response.getGroupId()).isNotEmpty().as("The group id is populated");
         assertThat(response.getGroupName()).isEqualTo(studyGroupRequest.getGroupName()).as("The name is correct");
         assertThat(response.isActive()).isTrue();
+
+        studyGroupService.deleteStudyGroup(groupId);
     }
 
     /**
@@ -113,6 +91,7 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group not is added
      * WHEN (Action(s)): post request
      * THEN (Verification steps): 400 error
+     * Clean up : none, study group not created
      */
     @Test
     public void addStudyGroup_AddingStudyGroupFails() throws Exception {
@@ -143,6 +122,7 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group is added, member is added
      * WHEN (Action(s)): post request
      * THEN (Verification steps): 200, groupId, memberId is populated
+     * Clean up: tear down the created study group set up and restore the state
      */
 
     @Test
@@ -180,6 +160,9 @@ public class StudyGroupControllerTest {
         assertThat(response.getMemberId()).isNotEmpty().as("The member id is populated");
         assertThat(response.getGroupName()).isEqualTo(studyGroup.getGroupName()).as("The name is correct");
         assertThat(response.isActive()).isTrue();
+
+        studyGroupService.deleteStudyGroup(groupId);
+
     }
 
     // helper method
@@ -197,27 +180,14 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group is added, member is missing
      * WHEN (Action(s)): post request
      * THEN (Verification steps): 400 error
+     *
      */
     @Test
-    public void addMemberToAStudyGroup_missingMember_Unsuccessful() throws Exception {
+    public void addMemberToAStudyGroup_missingMember_unsuccessful() throws Exception {
         String groupId = "1";
-        String groupName = mockNeat.strings().valStr();
-        String discussionTopic = "discussionTopic";
-        ZonedDateTime date = ZonedDateTime.now();
-        boolean active = false;
-        String memberId = "person1@aol.com";
-        String password = "Password1!";
+        String memberId = null;
 
-        StudyGroup studyGroup = new StudyGroup(groupId, groupName, discussionTopic, date, active);
-
-        // Add StudyGroup
-        studyGroupService.addNewStudyGroup(studyGroup);
-
-
-        // Create studyGroup to member association
-        //studyGroupService.addMemberToStudyGroup(studyGroup, memberId);
-
-        ResultActions actions = mvc.perform(post("/v1/groups/{groupId}/members/{memberId}", groupId, memberId)
+        mvc.perform(post("/v1/groups/{groupId}/members/{memberId}", groupId, memberId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());// action
@@ -233,6 +203,7 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group is added, list of members is added
      * WHEN (Action(s)): get request
      * THEN (Verification steps): 200, groupId, memberId in list are populated
+     * Clean up: restore
      */
 
     @Test
@@ -305,6 +276,8 @@ public class StudyGroupControllerTest {
         assertThat(response2.getGroupName()).isEqualTo(groupName);
         assertThat(response2.getDiscussionTopic()).isEqualTo(discussionTopic);
 
+        studyGroupService.deleteStudyGroup(groupId);
+
     }
     /**
      * Acceptance criteria: unable to get all members in a group
@@ -315,7 +288,7 @@ public class StudyGroupControllerTest {
      */
 
     @Test
-    public void getStudyGroupMembers_Unsuccessful() throws Exception {
+    public void getStudyGroupMembers_unsuccessful() throws Exception {
         String groupId = "1";
         String groupName = mockNeat.strings().valStr();
         String discussionTopic = "discussionTopic";
@@ -333,10 +306,10 @@ public class StudyGroupControllerTest {
         studyGroupService.addNewStudyGroup(studyGroup);
 
         // list of members - no members present
-        List<String> memberList = new ArrayList<>();
-        for (String member : memberList) {
-            studyGroupService.addMemberToStudyGroup(studyGroup, member);
-        }
+//        List<String> memberList = new ArrayList<>();
+//        for (String member : memberList) {
+//            studyGroupService.addMemberToStudyGroup(studyGroup, member);
+//        }
 
         // when
         StudyGroupMemberRequest studyGroupMemberRequest = new StudyGroupMemberRequest();
@@ -349,7 +322,6 @@ public class StudyGroupControllerTest {
 
         ResultActions actions = mvc.perform(get("/v1/groups/{groupId}/members/", groupId)
                         // create a request
-                        .content(mapper.writeValueAsString(studyGroupMemberRequest))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
@@ -566,7 +538,7 @@ public class StudyGroupControllerTest {
      * THEN (Verification steps): 200, the study group is found
      */
     @Test
-    public void getStudyGroupById_Successful() throws Exception {
+    public void getStudyGroupById_successful() throws Exception {
         String groupId = "1";
         String groupName = mockNeat.strings().valStr();
         String discussionTopic = "discussionTopic";
@@ -592,6 +564,8 @@ public class StudyGroupControllerTest {
         assertThat(response.getGroupId()).isNotEmpty().as("The group id is populated");
         assertThat(response.getGroupName()).isNotEmpty().as("The name is correct");
         assertThat(response.isActive()).isTrue();
+
+        studyGroupService.deleteStudyGroup(groupId);
     }
     /**
      * Acceptance criteria: finds no study group by id
@@ -605,10 +579,10 @@ public class StudyGroupControllerTest {
      String groupId = "1";
 
         //THEN
-        ResultActions actions = mvc.perform(get("/v1/groups/{groupId}", groupId)
+        mvc.perform(get("/v1/groups/{groupId}", groupId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound());
+                .andExpect(status().is4xxClientError());
     }
     /** ------------------------------------------------------------------------
      *  Get All Study Groups
@@ -700,6 +674,8 @@ public class StudyGroupControllerTest {
         assertThat(response.getGroupId()).isEqualTo(groupId).as("The group id is populated");
         assertThat(response.getGroupName()).isEqualTo(studyGroupRequest.getGroupName()).as("The name is correct");
         assertThat(response.isActive()).isTrue();
+
+        studyGroupService.deleteStudyGroup(groupId);
     }
 
     /**

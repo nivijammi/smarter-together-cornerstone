@@ -24,7 +24,7 @@ public class UserLogInController {
     @Autowired
     UserLoginService userLoginService;
 
-    // loged in or unsuccessful
+
     @PostMapping("/users/login")
     public ResponseEntity<AddUserLoginResponse> login(@RequestBody UserLoginRequest request) {
 
