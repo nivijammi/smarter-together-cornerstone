@@ -14,12 +14,14 @@ import java.net.URI;
 import java.time.ZonedDateTime;
 
 @RestController
-@RequestMapping("/notes")
+@RequestMapping("/v1")
 public class NoteController {
     @Autowired
     NoteService noteService;
 
-    @PostMapping("/create")
+
+    // had to change the endpoints
+    @PostMapping("/notes/create")
     public ResponseEntity<NoteResponse> createNote(@RequestBody NoteRequest request) {
         // Scenario #1: Note Exists
         boolean exists = noteService.doesNoteExist(request.getNoteId());
