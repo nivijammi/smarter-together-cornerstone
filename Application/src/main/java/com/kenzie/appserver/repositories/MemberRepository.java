@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface MemberRepository extends CrudRepository<MemberRecord, String> {
     // imp: has to match the Record
     Optional<MemberRecord> findById(String email); // memberId is email
+
 }
 

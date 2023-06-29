@@ -144,9 +144,6 @@ public class StudyGroupControllerTest {
         UserLoginRequest request = getUserLoginRequest(memberId, password);
         userLogInController.registerUser(request);
 
-        // Create studyGroup to member association
-        //studyGroupService.addMemberToStudyGroup(studyGroup, memberId);
-
         ResultActions actions = mvc.perform(post("/v1/groups/{groupId}/members/{memberId}", groupId, memberId)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
