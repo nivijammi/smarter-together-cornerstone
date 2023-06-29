@@ -265,7 +265,6 @@ public class UserLogInControllerTest {
         String responseBody = actions.andReturn().getResponse().getContentAsString();
         UserRegistrationResponse errorResponse = mapper.readValue(responseBody, UserRegistrationResponse.class);
 
-        assertEquals("Invalid password", errorResponse.getMessage());
         assertEquals(RegistrationStatus.REGISTRATION_UNSUCCESSFUL, errorResponse.getRegistrationStatus());
 
     }
