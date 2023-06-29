@@ -20,13 +20,11 @@ public class CacheStore {
     }
 
     public StudyGroup get(String key) {
-        // Write your code here
         // Retrieve and return the studyGroup
         return cache.getIfPresent(key);
     }
 
     public void evict(String key) {
-        // Write your code here
         // Invalidate/evict the StudyGroup from cache
         if(key != null){
             cache.invalidate(key);
@@ -34,7 +32,6 @@ public class CacheStore {
     }
 
     public void add(String key, StudyGroup value) {
-        // Write your code here
         // Add studyGroup to cache
         cache.put(key,value);
     }

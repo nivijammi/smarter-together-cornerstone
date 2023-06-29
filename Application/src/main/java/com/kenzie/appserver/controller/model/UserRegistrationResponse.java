@@ -1,5 +1,6 @@
 package com.kenzie.appserver.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -15,9 +16,22 @@ public class UserRegistrationResponse {
     @JsonProperty("registrationStatus")
     private RegistrationStatus registrationStatus;
 
-    public UserRegistrationResponse(String userEmail, RegistrationStatus registrationStatus) {
+    @JsonProperty("message")
+    private String message;
+
+    @JsonCreator
+    public UserRegistrationResponse(@JsonProperty("userEmail")String userEmail, @JsonProperty("registrationStatus")RegistrationStatus registrationStatus,@JsonProperty("message") String message) {
         this.userEmail = userEmail;
         this.registrationStatus = registrationStatus;
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getUserEmail() {

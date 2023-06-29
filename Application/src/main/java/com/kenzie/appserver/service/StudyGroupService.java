@@ -266,7 +266,7 @@ public class StudyGroupService {
         studyGroupRecord.setGroupName(studyGroup.getGroupName());
         studyGroupRecord.setDiscussionTopic(studyGroup.getDiscussionTopic());
         studyGroupRecord.setCreationDate(studyGroup.getCreationDate());
-        studyGroupRecord.setActive(studyGroup.isActive());
+        studyGroupRecord.setActive(true);
         studyGroupRepository.save(studyGroupRecord);
         cache.evict(studyGroup.getGroupId());
     }
