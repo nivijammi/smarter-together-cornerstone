@@ -1,15 +1,14 @@
 package com.kenzie.appserver.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kenzie.appserver.IntegrationTest;
-import com.kenzie.appserver.controller.model.*;
-import com.kenzie.appserver.repositories.model.MemberRecord;
+import com.kenzie.appserver.controller.model.AddUserLoginResponse;
+import com.kenzie.appserver.controller.model.RegistrationStatus;
+import com.kenzie.appserver.controller.model.UserLoginRequest;
+import com.kenzie.appserver.controller.model.UserRegistrationResponse;
 import com.kenzie.appserver.service.MemberService;
 import com.kenzie.appserver.service.UserLoginService;
 import com.kenzie.appserver.service.model.Member;
-import com.kenzie.appserver.service.model.MemberValidationStatus;
 import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static com.kenzie.appserver.controller.model.RegistrationStatus.LOGIN_SUCCESSFUL;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
