@@ -1,9 +1,6 @@
 package com.kenzie.appserver.repositories.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import org.springframework.data.annotation.Id;
 
 import java.util.Objects;
@@ -21,6 +18,14 @@ public class StudyGroupReviewRecord {
 
     public StudyGroupReviewRecord(){}
 
+    /**
+     * changes made:
+     * 1. commented out discussionTopic
+     * 2. removed it from constructor
+     * 3. removed getter and setter for discussionTopic
+     * 4. added with annotations
+     *
+     */
     public StudyGroupReviewRecord(StudyGroupReviewId studyGroupReviewId, String groupName, String discussionTopic, double rating, String reviewComments, double averageRating) {
         this.studyGroupReviewId = studyGroupReviewId;
         this.groupName = groupName;
@@ -50,6 +55,15 @@ public class StudyGroupReviewRecord {
         }
         studyGroupReviewId.setReviewId(reviewId);
     }
+    @DynamoDBAttribute(attributeName = "DiscussionTopic")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "DiscussionTopicIndex")
+    public String getDiscussionTopic(){
+        return discussionTopic;
+    }
+
+    public void setDiscussionTopic(String discussionTopic){
+        this.discussionTopic = discussionTopic;
+    }
 
 
     @DynamoDBAttribute(attributeName = "GroupName")
@@ -60,14 +74,8 @@ public class StudyGroupReviewRecord {
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
-    @DynamoDBAttribute(attributeName = "DiscussionTopic")
-    public String getDiscussionTopic() {
-        return discussionTopic;
-    }
 
-    public void setDiscussionTopic(String discussionTopic) {
-        this.discussionTopic = discussionTopic;
-    }
+
     @DynamoDBAttribute(attributeName = "Rating")
     public double getRating() {
         return rating;
@@ -111,7 +119,7 @@ public class StudyGroupReviewRecord {
         return "StudyGroupReviewRecord{" +
                 "studyGroupReviewId=" + studyGroupReviewId +
                 ", groupName='" + groupName + '\'' +
-                ", discussionTopic='" + discussionTopic + '\'' +
+                //", discussionTopic='" + discussionTopic + '\'' +
                 ", rating=" + rating +
                 ", reviewComments='" + reviewComments + '\'' +
                 ", averageRating=" + averageRating +

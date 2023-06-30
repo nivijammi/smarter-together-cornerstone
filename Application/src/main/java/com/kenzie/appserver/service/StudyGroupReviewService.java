@@ -33,11 +33,12 @@ public class StudyGroupReviewService {
 
         StudyGroupReviewId reviewId = new StudyGroupReviewId(review.getGroupId(), review.getReviewId());
         // Save the review to the repository
+        // todo record does not have discussion
         StudyGroupReviewRecord record = getStudyGroupReviewRecord(review);
         reviewRepository.save(record);
 
         // Calculate and update the average rating for the associated study group
-        StudyGroupReviewId studyGroupReviewId = new StudyGroupReviewId(review.getGroupId(),review.getReviewId());
+        StudyGroupReviewId studyGroupReviewId = new StudyGroupReviewId(record.getGroupId(),record.getReviewId());
         double averageRating = calculateAverageRating(studyGroupReviewId);
 
         // Collect all comments for the study group
@@ -82,7 +83,7 @@ public class StudyGroupReviewService {
         return comments;
     }
 
-    public static StudyGroupReviewRecord getStudyGroupReviewRecord(StudyGroupReview review) {
+    public StudyGroupReviewRecord getStudyGroupReviewRecord(StudyGroupReview review) {
 
         StudyGroupReviewRecord record = new StudyGroupReviewRecord();
         record.setGroupId(review.getGroupId());
@@ -108,6 +109,33 @@ public class StudyGroupReviewService {
 
         return null;
     }
+
+    public List<StudyGroupReview> getStudyGroupReviewsByTopic(String discussionTopic) {
+
+        Optional<List<StudyGroupReviewRecord>> byTopic = reviewRepository.findByDiscussionTopic(discussionTopic);
+        List<StudyGroupReviewRecord> reviewRecords = byTopic.get();
+
+        List<StudyGroupReview> reviews = new ArrayList<>();
+        for (StudyGroupReviewRecord record:reviewRecords){
+            reviews.add(buildStudyGroupReview(record));
+        }
+        return reviews;
+    }
+
+    public StudyGroupReview buildStudyGroupReview(StudyGroupReviewRecord record){
+        StudyGroupReview groupReview = new StudyGroupReview();
+        groupReview.setGroupId(record.getGroupId());
+        groupReview.setReviewId(record.getReviewId());
+        groupReview.setGroupName(record.getGroupName());
+        groupReview.setDiscussionTopic(record.getDiscussionTopic());
+        groupReview.setRating(record.getRating());
+        groupReview.setAverageRating(record.getAverageRating());
+        groupReview.setReviewComments(record.getReviewComments());
+
+        return groupReview;
+    }
+
+
 
     public double calculateAverageRating(StudyGroupReviewId id) {
         Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(id.getGroupId());

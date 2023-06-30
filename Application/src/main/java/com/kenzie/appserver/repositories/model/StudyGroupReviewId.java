@@ -1,7 +1,6 @@
 package com.kenzie.appserver.repositories.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
 import java.util.Objects;
 
@@ -9,14 +8,24 @@ public class StudyGroupReviewId {
     private String groupId;
     private String reviewId;
 
-    public StudyGroupReviewId(){
+    private String discussionTopic;
 
+    /**
+     * changes made:
+     * 1. added field
+     * 2. constructor??
+     * 3. added getter and setter for discussionTopic
+     * 4. added with annotations
+     *
+     */
+    public StudyGroupReviewId(){
     }
 
     public StudyGroupReviewId(String groupId, String reviewId) {
         this.groupId = groupId;
         this.reviewId = reviewId;
     }
+
     @DynamoDBHashKey(attributeName = "GroupId")
     public String getGroupId() {
         return groupId;
@@ -25,7 +34,10 @@ public class StudyGroupReviewId {
     public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
+
+
     @DynamoDBRangeKey(attributeName = "ReviewId")
+    @DynamoDBIndexRangeKey(globalSecondaryIndexName = "DiscussionTopicIndex")
     public String getReviewId() {
         return reviewId;
     }
@@ -33,6 +45,8 @@ public class StudyGroupReviewId {
     public void setReviewId(String reviewId) {
         this.reviewId = reviewId;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

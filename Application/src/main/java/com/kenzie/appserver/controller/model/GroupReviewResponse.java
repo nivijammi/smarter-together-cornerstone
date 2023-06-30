@@ -4,51 +4,47 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class StudyGroupReviewResponse {
+public class GroupReviewResponse {
 
-    @JsonProperty("groupId")
-    private String groupId;
+        @JsonProperty("groupId")
+        private String groupId;
 
-    @JsonProperty("groupName")
-    private String groupName;
+        @JsonProperty("groupName")
+        private String groupName;
 
-    @JsonProperty("reviewId")
-    private String reviewId;
+        @JsonProperty("reviewId")
+        private String reviewId;
 
+        @JsonProperty("discussionTopic")
+        private String discussionTopic;
 
-    @JsonProperty("discussionTopic")
-    private String discussionTopic;
+        @JsonProperty("totalRating")
+        private double totalRating;
 
-    @JsonProperty("rating")
-    private double rating;
+        @JsonProperty("averageRating")
+        private double averageRating;
 
-    @JsonProperty("averageRating")
-    private double averageRating;
+        @JsonProperty("reviewComments")
+        private String reviewComments;
 
-    @JsonProperty("reviewComment")
-    private String reviewComment;
-
-    public StudyGroupReviewResponse(){
-
-    }
+    public GroupReviewResponse(){}
 
     @JsonCreator
-    public StudyGroupReviewResponse(@JsonProperty("groupId")String groupId,
+    public GroupReviewResponse(@JsonProperty("groupId")String groupId,
                                     @JsonProperty("groupName")String groupName,
                                     @JsonProperty("reviewId")String reviewId,
                                     @JsonProperty("discussionTopic")String discussionTopic,
-                                    @JsonProperty("rating")int rating,
+                                    @JsonProperty("totalRating")double totalRating,
                                     @JsonProperty("averageRating") double averageRating,
-                                    @JsonProperty("reviewComment")String reviewComment) {
+                                    @JsonProperty("reviewComments")String reviewComments) {
         this.groupId = groupId;
         this.groupName = groupName;
         this.reviewId = reviewId;
         this.discussionTopic = discussionTopic;
-        this.rating = rating;
+        this.totalRating = totalRating;
         this.averageRating = averageRating;
-        this.reviewComment = reviewComment;
+        this.reviewComments = reviewComments;
     }
 
     public String getGroupId() {
@@ -83,12 +79,12 @@ public class StudyGroupReviewResponse {
         this.discussionTopic = discussionTopic;
     }
 
-    public double getRating() {
-        return rating;
+    public double getTotalRating() {
+        return totalRating;
     }
 
-    public void setRating(double rating) {
-        this.rating = rating;
+    public void setTotalRating(double totalRating) {
+        this.totalRating = totalRating;
     }
 
     public double getAverageRating() {
@@ -99,11 +95,11 @@ public class StudyGroupReviewResponse {
         this.averageRating = averageRating;
     }
 
-    public String getReviewComment() {
-        return reviewComment;
+    public String getReviewComments() {
+        return reviewComments;
     }
 
-    public void setReviewComment(String reviewComments) {
-        this.reviewComment = reviewComment;
+    public void setReviewComments(String reviewComments) {
+        this.reviewComments = reviewComments;
     }
 }

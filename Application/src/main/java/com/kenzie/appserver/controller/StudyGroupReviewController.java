@@ -1,7 +1,9 @@
 package com.kenzie.appserver.controller;
 
+import com.kenzie.appserver.controller.model.GroupReviewResponse;
 import com.kenzie.appserver.controller.model.StudyGroupReviewRequest;
 import com.kenzie.appserver.controller.model.StudyGroupReviewResponse;
+import com.kenzie.appserver.repositories.model.StudyGroupReviewId;
 import com.kenzie.appserver.service.StudyGroupReviewService;
 import com.kenzie.appserver.service.model.StudyGroupReview;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -25,13 +29,13 @@ public class StudyGroupReviewController {
     }
 
     @PostMapping("/studygroup/reviews")
-    public ResponseEntity<StudyGroupReviewResponse> submitReview(@RequestBody StudyGroupReviewRequest request) {
+    public ResponseEntity<GroupReviewResponse> submitReview(@RequestBody StudyGroupReviewRequest request) {
         if (request.getGroupId() == null || request.getGroupId().length() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request");
         }
         StudyGroupReview studyGroupReview = convertToReview(request);
         StudyGroupReview review = reviewService.submitStudyGroupReview(studyGroupReview);
-        StudyGroupReviewResponse response = convertToResponse(review);
+        GroupReviewResponse response = reviewToResponses(review);
         return ResponseEntity.created(URI.create("/studygroup/reviews" + response.getReviewId())).body(response);
 
     }
@@ -45,6 +49,25 @@ public class StudyGroupReviewController {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    @GetMapping("/studygroup/reviews/discussionTopic/{discussionTopic}")
+    public ResponseEntity<List<GroupReviewResponse>> getStudyGroupReviewsByTopic(@PathVariable String discussionTopic)  {
+
+        List<StudyGroupReview> reviewsByTopic = reviewService.getStudyGroupReviewsByTopic(discussionTopic);
+
+        if (reviewsByTopic == null || reviewsByTopic.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<GroupReviewResponse> reviewResponseList = new ArrayList<>();
+        if (reviewsByTopic != null) {
+            for (StudyGroupReview review : reviewsByTopic) {
+                reviewResponseList.add(reviewToResponses(review));
+            }
+        }
+        return ResponseEntity
+                .status(200)
+                .body(reviewResponseList);
     }
 
     private StudyGroupReview convertToReview(StudyGroupReviewRequest request) {
@@ -64,6 +87,18 @@ public class StudyGroupReviewController {
         response.setGroupName(review.getGroupName());
         response.setReviewId(review.getReviewId());
         response.setRating(review.getRating());
+        response.setDiscussionTopic(review.getDiscussionTopic());
+        response.setAverageRating(review.getAverageRating());
+        response.setReviewComment(review.getReviewComments());
+        return response;
+    }
+
+    private GroupReviewResponse reviewToResponses(StudyGroupReview review) {
+        GroupReviewResponse response = new GroupReviewResponse();
+        response.setGroupId(review.getGroupId());
+        response.setGroupName(review.getGroupName());
+        response.setReviewId(review.getReviewId());
+        response.setTotalRating(review.getRating());
         response.setDiscussionTopic(review.getDiscussionTopic());
         response.setAverageRating(review.getAverageRating());
         response.setReviewComments(review.getReviewComments());
