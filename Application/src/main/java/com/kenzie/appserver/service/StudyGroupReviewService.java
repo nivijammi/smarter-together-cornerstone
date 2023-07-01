@@ -9,18 +9,18 @@ import com.kenzie.appserver.service.model.StudyGroupReview;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class StudyGroupReviewService {
    @Autowired
     private StudyGroupReviewRepository reviewRepository;
 
+    public StudyGroupReviewService(StudyGroupReviewRepository reviewRepository) {
+        this.reviewRepository = reviewRepository;
+    }
+
     public StudyGroupReview submitStudyGroupReview(StudyGroupReview review) {
-        // Validate the review data and perform any necessary checks
         if (review == null) {
             throw new ReviewNotFoundException("Review cannot be null");
         }
@@ -32,35 +32,27 @@ public class StudyGroupReviewService {
         }
 
         StudyGroupReviewId reviewId = new StudyGroupReviewId(review.getGroupId(), review.getReviewId());
-        // Save the review to the repository
-        // todo record does not have discussion
+
         StudyGroupReviewRecord record = getStudyGroupReviewRecord(review);
         reviewRepository.save(record);
 
-        // Calculate and update the average rating for the associated study group
-        StudyGroupReviewId studyGroupReviewId = new StudyGroupReviewId(record.getGroupId(),record.getReviewId());
-        double averageRating = calculateAverageRating(studyGroupReviewId);
-
-        // Collect all comments for the study group
-        List<String> comments = collectCommentsForStudyGroup(review.getGroupId());
-        double totalRating = collectRatingsForStudyGroup(review.getGroupId());
 
         StudyGroupReview groupReview = new StudyGroupReview();
-        groupReview.setGroupId(studyGroupReviewId.getGroupId());
-        groupReview.setReviewId(studyGroupReviewId.getReviewId());
+        groupReview.setGroupId(record.getGroupId());
+        groupReview.setReviewId(record.getReviewId());
         groupReview.setGroupName(record.getGroupName());
         groupReview.setDiscussionTopic(record.getDiscussionTopic());
-        groupReview.setRating(totalRating);
-        groupReview.setAverageRating(averageRating);
-        groupReview.setReviewComments(comments.toString());
+        groupReview.setRating(record.getRating());
+        groupReview.setAverageRating(record.getAverageRating());
+        groupReview.setReviewComments(record.getReviewComments());
 
         return groupReview;
 
 
     }
-    private double collectRatingsForStudyGroup(String groupId) {
+    public double collectRatingsForStudyGroup(String groupId) {
         Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(groupId);
-        List<StudyGroupReviewRecord> ratingList = byGroupId.get();
+        List<StudyGroupReviewRecord> ratingList = byGroupId.orElse(Collections.emptyList());
 
         double totalRating = 0.0;
         for (StudyGroupReviewRecord rating : ratingList) {
@@ -71,9 +63,9 @@ public class StudyGroupReviewService {
 
 
 
-    private List<String> collectCommentsForStudyGroup(String groupId) {
+    public List<String> collectCommentsForStudyGroup(String groupId) {
         Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(groupId);
-        List<StudyGroupReviewRecord> recordList = byGroupId.get();
+        List<StudyGroupReviewRecord> recordList = byGroupId.orElse(Collections.emptyList());
         List<String> comments = new ArrayList<>();
 
         for (StudyGroupReviewRecord record : recordList) {
@@ -87,7 +79,7 @@ public class StudyGroupReviewService {
 
         StudyGroupReviewRecord record = new StudyGroupReviewRecord();
         record.setGroupId(review.getGroupId());
-        record.setReviewId(UUID.randomUUID().toString());
+        record.setReviewId(review.getReviewId());
         record.setGroupName(review.getGroupName());
         record.setRating(review.getRating());
         record.setAverageRating(review.getRating());
@@ -113,7 +105,7 @@ public class StudyGroupReviewService {
     public List<StudyGroupReview> getStudyGroupReviewsByTopic(String discussionTopic) {
 
         Optional<List<StudyGroupReviewRecord>> byTopic = reviewRepository.findByDiscussionTopic(discussionTopic);
-        List<StudyGroupReviewRecord> reviewRecords = byTopic.get();
+        List<StudyGroupReviewRecord> reviewRecords = byTopic.orElse(Collections.emptyList());
 
         List<StudyGroupReview> reviews = new ArrayList<>();
         for (StudyGroupReviewRecord record:reviewRecords){
@@ -139,12 +131,13 @@ public class StudyGroupReviewService {
 
     public double calculateAverageRating(StudyGroupReviewId id) {
         Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(id.getGroupId());
-        List<StudyGroupReviewRecord> reviews = byGroupId.get();
-        int totalRating = 0;
-        int reviewCount = reviews.size();
+        //List<StudyGroupReviewRecord> reviews = byGroupId.get();
+        List<StudyGroupReviewRecord> reviews = byGroupId.orElse(Collections.emptyList());
+        double totalRating = 0;
+        double reviewCount = reviews.size();
 
         for (StudyGroupReviewRecord reviewRecord  : reviews) {
-            totalRating += reviewRecord.getAverageRating();
+            totalRating += reviewRecord.getRating();
         }
          return (reviewCount > 0) ? (double) totalRating / reviewCount : 0.0;
 
