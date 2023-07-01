@@ -106,16 +106,16 @@ public class StudyGroupService {
 
 
     // addMemberToStudyGroup
-    public StudyGroup findStudyGroupById(String groupId) {
-        Optional<StudyGroupRecord> groupById = studyGroupRepository.findById(groupId);
-        if(!groupById.isPresent()) {
-            return null;
-        }
-        StudyGroupRecord studyGroupRecord = groupById.get();
-        // convert from record to study group(domain object)
-        StudyGroup studyGroup = buildStudyGroup(studyGroupRecord);
-        return studyGroup;
-    }
+//    public StudyGroup findStudyGroupById(String groupId) {
+//        Optional<StudyGroupRecord> groupById = studyGroupRepository.findById(groupId);
+//        if(!groupById.isPresent()) {
+//            return null;
+//        }
+//        StudyGroupRecord studyGroupRecord = groupById.get();
+//        // convert from record to study group(domain object)
+//        StudyGroup studyGroup = buildStudyGroup(studyGroupRecord);
+//        return studyGroup;
+//    }
 
     public StudyGroup findByCachedGroupId(String groupId) {
         StudyGroup cachedStudyGroup = cache.get(groupId);

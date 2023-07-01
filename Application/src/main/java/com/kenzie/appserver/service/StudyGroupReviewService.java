@@ -1,5 +1,6 @@
 package com.kenzie.appserver.service;
 
+import com.amazonaws.services.dynamodbv2.xspec.S;
 import com.kenzie.appserver.controller.model.StudyGroupReviewResponse;
 import com.kenzie.appserver.exception.ReviewNotFoundException;
 import com.kenzie.appserver.repositories.StudyGroupReviewRepository;
@@ -36,6 +37,7 @@ public class StudyGroupReviewService {
         StudyGroupReviewRecord record = getStudyGroupReviewRecord(review);
         reviewRepository.save(record);
 
+        double averageRating = calculateAverageRating(review.getGroupId());
 
         StudyGroupReview groupReview = new StudyGroupReview();
         groupReview.setGroupId(record.getGroupId());
@@ -43,7 +45,7 @@ public class StudyGroupReviewService {
         groupReview.setGroupName(record.getGroupName());
         groupReview.setDiscussionTopic(record.getDiscussionTopic());
         groupReview.setRating(record.getRating());
-        groupReview.setAverageRating(record.getAverageRating());
+        groupReview.setAverageRating(averageRating);
         groupReview.setReviewComments(record.getReviewComments());
 
         return groupReview;
@@ -74,7 +76,8 @@ public class StudyGroupReviewService {
 
         return comments;
     }
-
+    // helper should not ever make a UUID,
+    // it should be as versatile as possible, to be used by other methods
     public StudyGroupReviewRecord getStudyGroupReviewRecord(StudyGroupReview review) {
 
         StudyGroupReviewRecord record = new StudyGroupReviewRecord();
@@ -129,8 +132,8 @@ public class StudyGroupReviewService {
 
 
 
-    public double calculateAverageRating(StudyGroupReviewId id) {
-        Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(id.getGroupId());
+    public double calculateAverageRating(String id) {
+        Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(id);
         //List<StudyGroupReviewRecord> reviews = byGroupId.get();
         List<StudyGroupReviewRecord> reviews = byGroupId.orElse(Collections.emptyList());
         double totalRating = 0;

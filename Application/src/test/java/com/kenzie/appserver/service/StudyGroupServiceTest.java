@@ -196,57 +196,52 @@ public class StudyGroupServiceTest {
         assertEquals(null, existingStudyGroup);
     }
 
-    @Test
-    public void findStudyGroupById_ExistingGroup_ReturnsStudyGroup() {
-        StudyGroupRecord groupRecord = new StudyGroupRecord();
-        groupRecord.setGroupId("1");
-        groupRecord.setGroupName("Group1");
-        groupRecord.setDiscussionTopic("API");
-        groupRecord.setCreationDate(ZonedDateTime.now());
-        groupRecord.setActive(true);
+//    @Test
+//    public void findStudyGroupById_ExistingGroup_ReturnsStudyGroup() {
+//        StudyGroupRecord groupRecord = new StudyGroupRecord();
+//        groupRecord.setGroupId("1");
+//        groupRecord.setGroupName("Group1");
+//        groupRecord.setDiscussionTopic("API");
+//        groupRecord.setCreationDate(ZonedDateTime.now());
+//        groupRecord.setActive(true);
+//
+//        when(studyGroupRepository.findById("1")).thenReturn(Optional.of(groupRecord));
+//
+//        // Class under test
+//        StudyGroup result = subject.findStudyGroupById("1");
+//
+//        verify(studyGroupRepository).findById("1");
+//
+//        assertNotNull(result);
+//        assertEquals(groupRecord.getGroupId(), result.getGroupId());
+//        assertEquals(groupRecord.getGroupName(), result.getGroupName());
+//        assertEquals(groupRecord.getDiscussionTopic(), result.getDiscussionTopic());
+//        assertEquals(groupRecord.getCreationDate(), result.getCreationDate());
+//        assertTrue(result.isActive());
+//    }
 
-        when(studyGroupRepository.findById("1")).thenReturn(Optional.of(groupRecord));
+//    @Test
+//    public void findStudyGroupById_NonexistentGroup_ReturnsNull() {
+//        when(studyGroupRepository.findById("2")).thenReturn(Optional.empty());
+//
+//        // Class under test
+//        StudyGroup result = subject.findStudyGroupById("2");
+//
+//        verify(studyGroupRepository).findById("2");
+//
+//        assertNull(result);
+//    }
 
-        // Class under test
-        StudyGroup result = subject.findStudyGroupById("1");
 
-        verify(studyGroupRepository).findById("1");
 
-        assertNotNull(result);
-        assertEquals(groupRecord.getGroupId(), result.getGroupId());
-        assertEquals(groupRecord.getGroupName(), result.getGroupName());
-        assertEquals(groupRecord.getDiscussionTopic(), result.getDiscussionTopic());
-        assertEquals(groupRecord.getCreationDate(), result.getCreationDate());
-        assertTrue(result.isActive());
-    }
+    // write one where the cache.get return null
+    // and verify that repository gets called and cache gets added
 
-    @Test
-    public void findStudyGroupById_NonexistentGroup_ReturnsNull() {
-        when(studyGroupRepository.findById("2")).thenReturn(Optional.empty());
-
-        // Class under test
-        StudyGroup result = subject.findStudyGroupById("2");
-
-        verify(studyGroupRepository).findById("2");
-
-        assertNull(result);
-    }
-
-    @Test
-    public void findByCachedGroupId_GroupInCache_ReturnsCachedStudyGroup() {
-        String groupId = "1";
-        StudyGroup cachedStudyGroup = new StudyGroup(groupId, "Group1", "API", ZonedDateTime.now(), true);
-
-        when(cache.get(groupId)).thenReturn(cachedStudyGroup);
-
-        // Class under test
-        StudyGroup result = subject.findByCachedGroupId(groupId);
-
-        // repository was not called
-        verify(studyGroupRepository, never()).findById(anyString());
-
-        assertEquals(cachedStudyGroup, result);
-    }
+    /**
+     * ---------------------------------------------------------------------------------
+     *  StudyGroup Not In Cache - repository gets called - cache gets added
+     * ---------------------------------------------------------------------------------
+     */
 
     @Test
     public void findByCachedGroupId_GroupNotInCache_ReturnsStudyGroupFromBackendService() {
@@ -271,6 +266,28 @@ public class StudyGroupServiceTest {
         assertEquals(backendStudyGroup.getCreationDate(), result.getCreationDate());
         assertTrue(result.isActive());
 
+    }
+
+    /**
+     * ---------------------------------------------------------------------------------
+     *  StudyGroup In Cache - repository never called - cached Study Group returned
+     * ---------------------------------------------------------------------------------
+     */
+
+    @Test
+    public void findByCachedGroupId_GroupInCache_ReturnsCachedStudyGroup() {
+        String groupId = "1";
+        StudyGroup cachedStudyGroup = new StudyGroup(groupId, "Group1", "API", ZonedDateTime.now(), true);
+
+        when(cache.get(groupId)).thenReturn(cachedStudyGroup);
+
+        // Class under test
+        StudyGroup result = subject.findByCachedGroupId(groupId);
+
+        // repository was not called
+        verify(studyGroupRepository, never()).findById(anyString());
+
+        assertEquals(cachedStudyGroup, result);
     }
 
     @Test
@@ -436,7 +453,7 @@ public class StudyGroupServiceTest {
         assertTrue(result.isEmpty());
     }
 
-    // todo: can't solve
+
     @Test
     void removeMemberFromStudyGroup_ExistingGroupAndMember_RemovesMember() {
         ZonedDateTime date = ZonedDateTime.now();
@@ -507,6 +524,12 @@ public class StudyGroupServiceTest {
         verify(studyGroupMemberRepository, never()).delete(any());
     }
 
+    /**
+     * ---------------------------------------------------------------------------------
+     *  StudyGroup updated - cached Study Group eveicted
+     * ---------------------------------------------------------------------------------
+     */
+
     @Test
     void updateStudyGroup_existingStudyGroup_groupUpdated() {
         String groupId = "group1";
@@ -534,6 +557,11 @@ public class StudyGroupServiceTest {
         verify(cache).evict(groupId);
     }
 
+    /**
+     * ----------------------------------------------------------------------------
+     *  Update unsuccessful - Study Group not deleted from cache
+     * ----------------------------------------------------------------------------
+     */
     @Test
     void updateStudyGroup_nonExistingStudyGroup_exceptionThrown() {
         String groupId = "group1";
@@ -549,10 +577,11 @@ public class StudyGroupServiceTest {
         verify(cache, never()).evict(any());
     }
 
-    @Test
-    void deleteStudyGroup_deleteGroupWithItsMembers() {
-
-    }
+    /**
+     * ----------------------------------------------------------------------------
+     *  Study Group deleted from cache
+     * ----------------------------------------------------------------------------
+     */
 
     @Test
     void deleteStudyGroup_alsoRemovesMembers_deletesGroupAndMembers() {

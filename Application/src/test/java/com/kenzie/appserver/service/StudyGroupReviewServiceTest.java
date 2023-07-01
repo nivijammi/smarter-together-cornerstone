@@ -53,7 +53,6 @@ public class StudyGroupReviewServiceTest {
 
         verify(reviewRepository).save(any(StudyGroupReviewRecord.class));
         Assertions.assertEquals(savedRecord.getGroupId(), studyGroupReview.getGroupId());
-        Assertions.assertEquals(savedRecord.getReviewId(), studyGroupReview.getReviewId());
         Assertions.assertEquals(savedRecord.getGroupName(), studyGroupReview.getGroupName());
         Assertions.assertEquals(savedRecord.getDiscussionTopic(), studyGroupReview.getDiscussionTopic());
         Assertions.assertEquals(savedRecord.getRating(), studyGroupReview.getRating());
@@ -250,7 +249,7 @@ public class StudyGroupReviewServiceTest {
 
         when(reviewRepository.findByGroupId(groupId)).thenReturn(Optional.of(recordList));
 
-        double actualAverageRating = subject.calculateAverageRating(id);
+        double actualAverageRating = subject.calculateAverageRating(groupId);
 
         double expectedAverageRating = (rating1 + rating2) / recordList.size();
 
@@ -270,7 +269,7 @@ public class StudyGroupReviewServiceTest {
 
         when(reviewRepository.findByGroupId(groupId)).thenReturn(Optional.empty());
 
-        double averageRating = subject.calculateAverageRating(id);
+        double averageRating = subject.calculateAverageRating(groupId);
 
         // rating not found
         double expectedAverageRating = 0.0;

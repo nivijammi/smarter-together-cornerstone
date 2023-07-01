@@ -18,8 +18,8 @@ public class StudyGroupReviewRequest {
     @JsonProperty("rating")
     private double rating;
     @NotEmpty
-    @JsonProperty("reviewComments")
-    private String reviewComments;
+    @JsonProperty("reviewComment")
+    private String reviewComment;
 
 
     public String getGroupId() {
@@ -54,11 +54,11 @@ public class StudyGroupReviewRequest {
         this.rating = rating;
     }
 
-    public String getReviewComments() {
-        return reviewComments;
+    public String getReviewComment() {
+        return reviewComment;
     }
 
-    public void setReviewComments(String reviewComments) {
-        this.reviewComments = reviewComments;
+    public void setReviewComment(String reviewComments) {
+        this.reviewComment = reviewComments;
     }
 }

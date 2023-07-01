@@ -15,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 @RestController
@@ -29,13 +30,14 @@ public class StudyGroupReviewController {
     }
 
     @PostMapping("/studygroup/reviews")
-    public ResponseEntity<GroupReviewResponse> submitReview(@RequestBody StudyGroupReviewRequest request) {
+    public ResponseEntity<StudyGroupReviewResponse> submitReview(@RequestBody StudyGroupReviewRequest request) {
         if (request.getGroupId() == null || request.getGroupId().length() == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request");
         }
+
         StudyGroupReview studyGroupReview = convertToReview(request);
         StudyGroupReview review = reviewService.submitStudyGroupReview(studyGroupReview);
-        GroupReviewResponse response = reviewToResponses(review);
+        StudyGroupReviewResponse response = convertToResponse(review);
         return ResponseEntity.created(URI.create("/studygroup/reviews" + response.getReviewId())).body(response);
 
     }
@@ -70,13 +72,21 @@ public class StudyGroupReviewController {
                 .body(reviewResponseList);
     }
 
+    @GetMapping("/studygroup/averageRating/{groupId}")
+    public ResponseEntity<String> getAverageRatingByIdc(@PathVariable String groupId){
+        double averageRating = reviewService.calculateAverageRating(groupId);
+        String response = "Average rating for group " + groupId + ": " + averageRating;
+        return ResponseEntity.ok(response);
+    }
+
     private StudyGroupReview convertToReview(StudyGroupReviewRequest request) {
         StudyGroupReview review = new StudyGroupReview();
         review.setGroupId(request.getGroupId());
+        review.setReviewId(UUID.randomUUID().toString());
         review.setGroupName(request.getGroupName());
         review.setDiscussionTopic(request.getDiscussionTopic());
         review.setRating(request.getRating());
-        review.setReviewComments(request.getReviewComments());
+        review.setReviewComments(request.getReviewComment());
 
         return review;
     }

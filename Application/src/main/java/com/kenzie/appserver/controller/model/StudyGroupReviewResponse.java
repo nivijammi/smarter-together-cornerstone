@@ -103,7 +103,7 @@ public class StudyGroupReviewResponse {
         return reviewComment;
     }
 
-    public void setReviewComment(String reviewComments) {
+    public void setReviewComment(String reviewComment) {
         this.reviewComment = reviewComment;
     }
 }
