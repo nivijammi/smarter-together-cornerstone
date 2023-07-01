@@ -39,6 +39,26 @@ public class StudySessionRequest {
         return notes;
     }
 
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     @Override
     public String toString() {
         return "StudySessionRequest{" +

@@ -1,10 +1,12 @@
-package com.kenzie.appserver;
+package com.kenzie.appserver.lambdaTesting;
 
 import com.kenzie.capstone.service.client.StudySessionServiceClient;
 import com.kenzie.capstone.service.model.StudySessionRequest;
 import com.kenzie.capstone.service.model.StudySessionResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -22,10 +24,10 @@ public class AddStudySession {
     @Test
     void studySessionServiceClient_addStudySession_isValid() {
         //GIVEN
-        String userId = "testcustomerId";
+        String userId = UUID.randomUUID().toString();
         String subject = "testSubject";
         int duration = 10;
-        String date = "testdate";
+        String date = "2023-10-10"; //zoneddatetime.now?
         String notes = "testNotes";
 
         StudySessionRequest request = new StudySessionRequest();

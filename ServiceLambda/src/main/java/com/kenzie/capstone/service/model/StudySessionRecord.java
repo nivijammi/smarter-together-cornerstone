@@ -1,10 +1,11 @@
 package com.kenzie.capstone.service.model;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.kenzie.capstone.service.converter.ZonedDateTimeConverter;
 
 import java.time.ZonedDateTime;
 
-@DynamoDBTable(tableName = "StudySession")
+@DynamoDBTable(tableName = "StudySessionTable")
 public class StudySessionRecord {
 
 
@@ -16,38 +17,37 @@ public class StudySessionRecord {
     private String notes;
 
     //TODO: GSIs?
-
-    @DynamoDBHashKey(attributeName = "UserId")
-//    @DynamoDBIndexHashKey(globalSecondaryIndexName = "UserIdIndex", attributeName = "UserId")
+    @DynamoDBHashKey(attributeName = "sessionId")
+    public String getSessionId() {
+        return sessionId;
+    }
+    @DynamoDBAttribute(attributeName = "userId")
+    @DynamoDBIndexHashKey(globalSecondaryIndexName = "userIdIndex", attributeName = "userId")
     public String getUserId() {
         return userId;
     }
 
-    @DynamoDBAttribute(attributeName = "Subject")
+    @DynamoDBAttribute(attributeName = "subject")
 //    @DynamoDBIndexHashKey(globalSecondaryIndexName = "SubjectIndex", attributeName = "Subject")
     public String getSubject() {
         return subject;
     }
 
-    @DynamoDBAttribute(attributeName = "SessionId")
-    public String getSessionId() {
-        return sessionId;
-    }
 
-    @DynamoDBAttribute(attributeName = "Duration")
 
+    @DynamoDBAttribute(attributeName = "duration")
     public int getDuration() {
         return duration;
     }
 
-    @DynamoDBAttribute(attributeName = "Date")
+    @DynamoDBAttribute(attributeName = "date")
     //placing the next time as a reminder to check why this record uses ZonedDateTime as opposed to string
-//    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
+    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
     public ZonedDateTime getDate() {
         return date;
     }
 
-    @DynamoDBAttribute(attributeName = "Notes")
+    @DynamoDBAttribute(attributeName = "notes")
     public String getNotes() {
         return notes;
     }

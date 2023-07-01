@@ -15,6 +15,7 @@ public interface StudySessionDao {
     List<StudySessionRecord> findAllSessions();
 
     List<StudySessionRecord> findSessionsByUserId(String userId);
+    public StudySessionRecord findStudySessionBySessionId(String sessionId);
 
 
 
