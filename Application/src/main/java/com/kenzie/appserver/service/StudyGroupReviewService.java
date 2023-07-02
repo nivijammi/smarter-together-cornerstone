@@ -152,7 +152,6 @@ public class StudyGroupReviewService {
             List<StudyGroupReviewRecord> studyGroupReviewRecords = byGroupId.get();
             reviewRepository.deleteAll(studyGroupReviewRecords);
         } else {
-            // Handle the case when no study group reviews are found for the given groupId
             throw new ReviewNotFoundException("No study group reviews found for groupId: " + groupId);
         }
     }

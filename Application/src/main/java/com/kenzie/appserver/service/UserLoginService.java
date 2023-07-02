@@ -95,12 +95,14 @@ public class UserLoginService {
         // Retrieve the storedUser by email from the repository
         //MemberRecord storedUser = memberRepository.findMemberById(email);
         Optional<MemberRecord> findById = memberRepository.findById(email);
-        MemberRecord storedUser = findById.get();
+
         // Scenario #1: user not found
         // convert it into userDetail
-        if (storedUser == null) {
+        if (findById.isEmpty()) {
             return new MemberValidationStatus(false, false);
         }
+
+        MemberRecord storedUser = findById.get();
 
         // Check if a storedUser with the given email exists and if the password matches
         // Scenario #2: found the record,
@@ -122,14 +124,13 @@ public class UserLoginService {
     public boolean doesUserExist(String email) {
         //MemberRecord user = memberRepository.findMemberById(userEmail);
         Optional<MemberRecord> findById = memberRepository.findById(email);
-        if (!findById.isPresent())
+
+        if (findById.isEmpty()) {
             return false;
+        }
 
         MemberRecord storedUser = findById.get();
-        if(storedUser != null){
-            return true;
-        }
-        return false;
+        return true;
     }
 
     public Member registerUser(Member user) {
