@@ -76,8 +76,7 @@ public class StudyGroupReviewService {
 
         return comments;
     }
-    // helper should not ever make a UUID,
-    // it should be as versatile as possible, to be used by other methods
+
     public StudyGroupReviewRecord getStudyGroupReviewRecord(StudyGroupReview review) {
 
         StudyGroupReviewRecord record = new StudyGroupReviewRecord();
@@ -144,6 +143,18 @@ public class StudyGroupReviewService {
         }
          return (reviewCount > 0) ? (double) totalRating / reviewCount : 0.0;
 
+    }
+
+    public void deleteGroupFromReviewRecord(String groupId) {
+        Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(groupId);
+
+        if (byGroupId.isPresent()) {
+            List<StudyGroupReviewRecord> studyGroupReviewRecords = byGroupId.get();
+            reviewRepository.deleteAll(studyGroupReviewRecords);
+        } else {
+            // Handle the case when no study group reviews are found for the given groupId
+            throw new ReviewNotFoundException("No study group reviews found for groupId: " + groupId);
+        }
     }
 
 }

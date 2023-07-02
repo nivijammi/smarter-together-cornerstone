@@ -3,7 +3,6 @@ package com.kenzie.appserver.controller;
 import com.kenzie.appserver.controller.model.GroupReviewResponse;
 import com.kenzie.appserver.controller.model.StudyGroupReviewRequest;
 import com.kenzie.appserver.controller.model.StudyGroupReviewResponse;
-import com.kenzie.appserver.repositories.model.StudyGroupReviewId;
 import com.kenzie.appserver.service.StudyGroupReviewService;
 import com.kenzie.appserver.service.model.StudyGroupReview;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +42,7 @@ public class StudyGroupReviewController {
     }
 
     @GetMapping("/studygroup/reviews/{reviewId}")
-    public ResponseEntity<StudyGroupReviewResponse> getReview(@PathVariable String reviewId) {
+    public ResponseEntity<StudyGroupReviewResponse> getReviewByReviewId(@PathVariable String reviewId) {
         StudyGroupReview review = reviewService.getStudyGroupReview(reviewId);
         if (review != null) {
             StudyGroupReviewResponse response = convertToResponse(review);
@@ -73,10 +72,9 @@ public class StudyGroupReviewController {
     }
 
     @GetMapping("/studygroup/averageRating/{groupId}")
-    public ResponseEntity<String> getAverageRatingByIdc(@PathVariable String groupId){
+    public ResponseEntity<Double> getAverageRatingById(@PathVariable String groupId){
         double averageRating = reviewService.calculateAverageRating(groupId);
-        String response = "Average rating for group " + groupId + ": " + averageRating;
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(averageRating);
     }
 
     private StudyGroupReview convertToReview(StudyGroupReviewRequest request) {

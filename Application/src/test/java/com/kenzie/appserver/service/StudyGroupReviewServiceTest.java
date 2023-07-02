@@ -47,7 +47,7 @@ public class StudyGroupReviewServiceTest {
 
         StudyGroupReview review = new StudyGroupReview(groupId, groupName, reviewId, discussionTopic, rating, rating, reviewComments);
         when(reviewRepository.save(any(StudyGroupReviewRecord.class))).thenReturn(savedRecord);
-
+        when(reviewRepository.findByGroupId(groupId)).thenReturn(Optional.empty());
 
         StudyGroupReview studyGroupReview = subject.submitStudyGroupReview(review);
 
@@ -378,6 +378,55 @@ public class StudyGroupReviewServiceTest {
 
         assertNull(groupReview);
     }
+
+    @Test
+    public void deleteStudyGroupReview_Successful() throws Exception {
+        String groupId = "1";
+        String reviewId1 = "review123";
+        String groupName1 = "group123";
+        String discussionTopic1 = "Strings";
+        double rating1 = 4.5;
+        String reviewComments1 = "A good session";
+        double averageRating1 = 0.0;
+
+        List<StudyGroupReviewRecord> recordList = new ArrayList<>();
+        StudyGroupReviewId id = new StudyGroupReviewId(groupId, reviewId1);
+        StudyGroupReviewRecord record1 = new StudyGroupReviewRecord(id,
+                groupName1, discussionTopic1, rating1, reviewComments1, averageRating1);
+        recordList.add(record1);
+
+
+        String reviewId2 = "review123";
+        String groupName2 = "group123";
+        String discussionTopic2 = "Strings";
+        double rating2 = 3.8;
+        String reviewComments2 = "I was okay";
+        double averageRating2 = 0.0;
+
+        StudyGroupReviewId id2 = new StudyGroupReviewId(groupId, reviewId2);
+        StudyGroupReviewRecord record2 = new StudyGroupReviewRecord(id,
+                groupName2, discussionTopic2, rating2, reviewComments2, averageRating2);
+        recordList.add(record2);
+
+        when(reviewRepository.findByGroupId(groupId)).thenReturn(Optional.of(recordList));
+
+        subject.deleteGroupFromReviewRecord(groupId);
+        // Assert
+        verify(reviewRepository, times(1)).deleteAll(recordList);
+    }
+
+    @Test
+    public void deleteStudyGroupReview_NoRecordsFound() throws Exception {
+        String groupId = "1";
+
+        when(reviewRepository.findByGroupId(groupId)).thenReturn(Optional.empty());
+
+        assertThrows(ReviewNotFoundException.class, () -> subject.deleteGroupFromReviewRecord(groupId));
+
+        verify(reviewRepository, never()).deleteAll(anyList());
+    }
+
+
 
 
 
