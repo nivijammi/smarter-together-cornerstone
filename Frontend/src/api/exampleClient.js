@@ -38,6 +38,7 @@ export default class ExampleClient extends BaseClass {
      */
     async getExample(id, errorCallback) {
         try {
+        // tries to do await on its own client - webpack config
             const response = await this.client.get(`/example/${id}`);
             return response.data;
         } catch (error) {

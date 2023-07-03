@@ -105,6 +105,7 @@ public class EndpointUtility {
         }
     }
 
+
     public String getEndpoint(String endpoint) {
         String api = getApiEndpint();
         String url = api + endpoint;
