@@ -1,4 +1,4 @@
-package com.kenzie.appserver.controller;
+package HelperExamples;
 
 import java.util.HashMap;
 import java.util.Map;
