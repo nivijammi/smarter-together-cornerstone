@@ -34,6 +34,9 @@ public class AddUserLoginResponse {
         this.errorMessage = errorMessage;
     }
 
+    public AddUserLoginResponse() {
+    }
+
     public String getUserEmail() {
         return userEmail;
     }

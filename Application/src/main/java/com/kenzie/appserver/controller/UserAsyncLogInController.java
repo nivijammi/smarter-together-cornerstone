@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
 /**
  * https://auth0.com/docs/get-started/authentication-and-authorization-flow/authorization-code-flow
@@ -35,7 +36,8 @@ public class UserAsyncLogInController {
     }
 
     @PostMapping("/users/login")
-    public CompletableFuture<MemberValidationStatus> loginAsync(@RequestBody UserLoginRequest request) {
+    @ResponseBody
+    public CompletableFuture<AddUserLoginResponse> loginAsync(@RequestBody UserLoginRequest request) {
 
         String email = request.getEmail();
         String password = request.getPassword();
@@ -45,7 +47,7 @@ public class UserAsyncLogInController {
             String errorMessage = "Invalid email format";
             AddUserLoginResponse emailInvalidResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_SUCCESSFUL,errorMessage);
             //return ResponseEntity.status(400).body(emailInvalidResponse);
-            return null;
+            return CompletableFuture.completedFuture(emailInvalidResponse);
         }
 
         // Password don't match
@@ -53,35 +55,63 @@ public class UserAsyncLogInController {
             String errorMessage = "Password strength is weak";
             AddUserLoginResponse passwordStrengthInvalidResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage);
             //return ResponseEntity.status(400).body(passwordStrengthInvalidResponse);
-            return null;
+            return CompletableFuture.completedFuture(passwordStrengthInvalidResponse);
         }
 
         // Authenticate the user
-        CompletableFuture<MemberValidationStatus> status = userAyncLoginService.authenticateUserAsync(email, password);
+        //CompletableFuture<MemberValidationStatus> status = userAyncLoginService.authenticateUserAsync(email, password);
+        CompletableFuture<AddUserLoginResponse> addUserLoginResponseCompletableFuture = userAyncLoginService.authenticateUserAsync(email, password)
+                // checking the MemberValidationStatus to return the AddUserLoginResponse
+                .thenCompose(status -> returnResponse(request.getEmail(), status));
+        return addUserLoginResponseCompletableFuture;
 
+        //    // Scenario #1: User not found
+        //    if (!status.isUserFound() && !status.isPasswordMatched()) {
+        //        String errorMessage = "User not found and password does not match";
+        //        AddUserLoginResponse userNotFoundResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage);
+        //        return ResponseEntity.status(400).body(userNotFoundResponse);
+        //    }
         //
-        //// Scenario #1: User not found
-        //if (!status.isUserFound() && !status.isPasswordMatched()) {
-        //    String errorMessage = "User not found and password does not match";
-        //    AddUserLoginResponse userNotFoundResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage);
-        //    return ResponseEntity.status(400).body(userNotFoundResponse);
-        //}
+        //    // Password does not match -
+        //    else if (status.isUserFound() && !status.isPasswordMatched()){
+        //        String errorMessage = "Invalid Password";
+        //        AddUserLoginResponse passwordNotMatchedResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage );
+        //        return ResponseEntity.status(400).body(passwordNotMatchedResponse);
+        //    }
         //
-        //// Password does not match -
-        //else if (status.isUserFound() && !status.isPasswordMatched()){
-        //    String errorMessage = "Invalid Password";
-        //    AddUserLoginResponse passwordNotMatchedResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage );
-        //    return ResponseEntity.status(400).body(passwordNotMatchedResponse);
-        //}
-        //
-        //// User found and password matches
-        //else{
-        //    String message = "Login successful";
-        //    AddUserLoginResponse loginSuccessfulResponse  = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_SUCCESSFUL, message);
-        //    return ResponseEntity.created(URI.create("/users/" + loginSuccessfulResponse.getUserEmail())).body(loginSuccessfulResponse);
-        //}
+        //    // User found and password matches
+        //    else{
+        //        String message = "Login successful";
+        //        AddUserLoginResponse loginSuccessfulResponse  = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_SUCCESSFUL, message);
+        //        return ResponseEntity.created(URI.create("/users/" + loginSuccessfulResponse.getUserEmail())).body(loginSuccessfulResponse);
+        //    }
+    }
 
-        return status;
+    private CompletionStage<AddUserLoginResponse> returnResponse(String email, MemberValidationStatus status) {
+
+        // Scenario #1: User not found
+        if (!status.isUserFound() && !status.isPasswordMatched()) {
+            String errorMessage = "User not found and password does not match";
+            //AddUserLoginResponse userNotFoundResponse = new AddUserLoginResponse(request.getEmail(), RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage);
+            AddUserLoginResponse userNotFoundResponse = new AddUserLoginResponse(email, RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage);
+            return CompletableFuture.completedFuture(userNotFoundResponse);
+        }
+
+        // Password does not match -
+        else if (status.isUserFound() && !status.isPasswordMatched()){
+            String errorMessage = "Invalid Password";
+            AddUserLoginResponse passwordNotMatchedResponse = new AddUserLoginResponse(email, RegistrationStatus.LOGIN_UNSUCCESSFUL,errorMessage );
+            return CompletableFuture.completedFuture(passwordNotMatchedResponse);
+            //return ResponseEntity.status(400).body(passwordNotMatchedResponse);
+        }
+
+        // User found and password matches
+        else{
+            String message = "Login successful";
+            AddUserLoginResponse loginSuccessfulResponse  = new AddUserLoginResponse(email, RegistrationStatus.LOGIN_SUCCESSFUL, message);
+            //return ResponseEntity.created(URI.create("/users/" + loginSuccessfulResponse.getUserEmail())).body(loginSuccessfulResponse);
+            return CompletableFuture.completedFuture(loginSuccessfulResponse);
+        }
     }
 
     @PostMapping("/users/register")

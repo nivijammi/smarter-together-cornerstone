@@ -108,7 +108,7 @@ public class UserAyncLoginService {
 
         // Retrieve the storedUser by email from the repository
         //MemberRecord storedUser = memberRepository.findMemberById(email);
-        Optional<MemberRecord> findById = memberRepository.findById(email);
+        Optional<MemberRecord> findById = memberRepository.findById(email);//Bl
 
         // Scenario #1: user not found
         // convert it into userDetail
