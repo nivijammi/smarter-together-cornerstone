@@ -50,6 +50,8 @@ class ExamplePage extends BaseClass {
         let id = document.getElementById("id-field").value;
         this.dataStore.set("example", null);
 
+        // await - asynchronously wait till for the result before moving to 54
+        // go to the client
         let result = await this.client.getExample(id, this.errorHandler);
         this.dataStore.set("example", result);
         if (result) {
@@ -65,6 +67,7 @@ class ExamplePage extends BaseClass {
         this.dataStore.set("example", null);
 
         let name = document.getElementById("create-name-field").value;
+
 
         const createdExample = await this.client.createExample(name, this.errorHandler);
         this.dataStore.set("example", createdExample);

@@ -1,24 +1,29 @@
 package com.kenzie.appserver.service;
 
+import com.amazonaws.services.ec2.model.EgressOnlyInternetGateway;
 import com.kenzie.appserver.repositories.MemberRepository;
 import com.kenzie.appserver.repositories.model.MemberRecord;
 import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.MemberValidationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Pattern;
 
 @Service
-public class UserLoginService {
+public class UserAyncLoginService {
 
     // source: https://stackoverflow.com/questions/8204680/java-regex-email
 
     @Autowired
     private MemberRepository memberRepository;
-    public UserLoginService(MemberRepository memberRepository) {
+    public UserAyncLoginService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
@@ -90,6 +95,11 @@ public class UserLoginService {
     }
 
 
+    public CompletableFuture<MemberValidationStatus> authenticateUserAsync(String email, String password) {
+        CompletableFuture<MemberValidationStatus> memberValidationStatus = CompletableFuture.supplyAsync(() -> authenticateUser(email, password));
+        return memberValidationStatus;
+    }
+
 
     // have time hash it on front end
     // backend should always just see a hash.
@@ -98,7 +108,7 @@ public class UserLoginService {
 
         // Retrieve the storedUser by email from the repository
         //MemberRecord storedUser = memberRepository.findMemberById(email);
-        Optional<MemberRecord> findById = memberRepository.findById(email);
+        Optional<MemberRecord> findById = memberRepository.findById(email);//Bl
 
         // Scenario #1: user not found
         // convert it into userDetail
@@ -152,5 +162,19 @@ public class UserLoginService {
         return user;
     }
 
+    public CompletableFuture<List<String>> getSomethingAsync(String groupId) {
+        CompletableFuture<List<String>> users = CompletableFuture.supplyAsync(() -> getUsers(groupId));
+        return users;
+    }
 
+    private List<String> getUsers(String groupId) {
+        System.out.println(groupId);
+        //Iterable<MemberRecord> memberRecords = memberRepository.findAll();
+        List<String> users = new ArrayList<>();
+        for (int i=0; i<1000; i++){
+            users.add("User"+i);
+        }
+        return users;
+    }
 }
+

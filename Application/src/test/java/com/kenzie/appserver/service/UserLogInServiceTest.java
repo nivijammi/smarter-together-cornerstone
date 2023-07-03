@@ -143,19 +143,6 @@ public class UserLogInServiceTest {
         verify(memberRepository).findById(email);
     }
 
-    @Test
-    public void authenticateUser_UserNotFound() {
-
-        String email = "notThere@aol.com";
-        String password = "amethyst";
-
-        Mockito.when(memberRepository.findById(email)).thenReturn(Optional.empty());
-
-        Assertions.assertThrows(NoSuchElementException.class, () -> {
-            subject.authenticateUser(email,password);
-        });
-        verify(memberRepository).findById(email);
-    }
 
     @Test
     public void doesUserExist_ExistingUser() {
@@ -242,6 +229,20 @@ public class UserLogInServiceTest {
         });
     }
 
+    @Test
+    public void authenticateUser_userNotFound() {
+
+        String email = "test@example.com";
+        String password = "password";
+        when(memberRepository.findById(email)).thenReturn(Optional.empty());
+
+
+        MemberValidationStatus validationStatus = subject.authenticateUser(email, password);
+
+
+        assertFalse(validationStatus.isUserFound());
+        assertFalse(validationStatus.isPasswordMatched());
+    }
 
 }
 
