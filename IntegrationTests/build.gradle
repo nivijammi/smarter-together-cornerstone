@@ -10,6 +10,10 @@ configurations {
 
 dependencies {
     implementation project(":Application")
+    implementation project(":ServiceLambda")
+    implementation project(":ServiceLambdaModel")
+    implementation project(":ServiceLambdaJavaClient")
+
     testImplementation('org.springframework.boot:spring-boot-starter-web:2.6.3')
     testImplementation('org.springframework.boot:spring-boot-starter-test:2.6.3')
 

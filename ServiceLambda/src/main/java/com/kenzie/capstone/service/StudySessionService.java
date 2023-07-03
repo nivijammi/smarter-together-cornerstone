@@ -2,14 +2,15 @@ package com.kenzie.capstone.service;
 
 import com.kenzie.capstone.service.converter.StudySessionConverter;
 import com.kenzie.capstone.service.dao.StudySessionDao;
+import com.kenzie.capstone.service.exceptions.InvalidDataException;
+import com.kenzie.capstone.service.model.*;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-import com.kenzie.capstone.service.exceptions.InvalidDataException;
-import com.kenzie.capstone.service.model.*;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,6 +23,7 @@ public class StudySessionService {
     private ExecutorService executor;
     static final Logger log = LogManager.getLogger();
 
+    @Inject
     public StudySessionService(StudySessionDao sessionDao) {
         this.sessionDao = sessionDao;
         this.executor = Executors.newCachedThreadPool();  //is this needed for ours???
@@ -30,6 +32,7 @@ public class StudySessionService {
     /**
      * Takes in a StudySessionRequest, converts to a Record to save to DynamoDB table, then
      * converts back to response and returns response
+     *
      * @param sessionRequest - StudySessionRequest
      * @return
      */
@@ -42,7 +45,12 @@ public class StudySessionService {
         sessionDao.addStudySession(record);
         return StudySessionConverter.fromRecordToResponse(record);
     }
-    
+
+    /**
+     *
+     * @param sessionId
+     * @return
+     */
     public boolean deleteStudySession(String sessionId) {
         boolean deleted = true;
 
@@ -55,11 +63,28 @@ public class StudySessionService {
 
         boolean delete = sessionDao.deleteStudySession(record);
 
-        if(!delete) {
+        if (!delete) {
             deleted = false;
         }
         return deleted;
     }
+
+    public StudySession getStudySessionBySessionId(String sessionId) {
+        StudySessionRecord record = sessionDao.findStudySessionBySessionId(sessionId);
+
+        StudySessionConverter studySessionConverter = new StudySessionConverter();
+
+        StudySession session = StudySessionConverter.fromRecordToStudySession(record);
+
+        return session;
+    }
+//        List<StudySessionRecord> records = sessionDao.findStudySessionBySessionId(sessionId);
+//
+//        return records.stream()
+//                .map(StudySessionConverter::fromRecordToStudySession)
+//                .collect(Collectors.toList());
+//
+//    }
 
     public List<StudySession> getAllStudySessionByUser(String userId) {
         List<StudySessionRecord> records = sessionDao.findSessionsByUserId(userId);
@@ -68,6 +93,7 @@ public class StudySessionService {
                 .map(StudySessionConverter::fromRecordToStudySession)
                 .collect(Collectors.toList());
     }
+
 
     public List<StudySession> getAllStudySessionsBySubject(String subject) {
         List<StudySessionRecord> records = sessionDao.findSessionBySubject(subject);

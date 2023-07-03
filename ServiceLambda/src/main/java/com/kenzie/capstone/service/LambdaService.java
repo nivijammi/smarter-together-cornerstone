@@ -13,7 +13,7 @@ public class LambdaService {
 
     private ExampleDao exampleDao;
 
-    @Inject
+//    @Inject
     public LambdaService(ExampleDao exampleDao) {
         this.exampleDao = exampleDao;
     }

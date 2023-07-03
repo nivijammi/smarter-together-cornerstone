@@ -12,9 +12,11 @@ import com.kenzie.capstone.service.model.StudySessionRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class NonCachingStudySessionDao implements StudySessionDao{
+public class NonCachingStudySessionDao implements StudySessionDao {
 
     private DynamoDBMapper mapper;
     static final Logger log = LogManager.getLogger();
@@ -28,7 +30,7 @@ public class NonCachingStudySessionDao implements StudySessionDao{
         try {
             mapper.save(session, new DynamoDBSaveExpression()
                     .withExpected(ImmutableMap.of(
-                            "SessionId",
+                            "sessionId",
                             new ExpectedAttributeValue().withExists(false)
                     )));
         } catch (ConditionalCheckFailedException e) {
@@ -38,14 +40,15 @@ public class NonCachingStudySessionDao implements StudySessionDao{
         return session;
     }
 
-    public boolean deleteStudySession(StudySessionRecord session){
-        try{
+    public boolean deleteStudySession(StudySessionRecord session) {
+        try {
             mapper.delete(session, new DynamoDBDeleteExpression()
                     .withExpected(ImmutableMap.of(
-                            "SessionId",
-                            new ExpectedAttributeValue().withValue(new AttributeValue(session.getSessionId())).withExists(true)
+                            "sessionId",
+                            new ExpectedAttributeValue().withValue(new AttributeValue(session.getSessionId()))
+                                    .withExists(true)
                     )));
-        } catch (AmazonDynamoDBException e ) {
+        } catch (AmazonDynamoDBException e) {
             log.info(e.getMessage());
             log.info(e.getStackTrace());
             return false;
@@ -54,23 +57,61 @@ public class NonCachingStudySessionDao implements StudySessionDao{
         return true;
     }
 
-    public List<StudySessionRecord> findSessionBySubject(String subject){
+    public List<StudySessionRecord> findSessionBySubject(String subject) {
         StudySessionRecord sessionRecord = new StudySessionRecord();
         sessionRecord.setSubject(subject);
 
-        DynamoDBQueryExpression<StudySessionRecord> queryExpression = new DynamoDBQueryExpression<StudySessionRecord>()
-                .withHashKeyValues(sessionRecord)
-                .withIndexName("SubjectIndex")
-                .withConsistentRead(false);
+        Map<String, AttributeValue> valueMap = new HashMap<>();
+        valueMap.put(":subject", new AttributeValue().withS(sessionRecord.getSubject()));
 
-        return mapper.query(StudySessionRecord.class, queryExpression);
-    }
-
-    public List<StudySessionRecord> findAllSessions(){
         DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                .withFilterExpression("SessionId");  //will it find all?
+                .withFilterExpression("subject = :subject")
+                .withExpressionAttributeValues(valueMap);
 
         return mapper.scan(StudySessionRecord.class, scanExpression);
+
+//        DynamoDBQueryExpression<StudySessionRecord> queryExpression = new DynamoDBQueryExpression<StudySessionRecord>()
+//                .withHashKeyValues(sessionRecord)
+//                .withIndexName("SubjectIndex")
+//                .withConsistentRead(false);
+//
+//        return mapper.query(StudySessionRecord.class, queryExpression);
+    }
+
+    public List<StudySessionRecord> findAllSessions() {
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression();
+//                .withFilterExpression("sessionId");  //will it find all?
+
+        return mapper.scan(StudySessionRecord.class, scanExpression);
+    }
+
+    //single record needed, but keep it a list for now?
+    //
+    public StudySessionRecord findStudySessionBySessionId(String sessionId) {
+        StudySessionRecord sessionRecord = new StudySessionRecord();
+        sessionRecord.setSessionId(sessionId);
+
+//        DynamoDBQueryExpression<StudySessionRecord> queryExpression = new DynamoDBQueryExpression<StudySessionRecord>()
+//                .withHashKeyValues(sessionRecord)
+//                .withIndexName("sessionId")
+//                .withConsistentRead(false);
+//
+//        List<StudySessionRecord> queryResult = mapper.query(StudySessionRecord.class, queryExpression);
+//
+//        if (!queryResult.isEmpty()) {
+//            return queryResult.get(0);
+//        } else {
+//            return null; // or handle the case when no record is found
+//        }
+        Map<String, AttributeValue> valueMap = new HashMap<>();
+        valueMap.put(":sessionId", new AttributeValue().withS(sessionRecord.getSessionId()));
+
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("sessionId = :sessionId")
+                .withExpressionAttributeValues(valueMap);
+
+        return mapper.scan(StudySessionRecord.class, scanExpression).get(0);
+
     }
 
 
@@ -78,14 +119,22 @@ public class NonCachingStudySessionDao implements StudySessionDao{
     //maybe use this?>? Implement and test later??
     public List<StudySessionRecord> findSessionsByUserId(String userId) {
         StudySessionRecord sessionRecord = new StudySessionRecord();
-        sessionRecord.setSubject(userId);
+        sessionRecord.setUserId(userId);
 
-        DynamoDBQueryExpression<StudySessionRecord> queryExpression = new DynamoDBQueryExpression<StudySessionRecord>()
-                .withHashKeyValues(sessionRecord)
-                .withIndexName("UserIdIndex")
-                .withConsistentRead(false);
+        Map<String, AttributeValue> valueMap = new HashMap<>();
+        valueMap.put(":userId", new AttributeValue().withS(sessionRecord.getUserId()));
 
-        return mapper.query(StudySessionRecord.class, queryExpression);
+//        DynamoDBQueryExpression<StudySessionRecord> queryExpression = new DynamoDBQueryExpression<StudySessionRecord>()
+////                .withHashKeyValues(sessionRecord)
+//                .withKeyConditionExpression("userId = :userId")
+//                .withExpressionAttributeValues(valueMap);
+////                .withIndexName("userId")
+////                .withConsistentRead(false);
+        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
+                .withFilterExpression("userId = :userId")
+                .withExpressionAttributeValues(valueMap);
+
+        return mapper.scan(StudySessionRecord.class, scanExpression);
     }
 
 }

@@ -3,35 +3,19 @@ Resources:
     Type: AWS::DynamoDB::Table
     Properties:
       "AttributeDefinitions":
-        - "AttributeName": "UserId"
+        - "AttributeName": "sessionId"
           "AttributeType": "S"
-#        - "AttributeName": "SessionId"
-#          "AttributeType": "S"
-#        - "AttributeName": "Subject"
-#          "AttributeType": "S"
-#        - "AttributeName": "Duration"
-#          "AttributeType": "N"
-#        - "AttributeName": "Date"
-#          "AttributeType": "S"
-#        - "AttributeName": "Notes"
-#          "AttributeType": "S"
       "KeySchema":
-        - "AttributeName": "UserId"
+        - "AttributeName": "sessionId"
           "KeyType": "HASH"
       PointInTimeRecoverySpecification:
         PointInTimeRecoveryEnabled: false
       BillingMode: PAY_PER_REQUEST
       TableName: "StudySessionTable"
-#      GlobalSecondaryIndexes:
-#        - IndexName: "UserIdIndex"
-#          KeySchema:
-#            - AttributeName: "UserId"
-#              KeyType: "HASH"
-#          Projection:
-#            ProjectionType: ALL
-#        - IndexName: "SubjectIndex"
-#          KeySchema:
-#            - AttributeName: "Subject"
-#              KeyType: "HASH"
-#          Projection:
-#            ProjectionType: ALL
+      GlobalSecondaryIndexes:
+        - IndexName: "userIdIndex"
+          KeySchema:
+            - AttributeName: "userId"
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: ALL
