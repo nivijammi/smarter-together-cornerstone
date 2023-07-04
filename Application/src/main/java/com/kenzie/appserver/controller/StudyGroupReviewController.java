@@ -71,6 +71,18 @@ public class StudyGroupReviewController {
                 .body(reviewResponseList);
     }
 
+    @GetMapping("/studygroup/ratings/{averageRating}/{discussionTopic}")
+    public ResponseEntity<List<String>> getGroupsWithDesiredAvgRating(@PathVariable String discussionTopic, @PathVariable double averageRating) {
+        List<String> groupIds = reviewService.getGroupsWithDesiredRating(discussionTopic);
+
+        if(groupIds == null || groupIds.isEmpty()){
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity
+                .status(200)
+                .body(groupIds);
+    }
+
     @GetMapping("/studygroup/averageRating/{groupId}")
     public ResponseEntity<Double> getAverageRatingById(@PathVariable String groupId){
         double averageRating = reviewService.calculateAverageRating(groupId);

@@ -25,6 +25,10 @@ public class UserLogInController {
     UserLoginService memberService;
 
 
+    /**
+     *
+     * Vicky - for /v1/user/login use UserAsyncLoginService
+     * */
     @PostMapping("/users/login")
     public ResponseEntity<AddUserLoginResponse> login(@RequestBody UserLoginRequest request) {
 

@@ -1,12 +1,10 @@
 package com.kenzie.appserver.service;
 
-import com.amazonaws.services.ec2.model.EgressOnlyInternetGateway;
 import com.kenzie.appserver.repositories.MemberRepository;
 import com.kenzie.appserver.repositories.model.MemberRecord;
 import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.MemberValidationStatus;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.security.MessageDigest;
@@ -14,92 +12,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
 import java.util.regex.Pattern;
 
+/**
+ * https://stackoverflow.com/questions/67708402/writing-asynchronous-rest-api-using-spring-boot-and-completablefuture-and-its-th
+ */
 @Service
 public class UserAyncLoginService {
-
-    // source: https://stackoverflow.com/questions/8204680/java-regex-email
-
     @Autowired
     private MemberRepository memberRepository;
+    private Executor customForkJoinPoolExecutor = new ForkJoinPool();
+
     public UserAyncLoginService(MemberRepository memberRepository) {
         this.memberRepository = memberRepository;
     }
 
-    private static final Pattern EMAIL_PATTERN = Pattern.compile("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
-
     /**
-     * Checks for email validation
-     * */
-
-    public boolean isValidEmail(String email) {
-        return EMAIL_PATTERN.matcher(email).matches();
-    }
-
-    /**
-     * checks for the length, presence of uppercase and lowercase letters, digits, and special characters.
-     *
-     * @param password
-     * @return
+     * Step towards non-blocking
+     * https://stackoverflow.com/questions/43019126/completablefuture-thenapply-vs-thencompose
      */
-    public boolean isPasswordStrengthGood(String password) {
-        // password validation logic
-        if (password.length() < 8) {
-            return false;
-        }
-
-        boolean hasUppercase = false;
-        boolean hasLowercase = false;
-        boolean hasDigit = false;
-        boolean hasSpecialChar = false;
-
-        // Special characters
-        String charList = "!@#$%^&*()-_+=~`[]{}|:;\"<>,.?/";
-
-        // Iterate over each character in the password
-        for (char c : password.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                hasUppercase = true;
-            } else if (Character.isLowerCase(c)) {
-                hasLowercase = true;
-            } else if (Character.isDigit(c)) {
-                hasDigit = true;
-            } else if (charList.contains(String.valueOf(c))) {
-                hasSpecialChar = true;
-            }
-        }
-        // if all requirements met
-        return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
-
-    }
-
-    // source : https://medium.com/programmers-blockchain/create-simple-blockchain-java-tutorial-from-scratch-6eeed3cb03fa
-    //Applies Sha256 to a string and returns the result.
-    public String hashPassword(String clearText){
-
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            //Applies sha256 to our clearText,
-            byte[] hash = digest.digest(clearText.getBytes("UTF-8"));
-            StringBuffer hashedHexStrBuffer = new StringBuffer(); // This will contain hash as hexidecimal
-            for (int i = 0; i < hash.length; i++) {
-                String hex = Integer.toHexString(0xff & hash[i]);
-                if(hex.length() == 1) hashedHexStrBuffer.append('0');
-                hashedHexStrBuffer.append(hex);
-            }
-            return hashedHexStrBuffer.toString();
-        }catch(Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
     public CompletableFuture<MemberValidationStatus> authenticateUserAsync(String email, String password) {
-        CompletableFuture<MemberValidationStatus> memberValidationStatus = CompletableFuture.supplyAsync(() -> authenticateUser(email, password));
+        CompletableFuture<MemberValidationStatus> memberValidationStatus = CompletableFuture.supplyAsync(() -> authenticateUser(email, password), customForkJoinPoolExecutor);
         return memberValidationStatus;
     }
-
 
     // have time hash it on front end
     // backend should always just see a hash.
@@ -135,46 +72,36 @@ public class UserAyncLoginService {
         return new MemberValidationStatus(true, true);
     }
 
-    public boolean doesUserExist(String email) {
-        //MemberRecord user = memberRepository.findMemberById(userEmail);
-        Optional<MemberRecord> findById = memberRepository.findById(email);
+    // source : https://medium.com/programmers-blockchain/create-simple-blockchain-java-tutorial-from-scratch-6eeed3cb03fa
+    //Applies Sha256 to a string and returns the result.
+    public String hashPassword(String clearText){
 
-        if (findById.isEmpty()) {
-            return false;
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            //Applies sha256 to our clearText,
+            byte[] hash = digest.digest(clearText.getBytes("UTF-8"));
+            StringBuffer hashedHexStrBuffer = new StringBuffer(); // This will contain hash as hexidecimal
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) hashedHexStrBuffer.append('0');
+                hashedHexStrBuffer.append(hex);
+            }
+            return hashedHexStrBuffer.toString();
+        }catch(Exception e) {
+            throw new RuntimeException(e);
         }
-
-        MemberRecord storedUser = findById.get();
-        return true;
     }
 
-    public Member registerUser(Member user) {
-        if (user.getEmail() == null || user.getEmail().isEmpty()) {
-            throw new IllegalArgumentException("Email cannot be empty or null");
-        }
-
-        if (user.getPassword() == null || user.getPassword().isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty or null");
-        }
-        MemberRecord record = new MemberRecord();
-        record.setEmail(user.getEmail());
-        record.setPassword(user.getPassword());
-        memberRepository.save(record);
-        return user;
-    }
-
-    public CompletableFuture<List<String>> getSomethingAsync(String groupId) {
-        CompletableFuture<List<String>> users = CompletableFuture.supplyAsync(() -> getUsers(groupId));
-        return users;
-    }
-
-    private List<String> getUsers(String groupId) {
-        System.out.println(groupId);
-        //Iterable<MemberRecord> memberRecords = memberRepository.findAll();
-        List<String> users = new ArrayList<>();
-        for (int i=0; i<1000; i++){
-            users.add("User"+i);
-        }
-        return users;
-    }
+    //    public CompletableFuture<List<String>> getSomethingAsync(String groupId) {
+    //        CompletableFuture<List<String>> users = CompletableFuture.supplyAsync(() -> getUsers(groupId));
+    //        return users;
+    //    }
+    //    private List<String> getUsers(String groupId) {
+    //        List<String> users = new ArrayList<>();
+    //        for (int i=0; i<1000; i++){
+    //            users.add("User"+i);
+    //        }
+    //        return users;
+    //    }
 }
 

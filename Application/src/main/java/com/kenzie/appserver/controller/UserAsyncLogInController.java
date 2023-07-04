@@ -29,11 +29,11 @@ public class UserAsyncLogInController {
     @Autowired
     UserLoginService userLoginService;
 
-    @GetMapping("/users/{groupId}")
-    public CompletableFuture<List<String>> getAllRegisteredUsers(@PathVariable String groupId) {
-        CompletableFuture<List<String>> response = userAyncLoginService.getSomethingAsync(groupId);
-        return  response;
-    }
+    //    @GetMapping("/users/{groupId}")
+    //    public CompletableFuture<List<String>> getAllRegisteredUsers(@PathVariable String groupId) {
+    //        CompletableFuture<List<String>> response = userAyncLoginService.getSomethingAsync(groupId);
+    //        return  response;
+    //    }
 
     @PostMapping("/users/login")
     @ResponseBody
@@ -59,12 +59,9 @@ public class UserAsyncLogInController {
         }
 
         // Authenticate the user
-        //CompletableFuture<MemberValidationStatus> status = userAyncLoginService.authenticateUserAsync(email, password);
-        CompletableFuture<AddUserLoginResponse> addUserLoginResponseCompletableFuture = userAyncLoginService.authenticateUserAsync(email, password)
-                // checking the MemberValidationStatus to return the AddUserLoginResponse
-                .thenCompose(status -> returnResponse(request.getEmail(), status));
+        CompletableFuture<MemberValidationStatus> memberValidationStatusCompletableFuture = userAyncLoginService.authenticateUserAsync(email, password);
+        CompletableFuture<AddUserLoginResponse> addUserLoginResponseCompletableFuture = memberValidationStatusCompletableFuture.thenCompose(status -> returnResponse(request.getEmail(), status));
         return addUserLoginResponseCompletableFuture;
-
         //    // Scenario #1: User not found
         //    if (!status.isUserFound() && !status.isPasswordMatched()) {
         //        String errorMessage = "User not found and password does not match";

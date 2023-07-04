@@ -200,7 +200,7 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group is added, list of members is added
      * WHEN (Action(s)): get request
      * THEN (Verification steps): 200, groupId, memberId in list are populated
-     * Clean up: restore
+     * Clean up : restore the state of system back to original state
      */
 
     @Test
@@ -533,6 +533,7 @@ public class StudyGroupControllerTest {
      * GIVEN (Preconditions): a study group is added
      * WHEN (Action(s)): get request
      * THEN (Verification steps): 200, the study group is found
+     * Clean up : restore the state of system back to original state
      */
     @Test
     public void getStudyGroupById_successful() throws Exception {

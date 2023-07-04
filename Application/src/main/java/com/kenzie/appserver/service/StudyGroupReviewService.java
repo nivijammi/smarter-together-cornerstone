@@ -1,6 +1,7 @@
 package com.kenzie.appserver.service;
 
 import com.amazonaws.services.dynamodbv2.xspec.S;
+import com.kenzie.appserver.controller.model.GroupReviewResponse;
 import com.kenzie.appserver.controller.model.StudyGroupReviewResponse;
 import com.kenzie.appserver.exception.ReviewNotFoundException;
 import com.kenzie.appserver.repositories.StudyGroupReviewRepository;
@@ -116,6 +117,7 @@ public class StudyGroupReviewService {
         return reviews;
     }
 
+
     public StudyGroupReview buildStudyGroupReview(StudyGroupReviewRecord record){
         StudyGroupReview groupReview = new StudyGroupReview();
         groupReview.setGroupId(record.getGroupId());
@@ -141,8 +143,40 @@ public class StudyGroupReviewService {
         for (StudyGroupReviewRecord reviewRecord  : reviews) {
             totalRating += reviewRecord.getRating();
         }
-         return (reviewCount > 0) ? (double) totalRating / reviewCount : 0.0;
+        double averageRating = (reviewCount > 0) ? (double) totalRating / reviewCount : 0.0;
 
+        return  averageRating;
+
+    }
+
+    public List<String> getGroupsWithDesiredRating(String discussionTopic) {
+        List<String> groupsWithFiveRating = new ArrayList<>();
+        List<String> groupsWithFourRating = new ArrayList<>();
+        List<String> groupsWithThreeOrLessRating = new ArrayList<>();
+
+        Iterable<StudyGroupReviewRecord> allRecords = reviewRepository.findAll();
+
+        for (StudyGroupReviewRecord reviewRecord : allRecords) {
+            if(Objects.equals(reviewRecord.getDiscussionTopic(), discussionTopic)) {
+                String groupId = reviewRecord.getGroupId();
+                double averageRating = calculateAverageRating(groupId);
+
+                if (averageRating == 5.0) {
+                    groupsWithFiveRating.add(groupId);
+                } else if (averageRating == 4.0) {
+                    groupsWithFourRating.add(groupId);
+                } else {
+                    groupsWithThreeOrLessRating.add(groupId);
+                }
+            }
+        }
+        if (!groupsWithFiveRating.isEmpty()) {
+            return groupsWithFiveRating;
+        } else if (!groupsWithFourRating.isEmpty()) {
+            return groupsWithFourRating;
+        } else {
+            return groupsWithThreeOrLessRating;
+        }
     }
 
     public void deleteGroupFromReviewRecord(String groupId) {
