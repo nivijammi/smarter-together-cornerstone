@@ -1,40 +1,93 @@
-<!DOCTYPE html>
 <html>
 <head>
+    <title>Smarter Together | Home</title>
+    <link rel="stylesheet" type="text/css" href="./css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <script type="text/javascript" src="examplePage.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/style.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
 </head>
-<body class="background">
-    <header class="header" id="header">
-        <div class="site-title">
-            <a class="header_home" href="index.html">Example App</a>
+<body>
+
+<header>
+    <div class="header">
+        <div class="inner-header">
+            <div class="logo">
+                <div class="img-container"><img src="images/4(1).png"></div>
+                <a href="index.html"><h1>Smarter<span>Together</span></h1></a>
+            </div>
+
+            <ul class="navigation">
+                <a href="create-account.html"><li>Create Account</li></a>
+                <a href="signin.html"><li> Sign In</li></a>
+            </ul>
         </div>
-    </header>
-    <div class="card">
-        <h2>Create Example</h2>
-        <form class="card-content" id="create-form">
-            <p class="form-field">
-                <label>Name</label>
-                <input type="text" required class="validated-field" id="create-name-field">
-            </p>
-            <button type="submit">Create</button>
-        </form>
     </div>
-    <div class="card">
-        <h2>Get By ID</h2>
-        <form class="card-content" id="get-by-id-form">
-            <p class="form-field">
-                <label>ID</label>
-                <input type="text" required class="validated-field" id="id-field">
-            </p>
-            <button type="submit">Get</button>
-        </form>
+</header>
+
+<div class="body">
+
+    <div class="info">
+        <table>
+            <caption><b>How it works</b></caption>
+            <thead>
+            <tr>
+                <th>Create an account</th>
+                <th>Search for a topic of intetest</th>
+                <th>Create a study goal</th>
+                <th>Enhance your study habits</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr>
+                <td>Sign up or sign in.</td>
+                <td>Use the search page to look for a topic of interest.</td>
+                <td>Have a goal in mind?</td>
+                <td>Create realistic goals and stick with it!</td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td>Once you find a topic, add it to your list.</td>
+                <td>Set your desired number of hours you'll study per month.</td>
+                <td>Use our analytics tools to see your progress in real time.</td>
+            </tr>
+            </tbody>
+        </table>
     </div>
-    <div class="card" id="result">
-        <h2>Result:</h2>
-        <p id="result-info"></p>
+
+</div>
+<footer>
+    <div class="footer">
+        <div class="inner-footer">
+            <div class="logo-container">
+                <h1>Smarter<span>Together</span></h1>
+            </div>
+
+            <div class="footer-third">
+                <h1>Legal</h1>
+                <a>Terms & Conditions</a>
+                <a>Privacy Policy</a>
+                <a>Cookie Policy</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Learn More</h1>
+                <a>Community</a>
+                <a>Product Help</a>
+                <a>Contact Us</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Company</h1>
+                <a>Careers</a>
+                <a>Affiliates</a>
+            </div>
+        </div>
     </div>
+</footer>
+
 
 </body>
 </html>
