@@ -526,7 +526,7 @@ public class StudyGroupServiceTest {
 
     /**
      * ---------------------------------------------------------------------------------
-     *  StudyGroup updated - cached Study Group eveicted
+     *  StudyGroup updated - cached Study Group evicted
      * ---------------------------------------------------------------------------------
      */
 

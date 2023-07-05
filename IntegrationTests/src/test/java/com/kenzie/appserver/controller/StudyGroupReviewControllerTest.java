@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,6 +27,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @IntegrationTest
@@ -405,6 +407,95 @@ public class StudyGroupReviewControllerTest {
             Assertions.assertNotEquals(expectedAverageRating, actualAverageRating, 0.01);
         }
     }
+
+    /**
+     * ------------------------------------------------------------------------
+     * Get groups with desired ratings by topic
+     * ------------------------------------------------------------------------
+     * <p>
+     * Acceptance criteria: find study group by desired rating by topic
+     * Endpoint(s) tested: "/v1""/studygroup/ratings/{averageRating}/{discussionTopic}"
+     * GIVEN (Preconditions): study groups with ratings are added
+     * WHEN (Action(s)): get request
+     * THEN (Verification steps): 200 error code, groups with the expected ratings are displayed
+     * Clean up: tear down the created study group set up and restore the state
+     */
+
+    @Test
+    public void getGroupsWithDesiredAvgRatingByTopic_successful() throws Exception {
+
+        String discussionTopic = "Threads";
+        double averageRating = 4.0;
+
+        String groupId1 = "1";
+        String reviewId1 = "review123";
+        String groupName1 = "group123";
+        double rating1 = 4.8;
+        String reviewComments1 = "A good session";
+        double averageRating1 = 4.8;
+
+        String groupId2 = "2";
+        String reviewId2 = "review123";
+        String groupName2 = "group123";
+        double rating2 = 4.9;
+        String reviewComments2 = "A really good session";
+        double averageRating2 = 4.9;
+
+        String groupId3 = "2";
+        String reviewId3 = "review456";
+        String groupName3 = "group456";
+        double rating3 = 4.9;
+        String reviewComments3 = "perfect for me";
+        double averageRating3 = 4.9;
+
+        List<StudyGroupReview> reviewList = new ArrayList<>();
+        StudyGroupReview reviewByTopic1 = new StudyGroupReview(groupId1, groupName1, reviewId1, discussionTopic, rating1, averageRating1, reviewComments1);
+        reviewList.add(reviewByTopic1);
+        StudyGroupReview reviewByTopic2 = new StudyGroupReview(groupId2, groupName2, reviewId2, discussionTopic, rating2, averageRating2, reviewComments2);
+        reviewList.add(reviewByTopic2);
+        StudyGroupReview reviewByTopic3 = new StudyGroupReview(groupId3, groupName3, reviewId3, discussionTopic, rating3, averageRating3, reviewComments3);
+        reviewList.add(reviewByTopic3);
+
+        for (StudyGroupReview review : reviewList) {
+            reviewService.submitStudyGroupReview(review);
+        }
+
+
+        ResultActions actions = mvc.perform(get("/v1/studygroup/ratings/{averageRating}/{discussionTopic}", averageRating, discussionTopic)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is2xxSuccessful());
+
+
+        String responseBody = actions.andReturn().getResponse().getContentAsString();
+        System.out.println(responseBody);
+
+        Map<String, Double> responseMap = mapper.readValue(responseBody, new TypeReference<Map<String, Double>>() {});
+
+        assertEquals(2, responseMap.size());
+
+        assertEquals(4.8, responseMap.get("1"), 0.001);
+        assertEquals(4.9, responseMap.get("2"), 0.001);
+
+        reviewService.deleteGroupFromReviewRecord(groupId1);
+
+    }
+
+    @Test
+    public void getGroupsWithDesiredAvgRatingByTopic_unsuccessful() throws Exception {
+
+        String discussionTopic = "Threads";
+        double averageRating = 4.0;
+
+        ResultActions actions = mvc.perform(get("/v1/studygroup/ratings/{averageRating}/{discussionTopic}", averageRating, discussionTopic)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(jsonPath("$.message").value("Desired rating not found for topic: Threads"));
+    }
+
+
+
+
+
 }
 
 

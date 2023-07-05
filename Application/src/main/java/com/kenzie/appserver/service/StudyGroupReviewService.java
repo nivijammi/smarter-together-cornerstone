@@ -133,9 +133,95 @@ public class StudyGroupReviewService {
 
 
 
+
+//
+//    public List<String> getGroupsWithDesiredRating1(String discussionTopic, double rating) {
+//
+//        final double HIGHEST_RATING = 5.0;
+//        Map<String, List<Double>> groupRatings = new HashMap<>();
+//
+//
+//        Iterable<StudyGroupReviewRecord> allRecords = reviewRepository.findAll();
+//
+//        if(allRecords !=null) {
+//
+//            for (StudyGroupReviewRecord reviewRecord : allRecords) {
+//                if (Objects.equals(reviewRecord.getDiscussionTopic(), discussionTopic)) {
+//                    String groupId = reviewRecord.getGroupId();
+//                    double averageRating = calculateAverageRating(groupId);
+//
+//                    if (averageRating >= rating) {
+//                        groupRatings.putIfAbsent(groupId, new ArrayList<>());
+//                        groupRatings.get(groupId).add(averageRating);
+//                    }
+//                }
+//            }
+//        }
+//        Map<String, Double> condensedResult = new HashMap<>();
+//        for (Map.Entry<String, List<Double>> entry : groupRatings.entrySet()) {
+//            String groupId = entry.getKey();
+//            List<Double> ratings = entry.getValue();
+//            double averageRating = ratings.stream().mapToDouble(Double::doubleValue).average().orElse(0.0);
+//
+//            condensedResult.put(groupId, averageRating);
+//        }
+//        return groupsWithDesiredRating;
+//    }
+
+    public Map<String, Double> getGroupsWithDesiredRating(double rating,String discussionTopic) {
+        // Map to store ids and ratings
+        Map<String, List<Double>> groupRatings = new HashMap<>();
+
+        // all records
+        Iterable<StudyGroupReviewRecord> allRecords = reviewRepository.findAll();
+
+
+        for (StudyGroupReviewRecord reviewRecord : allRecords) {
+            // Check if the discussion topic matches the desired topic
+            if (Objects.equals(reviewRecord.getDiscussionTopic(), discussionTopic)) {
+                String groupId = reviewRecord.getGroupId();
+                double currentRating = reviewRecord.getRating();
+
+                // Check if the average rating greater or equal to desired rating
+                if (currentRating >= rating) {
+                    // If the group ID is already present in the map, add the rating to its list
+                    // Otherwise, create a new list and add the rating to it
+                    if (groupRatings.containsKey(groupId)) {
+                        groupRatings.get(groupId).add(currentRating);
+                    } else {
+                        List<Double> ratings = new ArrayList<>();
+                        ratings.add(currentRating);
+                        groupRatings.put(groupId, ratings);
+                    }
+                }
+            }
+        }
+
+        //  Condensed result with group IDs and their average ratings
+        Map<String, Double> condensedResult = new HashMap<>();
+
+        // Calculate the average rating for each group and add it to the condensed result map
+        for (Map.Entry<String, List<Double>> entry : groupRatings.entrySet()) {
+            String groupId = entry.getKey();
+            List<Double> ratings = entry.getValue();
+
+            // Calculate the average rating by taking the sum and dividing it by the number of ratings
+            //double averageRating = calculateAverageRating(groupId);
+            double sum = 0.0;
+            for (double ratingValue : ratings) {
+                sum += ratingValue;
+            }
+            double average = sum / ratings.size();
+
+            condensedResult.put(groupId, average);
+        }
+
+        // Return the condensed result map
+        return condensedResult;
+    }
+
     public double calculateAverageRating(String id) {
         Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(id);
-        //List<StudyGroupReviewRecord> reviews = byGroupId.get();
         List<StudyGroupReviewRecord> reviews = byGroupId.orElse(Collections.emptyList());
         double totalRating = 0;
         double reviewCount = reviews.size();
@@ -149,35 +235,6 @@ public class StudyGroupReviewService {
 
     }
 
-    public List<String> getGroupsWithDesiredRating(String discussionTopic) {
-        List<String> groupsWithFiveRating = new ArrayList<>();
-        List<String> groupsWithFourRating = new ArrayList<>();
-        List<String> groupsWithThreeOrLessRating = new ArrayList<>();
-
-        Iterable<StudyGroupReviewRecord> allRecords = reviewRepository.findAll();
-
-        for (StudyGroupReviewRecord reviewRecord : allRecords) {
-            if(Objects.equals(reviewRecord.getDiscussionTopic(), discussionTopic)) {
-                String groupId = reviewRecord.getGroupId();
-                double averageRating = calculateAverageRating(groupId);
-
-                if (averageRating == 5.0) {
-                    groupsWithFiveRating.add(groupId);
-                } else if (averageRating == 4.0) {
-                    groupsWithFourRating.add(groupId);
-                } else {
-                    groupsWithThreeOrLessRating.add(groupId);
-                }
-            }
-        }
-        if (!groupsWithFiveRating.isEmpty()) {
-            return groupsWithFiveRating;
-        } else if (!groupsWithFourRating.isEmpty()) {
-            return groupsWithFourRating;
-        } else {
-            return groupsWithThreeOrLessRating;
-        }
-    }
 
     public void deleteGroupFromReviewRecord(String groupId) {
         Optional<List<StudyGroupReviewRecord>> byGroupId = reviewRepository.findByGroupId(groupId);

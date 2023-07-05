@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 
 @RestController
@@ -72,15 +70,17 @@ public class StudyGroupReviewController {
     }
 
     @GetMapping("/studygroup/ratings/{averageRating}/{discussionTopic}")
-    public ResponseEntity<List<String>> getGroupsWithDesiredAvgRating(@PathVariable String discussionTopic, @PathVariable double averageRating) {
-        List<String> groupIds = reviewService.getGroupsWithDesiredRating(discussionTopic);
+    public ResponseEntity<Map<String, ?>> getGroupsWithDesiredAvgRatingByTopic(@PathVariable double averageRating, @PathVariable String discussionTopic) {
+        Map<String, Double> groupsWithDesiredRating = reviewService.getGroupsWithDesiredRating(averageRating,discussionTopic);
 
-        if(groupIds == null || groupIds.isEmpty()){
-            return ResponseEntity.noContent().build();
+        if(groupsWithDesiredRating == null || groupsWithDesiredRating.isEmpty()){
+            Map<String, String> errorResponse = new HashMap<>();
+            errorResponse.put("message", "Desired rating not found for topic: " + discussionTopic);
+            return ResponseEntity.status(400).body(errorResponse);
         }
         return ResponseEntity
                 .status(200)
-                .body(groupIds);
+                .body(groupsWithDesiredRating);
     }
 
     @GetMapping("/studygroup/averageRating/{groupId}")
