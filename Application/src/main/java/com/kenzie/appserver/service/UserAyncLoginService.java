@@ -32,6 +32,7 @@ public class UserAyncLoginService {
     /**
      * Step towards non-blocking
      * https://stackoverflow.com/questions/43019126/completablefuture-thenapply-vs-thencompose
+     *
      */
     public CompletableFuture<MemberValidationStatus> authenticateUserAsync(String email, String password) {
         CompletableFuture<MemberValidationStatus> memberValidationStatus = CompletableFuture.supplyAsync(() -> authenticateUser(email, password), customForkJoinPoolExecutor);

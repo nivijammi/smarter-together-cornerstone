@@ -168,7 +168,7 @@ public class UserLogInServiceTest {
     public void doesUserExist_NonExistingUser() {
         String email = "person@aol.com";
 
-        Mockito.when(memberRepository.findById(email)).thenReturn(Optional.empty());
+        when(memberRepository.findById(email)).thenReturn(Optional.empty());
 
         boolean result = subject.doesUserExist(email);
 

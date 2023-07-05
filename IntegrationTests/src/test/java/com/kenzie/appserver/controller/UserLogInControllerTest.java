@@ -61,10 +61,6 @@ public class UserLogInControllerTest {
         Member user = new Member(email, hashedPassword);
 
         userLoginService.registerUser(user);
-        userLoginService.isValidEmail(email);
-        userLoginService.isPasswordStrengthGood(password);
-        userLoginService.hashPassword(password);
-        userLoginService.doesUserExist(email);
 
 
         ResultActions actions = mvc.perform(post("/v1/users/login")
@@ -107,10 +103,6 @@ public class UserLogInControllerTest {
         Member user = new Member(email, password);
 
         userLoginService.registerUser(user);
-        userLoginService.isValidEmail(email);
-        userLoginService.isPasswordStrengthGood(password);
-        userLoginService.hashPassword(password);
-        userLoginService.doesUserExist(email);
 
         // WHEN
         ResultActions actions = mvc.perform(post("/v1/users/login")
@@ -142,10 +134,6 @@ public class UserLogInControllerTest {
         Member user = new Member(email, hashedPassword);
 
         userLoginService.registerUser(user);
-        userLoginService.isValidEmail(email);
-        userLoginService.isPasswordStrengthGood(password);
-        userLoginService.hashPassword(password);
-        userLoginService.doesUserExist(email);
 
         // WHEN
         ResultActions actions = mvc.perform(post("/v1/users/login")
