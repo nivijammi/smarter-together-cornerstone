@@ -20,8 +20,6 @@ public class CacheStore {
                 .build();
     }
 
-
-
     public StudyGroup get(String key) {
         // Retrieve and return the studyGroup
         return cache.getIfPresent(key);

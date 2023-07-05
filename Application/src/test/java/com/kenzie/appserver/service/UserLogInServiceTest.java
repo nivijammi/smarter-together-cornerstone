@@ -21,7 +21,6 @@ import static org.mockito.Mockito.*;
 
 public class UserLogInServiceTest {
 
-
     private MemberRepository memberRepository;
     private UserLoginService subject;
 
@@ -107,21 +106,28 @@ public class UserLogInServiceTest {
 
     @Test
     public void authenticateUser_validatePassword_PasswordMatches() {
+        // 2. Mock your params
         String email = "person@aol.com";
         String password = "amethyst";
         String hashedPassword = "88670bf6f7563a74404a67a9f22b0c09d6fe5e458e0a7568aa6efa73baf8825e";
 
+        // 3. mocking repo
         MemberRecord storedUser = new MemberRecord();
         storedUser.setEmail(email);
         storedUser.setPassword(hashedPassword);
 
+        // step 3: mock the calls
         when(memberRepository.findById(email)).thenReturn(Optional.of(storedUser));
 
+        // 1. method under test - actual result
+        //   returnType result =  classIamTesting.methodIamTesting(if it has parameters)
         MemberValidationStatus result = subject.authenticateUser(email, password);
 
+        // 4. assert the values of method under test
         assertTrue(result.isUserFound());
         assertTrue(result.isPasswordMatched());
-        verify(memberRepository).findById(email);
+        // 5. verify
+        verify(memberRepository, times(1)).findById(email);
     }
     @Test
     public void authenticateUser_validatePassword_PasswordDoesNotMatches() {
@@ -162,7 +168,7 @@ public class UserLogInServiceTest {
     public void doesUserExist_NonExistingUser() {
         String email = "person@aol.com";
 
-        Mockito.when(memberRepository.findById(email)).thenReturn(Optional.empty());
+        when(memberRepository.findById(email)).thenReturn(Optional.empty());
 
         boolean result = subject.doesUserExist(email);
 
