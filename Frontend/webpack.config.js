@@ -45,55 +45,55 @@ module.exports = {
       inject: false
     }),
     new HtmlWebpackPlugin({
-              template: './src/create-account.html',
-              filename: 'create-account.html',
-              inject: false
-            }),
-        new HtmlWebpackPlugin({
-                  template: './src/create-session.html',
-                  filename: 'create-session.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-                  template: './src/dashboard.html',
-                  filename: 'dashboard.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-                  template: './src/index.html',
-                  filename: 'index.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-                  template: './src/my-account.html',
-                  filename: 'my-account.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-                  template: './src/my-group.html',
-                  filename: 'my-group.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-              template: './src/notes.html',
-              filename: 'notes.html',
-              inject: false
-            }),
-        new HtmlWebpackPlugin({
-                  template: './src/search-sessions.html',
-                  filename: 'search-sessions.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-                  template: './src/signin.html',
-                  filename: 'signin.html',
-                  inject: false
-                }),
-        new HtmlWebpackPlugin({
-                      template: './src/study-group.html',
-                      filename: 'study-group.html',
-                      inject: false
-                    })
+      template: './src/create-account.html',
+      filename: 'create-account.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/create-session.html',
+      filename: 'create-session.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/dashboard.html',
+      filename: 'dashboard.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/index.html',
+      filename: 'index.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/my-account.html',
+      filename: 'my-account.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/my-group.html',
+      filename: 'my-group.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/notes.html',
+      filename: 'notes.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/search-sessions.html',
+      filename: 'search-sessions.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/signin.html',
+      filename: 'signin.html',
+      inject: false
+    }),
+    new HtmlWebpackPlugin({
+      template: './src/study-group.html',
+      filename: 'study-group.html',
+      inject: false
+    }),
     new CopyPlugin({
       patterns: [
         {

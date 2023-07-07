@@ -86,15 +86,14 @@
 .body{
     top: 250px;
     width: 100%;
-    height: 1100px;
-    display: block;
+    height: 1000px;
     background-color: #fafaf0;
 }
 
 .body{
     display: grid;
     grid-template-columns: .2fr .9fr;
-    grid-template-rows: .25fr .55fr;
+    grid-template-rows: .25fr .75fr;
 }
 
 /* Sidebar with info */
@@ -240,9 +239,9 @@
     margin-bottom: 20px;
 }
 
-/* Goals, topic, update account */
+/* Search and Results */
 
-.goals-container{
+.create-session-container{
     height: 100%;
     width: 100%;
     grid-area: 1 / 2 / 2 / 3;
@@ -251,78 +250,49 @@
     justify-content: center;
 }
 
-.topic{
+.session{
     border: double 3px #003e29;
     width: 45%;
     height: 180px;
     flex-direction: column;
     display: table;
-    margin-top: 30px;
+    margin: 30px;
 }
 
-.topic h2{
+.session h2{
     font-size: 30;
     font-family: 'Roboto Condensed', sans-serif;
     margin: 10px 10px;
 }
 
-.topic form{
+.session form{
     display: flex;
     flex-direction: column;
 }
 
-.topic input{
+.session input{
     margin: 10px 10px;
     height: 30px;
-    width: 250px;
+    width: 350px;
     padding-left: 3px;
     outline: none;
     border: none;
     border: solid 2px #003e29;
 }
 
-.topic button{
-    width: 100px;
-    height: 35px;
-    margin-top: 70%;
-    margin: 10px 10px;
-    border: solid 2px #003e29;
-    border-radius: 10px;
-    background-color: #003e29;
-    color: FEFEE2;
-}
-
-.set-goal{
-    border: double 3px #003e29;
-    width: 45%;
-    height: 180px;
-    flex-direction: column;
-    display: table;
-    margin: 30px 0px;
-}
-
-.set-goal h2{
-    font-size: 30;
-    font-family: 'Roboto Condensed', sans-serif;
-    margin: 10px 10px;
-}
-
-.set-goal form{
-    display: flex;
-    flex-direction: column;
-}
-
-.set-goal input{
-    margin: 10px 10px;
-    height: 30px;
-    width: 250px;
-    padding-left: 3px;
-    outline: none;
+input[type="date"]::-webkit-calendar-picker-indicator{
+    background-color: transparent;
+    color: transparent;
     border: none;
-    border: solid 2px #003e29;
+    display: inline-block;
+    cursor: pointer;
+    width: 250px;
+    height: 30px;
+    position: absolute;
+    opacity: 0;
 }
 
-.set-goal button{
+.session button{
     width: 100px;
     height: 35px;
     margin: 10px 10px;
@@ -332,7 +302,7 @@
     color: FEFEE2;
 }
 
-.user-info-container{
+.edit-container{
     grid-area: 2 / 2 / 3 / 3;
     height: 100%;
     width: 100%;
@@ -342,8 +312,7 @@
     flex-direction: column;
 }
 
-
-.user-info{
+.update-session{
     border: double 3px #003e29;
     width: 45%;
     height: 180px;
@@ -352,28 +321,50 @@
     margin-bottom: 30px;
 }
 
-.user-info h2{
+.update-session h2{
     font-size: 30;
     font-family: 'Roboto Condensed', sans-serif;
     margin: 10px 10px;
 }
 
-.user-info form{
+.update-session form{
     display: flex;
     flex-direction: column;
 }
 
-.user-info input{
+.update-session select{
     margin: 10px 10px;
     height: 30px;
-    width: 250px;
+    width: 350px;
     padding-left: 3px;
     outline: none;
     border: none;
     border: solid 2px #003e29;
 }
 
-.user-info button{
+.update-session input{
+    margin: 10px 10px;
+    height: 30px;
+    width: 350px;
+    padding-left: 3px;
+    outline: none;
+    border: none;
+    border: solid 2px #003e29;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator{
+    background-color: transparent;
+    color: transparent;
+    border: none;
+    display: inline-block;
+    cursor: pointer;
+    width: 250px;
+    height: 30px;
+    position: absolute;
+    opacity: 0;
+}
+
+.update-session button{
     width: 100px;
     height: 35px;
     margin: 10px 10px;
@@ -383,40 +374,38 @@
     color: FEFEE2;
 }
 
-.resources{
+.delete-session{
     border: double 3px #003e29;
     width: 45%;
     height: 180px;
     flex-direction: column;
     display: table;
-    margin-bottom: 30px;
 }
 
-.resources h2{
+.delete-session h2{
     font-size: 30;
     font-family: 'Roboto Condensed', sans-serif;
     margin: 10px 10px;
 }
 
-.resources form{
+.delete-session form{
     display: flex;
     flex-direction: column;
 }
 
-.resources input{
+.delete-session select{
     margin: 10px 10px;
     height: 30px;
-    width: 250px;
+    width: 350px;
     padding-left: 3px;
     outline: none;
     border: none;
     border: solid 2px #003e29;
 }
 
-.resources button{
+.delete-session button{
     width: 100px;
     height: 35px;
-    margin-top: 70%;
     margin: 10px 10px;
     border: solid 2px #003e29;
     border-radius: 10px;
