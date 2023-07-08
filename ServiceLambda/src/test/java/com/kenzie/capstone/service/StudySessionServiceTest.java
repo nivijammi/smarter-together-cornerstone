@@ -9,6 +9,7 @@ import com.kenzie.capstone.service.model.StudySession;
 import com.kenzie.capstone.service.model.StudySessionRecord;
 import com.kenzie.capstone.service.model.StudySessionRequest;
 import com.kenzie.capstone.service.model.StudySessionResponse;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -38,6 +39,7 @@ public class StudySessionServiceTest {
         this.studySessionDao = mock(StudySessionDao.class);
         this.studySessionService = new StudySessionService(studySessionDao);
     }
+
 
     /*****************************************
 
@@ -140,17 +142,18 @@ public class StudySessionServiceTest {
 
         //WHEN
 
-        when(studySessionDao.deleteStudySession(record)).thenReturn(true);
+        when(studySessionDao.deleteStudySession(any())).thenReturn(true);
         boolean delete = studySessionService.deleteStudySession(sessionId);
 //        when(delete).thenReturn(true);
 
         //THEN
 //        verify(studySessionDao, times(1)).addStudySession(studySessionCaptor.capture());
+        //TODO implement clean up so it passes when ran individually... Needs to be 1 when ran by itself
         verify(studySessionDao, times(2)).deleteStudySession(studySessionCaptor.capture());
 //        verify(studySessionDao).deleteStudySession(studySessionCaptor.capture());
 //        StudySessionRecord record = studySessionCaptor.getValue();
 //        System.out.println(record.toString());
-//        assertTrue(delete);
+        assertTrue(delete);
 
 //        assertNull(record);
     }
