@@ -6,7 +6,8 @@ export default class StudyGroupClient extends BaseClass {
     constructor(props = {}){
         super();
         this.bindClassMethods(['clientLoaded', 'addNewStudyGroup', 'getStudyGroupById', 'getAllStudyGroups',
-        'updateStudyGroup', 'deleteStudyGroup', 'addMemberToStudyGroup', 'getStudyGroupMembers', 'removeMemberFromStudyGroup', 'removeAllMemberFromStudyGroup'], this);
+        'updateStudyGroup', 'deleteStudyGroup', 'addMemberToStudyGroup', 'getStudyGroupMembers',
+        'removeMemberFromStudyGroup', 'removeAllMemberFromStudyGroup'], this);
         this.props = props;
         this.clientLoaded(axios);
     }
@@ -22,68 +23,97 @@ export default class StudyGroupClient extends BaseClass {
         }
     }
 
- /**
-     * Gets the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     * @returns the flight
-     */
-    async addSession(id, errorCallback) {
+    async addNewStudyGroup(groupName, discussionTopic, creationDate, active, errorCallback) {
         try {
-            const response = await this.client.post(`/add`);
+            const response = await this.client.post(`/v1/groups`,
+            {
+                groupName: groupName,
+                discussionTopic: discussionTopic,
+                creationDate: creationDate,
+                active: active
+            });
             return response.data;
         } catch (error) {
-            this.handleError("addSession", error, errorCallback)
+            this.handleError("addNewStudyGroup", error, errorCallback)
         }
     }
 
-/**
-     * Deletes the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     */
-    async getSessionBySessionId(id, errorCallback){
+    async getStudyGroupById(groupId, errorCallback){
         try{
-            const response = await this.client.get(`/session/${sessionId}`);
+            const response = await this.client.get(`/v1/groups/{groupId}`);
             return response.data;
         } catch (error) {
-            this.handleError("GetSessionBySessionId", error, errorCallback);
+            this.handleError("getStudyGroupById", error, errorCallback);
         }
     }
 
-    async getSessionsBySubject(subject, errorCallback){
+    async getAllStudyGroups(errorCallback){
         try{
-            const response = await this.client.get(`/subject/${subject}`);
+            const response = await this.client.get(`/v1/groups`);
             return response.data;
         } catch (error) {
-            this.handleError("getSessionsBySubject", error, errorCallback);
+            this.handleError("getAllStudyGroups", error, errorCallback);
         }
     }
 
-    async getSessionsByUserId(userId, errorCallback){
+    async updateStudyGroup(groupId, groupName, discussionTopic, creationDate, active, errorCallback){
         try{
-            const response = await this.client.get(`/${userId}`);
+            const response = await this.client.put(`/v1/groups/{groupId}`,
+            {
+                groupName: groupName,
+                discussionTopic: discussionTopic,
+                creationDate: creationDate,
+                active: active
+            });
             return response.data;
         } catch (error) {
-            this.handleError("getSessionsByUserId", error, errorCallback);
+            this.handleError("updateStudyGroup", error, errorCallback);
         }
     }
 
-    async getAllSessions(errorCallback){
+    async deleteStudyGroup(groupId, errorCallback){
         try{
-            const response = await this.client.get(`/all`);
+            const response = await this.client.delete(`/v1/groups/{groupId}`);
             return response.data;
         } catch (error) {
-            this.handleError("getAllSessions", error, errorCallback);
+            this.handleError("deleteStudyGroup", error, errorCallback);
         }
     }
 
-    async deleteSession(id, errorCallback){
+    //Member Methods
+    async addMemberToStudyGroup(groupId, memberId, errorCallback){
         try{
-            const response = await this.client.get(`/delete/${sessionId}`);
+            const response = await this.client.post(`/v1/groups/{groupId}/members/{memberId}`);
             return response.data;
         } catch (error) {
-            this.handleError("deleteSession", error, errorCallback);
+            this.handleError("addMemberToStudyGroup", error, errorCallback);
+        }
+    }
+
+    async getStudyGroupMembers(groupId, errorCallback){
+        try{
+            const response = await this.client.get(`/v1/groups/{groupId}/members/`);
+            return response.data;
+        } catch (error) {
+            this.handleError("getStudyGroupMembers", error, errorCallback);
+        }
+    }
+
+    async removeMemberFromStudyGroup(groupId, memberId, errorCallback){
+        try{
+            const response = await this.client.delete(`/v1/groups/{groupId}/members/{memberId}`);
+            return response.data;
+        } catch (error) {
+            this.handleError("removeMemberFromStudyGroup", error, errorCallback);
+        }
+    }
+
+    async removeAllMemberFromStudyGroup(groupId, errorCallback){
+        try{
+            const response = await this.client.delete(`/v1/groups/{groupId}/members`);
+            return response.data;
+        } catch (error) {
+            this.handleError("removeAllMemberFromStudyGroup", error, errorCallback);
         }
     }
 

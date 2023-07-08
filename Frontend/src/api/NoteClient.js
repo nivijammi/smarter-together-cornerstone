@@ -27,9 +27,9 @@ export default class NoteClient extends BaseClass {
      * @param errorCallback (Optional) A function to execute if the call fails.
      * @returns the flight
      */
-    async createNote(id, errorCallback) {
+    async createNote(noteId, userId, content, createdDateTime, updatedDateTime, errorCallback) {
         try {
-            const response = await this.client.post(`/add`);
+            const response = await this.client.post(`/v1/notes/create`);
             return response.data;
         } catch (error) {
             this.handleError("createNote", error, errorCallback)
@@ -41,27 +41,27 @@ export default class NoteClient extends BaseClass {
      * @param id Unique identifier for a concert
      * @param errorCallback (Optional) A function to execute if the call fails.
      */
-    async getNoteById(id, errorCallback){
+    async getNoteById(noteId, errorCallback){
         try{
-            const response = await this.client.get(`/session/${sessionId}`);
+            const response = await this.client.get(`/v1/notes/{noteId}`);
             return response.data;
         } catch (error) {
             this.handleError("getNoteById", error, errorCallback);
         }
     }
 
-    async updateNote(id, errorCallback){
+    async updateNote(noteId, userId, content, createdDateTime, updatedDateTime, errorCallback){
         try{
-            const response = await this.client.get(`/subject/${subject}`);
+            const response = await this.client.put(`/v1/notes/{noteId}`);
             return response.data;
         } catch (error) {
             this.handleError("updateNote", error, errorCallback);
         }
     }
 
-    async deleteStudyGroup(userId, errorCallback){
+    async deleteStudyGroup(noteId, errorCallback){
         try{
-            const response = await this.client.get(`/${userId}`);
+            const response = await this.client.delete(`/v1/notes/{noteId}`);
             return response.data;
         } catch (error) {
             this.handleError("deleteStudyGroup", error, errorCallback);

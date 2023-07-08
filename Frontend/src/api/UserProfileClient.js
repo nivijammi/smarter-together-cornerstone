@@ -21,47 +21,50 @@ export default class UserProfileClient extends BaseClass {
         }
     }
 
- /**
-     * Gets the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     * @returns the flight
-     */
-    async addNewUser(firstName, lastName, email, username, pswd, creationDate, errorCallback) {
+    async addNewUser(firstName, lastName, email, password, creationDate, errorCallback) {
         try {
-            const response = await this.client.post(`/add`);
+            const response = await this.client.post(`/v1/users`,
+            {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password,
+                creationDate: creationDate
+            });
             return response.data;
         } catch (error) {
             this.handleError("addNewUser", error, errorCallback)
         }
     }
 
-/**
-     * Deletes the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     */
-    async updateUserProfile(id, errorCallback){
+    async updateUserProfile(email, firstName, lastName, password, creationDate, errorCallback){
         try{
-            const response = await this.client.get(`/session/${sessionId}`);
+            const response = await this.client.put(`/v1/{userID}`,
+            {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                password: password,
+                creationDate: creationDate
+            });
             return response.data;
         } catch (error) {
             this.handleError("updateUserProfile", error, errorCallback);
         }
     }
 
-    async getUserById(id, errorCallback){
+    async getUserById(userId, errorCallback){
         try{
-            const response = await this.client.get(`/subject/${subject}`);
+            const response = await this.client.get(`/v1/{userID}`);
             return response.data;
         } catch (error) {
             this.handleError("getUserById", error, errorCallback);
         }
     }
 
-    async deleteUserById(id, errorCallback){
+    async deleteUserById(userId, errorCallback){
         try{
-            const response = await this.client.delete(`/delete/${userId}`);
+            const response = await this.client.delete(`/v1/{userID}`);
             return response.data;
         } catch (error) {
             this.handleError("deleteUserById", error, errorCallback);

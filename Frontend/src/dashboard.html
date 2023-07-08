@@ -1,7 +1,9 @@
 <html>
 <head>
     <title>Smarter Together | Dashboard</title>
+    <script rel="script" type="text/javascript" src="dashboardPage.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/dashboard-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
@@ -12,11 +14,12 @@
     <div class="header">
         <div class="inner-header">
             <div class="logo">
-                <div class="img-container"><img src="images/4(1).png"></div>
+                <div class="img-container"><img src="css/logo.png"></div>
                 <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
             </div>
 
             <ul class="navigation">
+                <a href="notes.html"><li>Notes</li></a>
                 <a href="study-group.html"><li>Study Groups</li></a>
                 <a href="search-sessions.html"><li>Study Sessions</li></a>
                 <a href="my-group.html"><li>My Groups</li></a>
@@ -37,6 +40,9 @@
         <div class="graph-container">
 
             <div class="graph">
+                <h2>My Study Hours</h2>
+
+                <div class="bar-graph"></div>
 
             </div>
 

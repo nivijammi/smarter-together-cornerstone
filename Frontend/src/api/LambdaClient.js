@@ -5,7 +5,8 @@ export default class LambdaClient extends BaseClass {
 
     constructor(props = {}){
         super();
-        this.bindClassMethods(['clientLoaded', 'addSession', 'getSessionBySessionId', 'getSessionsBySubject', 'getSessionsByUserId', 'getAllSessions', 'deleteSession'], this);
+        this.bindClassMethods(['clientLoaded', 'addStudySession', 'getStudySessionBySessionId', 'getStudySessionsBySubject',
+        'getStudySessionsByUserId', 'getAllStudySessions', 'deleteStudySessionBySessionId'], this);
         this.props = props;
         this.clientLoaded(axios);
     }
@@ -21,68 +22,64 @@ export default class LambdaClient extends BaseClass {
         }
     }
 
- /**
-     * Gets the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     * @returns the flight
-     */
-    async addSession(id, errorCallback) {
+    async addStudySession(userId, subject, duration, date, notes, errorCallback) {
         try {
-            const response = await this.client.post(`/add`);
+            const response = await this.client.post(`/studysession/add`,
+            {
+                userId: userId,
+                subject: subject,
+                duration: duration,
+                date: date,
+                notes: notes
+            });
             return response.data;
         } catch (error) {
-            this.handleError("addSession", error, errorCallback)
+            this.handleError("addStudySession", error, errorCallback)
         }
     }
 
-/**
-     * Deletes the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     */
-    async getSessionBySessionId(id, errorCallback){
+    async getStudySessionBySessionId(sessionId, errorCallback){
         try{
-            const response = await this.client.get(`/session/${sessionId}`);
+            const response = await this.client.get(`/studysession/session/${sessionId}`);
             return response.data;
         } catch (error) {
-            this.handleError("getSessionBySessionId", error, errorCallback);
+            this.handleError("getStudySessionBySessionId", error, errorCallback);
         }
     }
 
-    async getSessionsBySubject(subject, errorCallback){
+    async getStudySessionsBySubject(subject, errorCallback){
         try{
-            const response = await this.client.get(`/subject/${subject}`);
+            const response = await this.client.get(`/studysession/subject/${subject}`);
             return response.data;
         } catch (error) {
-            this.handleError("getSessionsBySubject", error, errorCallback);
+            this.handleError("getStudySessionsBySubject", error, errorCallback);
         }
     }
 
-    async getSessionsByUserId(userId, errorCallback){
+    async getStudySessionsByUserId(userId, errorCallback){
         try{
-            const response = await this.client.get(`/${userId}`);
+            const response = await this.client.get(`/studysession/${userId}`);
             return response.data;
         } catch (error) {
-            this.handleError("getSessionsByUserId", error, errorCallback);
+            this.handleError("getStudySessionsByUserId", error, errorCallback);
         }
     }
 
-    async getAllSessions(errorCallback){
+    async getAllStudySessions(errorCallback){
         try{
-            const response = await this.client.get(`/all`);
+            const response = await this.client.get(`/studysession/all`);
             return response.data;
         } catch (error) {
-            this.handleError("getAllSessions", error, errorCallback);
+            this.handleError("getAllStudySessions", error, errorCallback);
         }
     }
 
-    async deleteSession(id, errorCallback){
+    async deleteStudySessionBySessionId(sessionId, errorCallback){
         try{
-            const response = await this.client.get(`/delete/${sessionId}`);
+            const response = await this.client.delete(`/studysession/delete/${sessionId}`);
             return response.data;
         } catch (error) {
-            this.handleError("deleteSession", error, errorCallback);
+            this.handleError("deleteStudySessionBySessionId", error, errorCallback);
         }
     }
 

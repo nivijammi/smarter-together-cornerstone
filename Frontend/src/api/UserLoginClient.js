@@ -5,7 +5,7 @@ export default class UserLoginClient extends BaseClass {
 
     constructor(props = {}){
         super();
-        this.bindClassMethods(['clientLoaded', 'login', 'registerUser'], this);
+        this.bindClassMethods(['clientLoaded', 'loginAsync', 'registerUser'], this);
         this.props = props;
         this.clientLoaded(axios);
     }
@@ -21,29 +21,29 @@ export default class UserLoginClient extends BaseClass {
         }
     }
 
- /**
-     * Gets the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     * @returns the flight
-     */
-    async login(email, pswd, errorCallback) {
+    async loginAsync(email, password, errorCallback) {
         try {
-            const response = await this.client.post(`/add`);
+            const response = await this.client.post(`/v2/users/login`,
+            {
+                "email": email,
+                "password": password
+            }
+            );
             return response.data;
         } catch (error) {
-            this.handleError("login", error, errorCallback)
+            this.handleError("loginAsync", error, errorCallback)
         }
     }
 
-/**
-     * Deletes the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     */
-    async registerUser(email, pswd, errorCallback){
+    async registerUser(email, password, errorCallback){
+    console.log(email, password);
         try{
-            const response = await this.client.get(`/session/${sessionId}`);
+            const response = await this.client.post(`/v1/users/register`,
+            {
+                "email": email,
+                "password": password
+            }
+            );
             return response.data;
         } catch (error) {
             this.handleError("registerUser", error, errorCallback);
