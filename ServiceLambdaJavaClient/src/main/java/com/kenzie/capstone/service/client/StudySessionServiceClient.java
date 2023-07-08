@@ -12,12 +12,20 @@ import java.util.List;
 public class StudySessionServiceClient {
 
     private static final String LOG_SESSION_ENDPOINT = "studysession/log";
-    private static final String ADD_SESSION_ENDPOINT = "studysession/add";  //removed BySessionId /{sessionId}
+
+
+
+
+
+    private static final String ADD_SESSION_ENDPOINT = "studysession/add";  //// removed BySessionId /{sessionId}
     private static final String GET_SESSION_BY_SESSIONID_ENDPOINT = "studysession/session/{sessionId}";
     private static final String GET_SESSIONS_BY_SUBJECT_ENDPOINT = "studysession/subject/{subject}";
     private static final String GET_SESSIONS_BY_USERID_ENDPOINT = "studysession/{userId}";
     private static final String GET_ALL_SESSIONS_ENDPOINT = "studysession/all"; //all?
     private static final String DELETE_SESSION_ENDPOINT = "studysession/delete/{sessionId}";
+
+
+
     private static final String SET_STUDY_GOAL_ENDPOINT = "studysession/goals";  // study goals a part of the studysession client?
     private static final String GET_SESSION_STATISTICS = "studysession/stats/{userId}";  // same as last, not a part of studysession ?
 

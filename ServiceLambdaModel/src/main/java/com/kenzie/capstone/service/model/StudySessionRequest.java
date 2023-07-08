@@ -9,6 +9,7 @@ public class StudySessionRequest {
     private String date;
     private String notes;  // does it need to be a list? Now I think its just a quick note, no need for list
 
+    //make a new constructor here, without a username... that will then dip into the userRepository to grab it?
     public StudySessionRequest(String userId, String subject, int duration, String date, String notes) {
         this.userId = userId;
         this.subject = subject;

@@ -8,10 +8,9 @@ import java.time.ZonedDateTime;
 @DynamoDBTable(tableName = "StudySessionTable")
 public class StudySessionRecord {
 
-
+    private String sessionId;
     private String userId;
     private String subject;
-    private String sessionId;
     private int duration;
     private ZonedDateTime date; //zonedDateTime here, and string elsewhere because this is a table?
     private String notes;
@@ -32,7 +31,6 @@ public class StudySessionRecord {
     public String getSubject() {
         return subject;
     }
-
 
 
     @DynamoDBAttribute(attributeName = "duration")
