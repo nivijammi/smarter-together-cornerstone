@@ -7,6 +7,9 @@ import com.kenzie.appserver.repositories.UserRepository;
 import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.repositories.model.UserRecord;
 import com.kenzie.appserver.service.model.User;
+import com.kenzie.capstone.service.client.StudySessionServiceClient;
+import com.kenzie.capstone.service.model.StudySessionRequest;
+import com.kenzie.capstone.service.model.StudySessionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,10 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private StudySessionServiceClient studySessionServiceClient;
+
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -109,5 +116,19 @@ public class UserService {
                 record.getLastName(), record.getFirstName(),
                 record.getDateCreated());
     }
+
+    /**
+     * StudySessionServiceClient methods
+     * Lambda fun
+     */
+
+    public StudySessionResponse addStudySession(StudySessionRequest studySessionRequest) {
+        StudySessionResponse response = studySessionServiceClient.addStudySession(studySessionRequest);
+
+        return response;
+    }
+
+
+
 
 }

@@ -7,6 +7,9 @@ import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.service.UserService;
 import com.kenzie.appserver.service.model.Note;
 import com.kenzie.appserver.service.model.User;
+import com.kenzie.capstone.service.client.StudySessionServiceClient;
+import com.kenzie.capstone.service.model.StudySessionRequest;
+import com.kenzie.capstone.service.model.StudySessionResponse;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +26,9 @@ public class UserProfileController {
     // todo: missing an annotation
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private StudySessionServiceClient studySessionServiceClient;
 
     UserProfileController(UserService userService) {
         this.userService = userService;
@@ -81,5 +87,17 @@ public class UserProfileController {
     public ResponseEntity deleteUserById(@PathVariable("userId") String userId) {
         userService.deleteUser(userId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/studysession/add")
+    public ResponseEntity<StudySessionResponse> addStudySession(@PathVariable StudySessionRequest studySessionRequest) {
+        if(studySessionRequest.getUserId() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid UserId - error from application");
+        }
+        StudySessionResponse studySessionResponse = studySessionServiceClient.addStudySession(studySessionRequest);
+
+        return ResponseEntity.ok(studySessionResponse);
+
+
     }
 }
