@@ -69,6 +69,9 @@ public class StudyGroupReviewController {
                 .body(reviewResponseList);
     }
 
+    /**
+     * Vicky - implement this one
+     */
     @GetMapping("/studygroup/ratings/{averageRating}/{discussionTopic}")
     public ResponseEntity<Map<String, ?>> getGroupsWithDesiredAvgRatingByTopic(@PathVariable double averageRating, @PathVariable String discussionTopic) {
         Map<String, Double> groupsWithDesiredRating = reviewService.getGroupsWithDesiredRating(averageRating,discussionTopic);

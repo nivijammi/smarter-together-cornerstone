@@ -1,9 +1,7 @@
 package com.kenzie.appserver.repositories.model;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 
 import java.time.ZonedDateTime;
 import java.util.Objects;
@@ -33,7 +31,9 @@ public class NoteRecord {
     public void setContent(String content) {
         this.content = content;
     }
+
     @DynamoDBAttribute(attributeName = "CreatedDateTime")
+    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
     public ZonedDateTime getCreatedDateTime() {
         return createdDateTime;
     }
@@ -41,6 +41,7 @@ public class NoteRecord {
         this.createdDateTime = createdDateTime;
     }
     @DynamoDBAttribute(attributeName = "UpdatedDateTime")
+    @DynamoDBTypeConverted(converter = ZonedDateTimeConverter.class)
     public ZonedDateTime getUpdatedDateTime() {
         return updatedDateTime;
     }

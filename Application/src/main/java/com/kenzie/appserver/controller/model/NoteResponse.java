@@ -20,13 +20,13 @@ public class NoteResponse {
 
     @NotEmpty
     @JsonProperty("createdDateTime")
-    private ZonedDateTime createdDateTime;
+    private String createdDateTime;
 
     @NotEmpty
     @JsonProperty("updatedDateTime")
-    private ZonedDateTime updatedDateTime;
+    private String updatedDateTime;
 
-    public NoteResponse(String noteId, String userId, String content, ZonedDateTime createdDateTime, ZonedDateTime updatedDateTime) {
+    public NoteResponse(String noteId, String userId, String content, String createdDateTime, String updatedDateTime) {
         this.noteId = noteId;
         this.userId = userId;
         this.content = content;
@@ -57,13 +57,13 @@ public class NoteResponse {
         this.content = content;
     }
 
-    public ZonedDateTime getCreatedDateTime() {
+    public String getCreatedDateTime() {
         return createdDateTime;
     }
-    public void setCreatedDateTime(ZonedDateTime createdDateTime) {
+    public void setCreatedDateTime(String createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 
-    public ZonedDateTime getUpdatedDateTime() {return updatedDateTime;}
-    public void setUpdatedDateTime(ZonedDateTime updatedDateTime) {this.updatedDateTime = updatedDateTime;}
+    public String getUpdatedDateTime() {return updatedDateTime;}
+    public void setUpdatedDateTime(String updatedDateTime) {this.updatedDateTime = updatedDateTime;}
 }

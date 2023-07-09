@@ -2,6 +2,8 @@ package com.kenzie.appserver.controller;
 
 
 import com.kenzie.appserver.controller.model.*;
+import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
+import com.kenzie.appserver.repositories.model.NoteUserId;
 import com.kenzie.appserver.service.NoteService;
 import com.kenzie.appserver.service.model.Note;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,14 +37,14 @@ public class NoteController {
         }
 
         // Scenario #2: UserID not valid
-        if (!noteService.isValidUserId(request.getUserId())) {
-            NoteResponse invalidUserIdResponse = new NoteResponse(request.getNoteId(),
-                    request.getUserId(),
-                    request.getContent(),
-                    request.getCreatedDateTime(),
-                    request.getUpdatedDateTime());
-            return ResponseEntity.created(URI.create("/users/" + invalidUserIdResponse.getUserId())).body(invalidUserIdResponse);
-        }
+//        if (!noteService.isValidUserId(request.getUserId())) {
+//            NoteResponse invalidUserIdResponse = new NoteResponse(request.getNoteId(),
+//                    request.getUserId(),
+//                    request.getContent(),
+//                    request.getCreatedDateTime(),
+//                    request.getUpdatedDateTime());
+//            return ResponseEntity.created(URI.create("/users/" + invalidUserIdResponse.getUserId())).body(invalidUserIdResponse);
+//        }
 
         Note note = new Note(request.getNoteId(), request.getUserId(), request.getContent(), ZonedDateTime.now(), ZonedDateTime.now());
         Note newNote = noteService.createNote(note);
@@ -50,8 +52,8 @@ public class NoteController {
         NoteResponse createNoteSuccessfulResponse = new NoteResponse(newNote.getNoteId(),
                 newNote.getUserId(),
                 newNote.getContent(),
-                newNote.getCreatedDateTime(),
-                newNote.getUpdatedDateTime());
+                new ZonedDateTimeConverter().convert(newNote.getCreatedDateTime()),
+                new ZonedDateTimeConverter().convert(newNote.getUpdatedDateTime()));
         return ResponseEntity.created(URI.create("/notes/" + createNoteSuccessfulResponse.getNoteId())).body(createNoteSuccessfulResponse);
     }
 
@@ -80,7 +82,7 @@ public class NoteController {
         existingNote.setNoteId(noteRequest.getNoteId());
         existingNote.setUserId(noteRequest.getUserId());
         existingNote.setContent(noteRequest.getContent());
-        existingNote.setCreatedDateTime(noteRequest.getCreatedDateTime());
+        existingNote.setCreatedDateTime(new ZonedDateTimeConverter().unconvert(noteRequest.getCreatedDateTime()));
         existingNote.setUpdatedDateTime(ZonedDateTime.now());
 
         noteService.updateNote(existingNote);
@@ -104,7 +106,7 @@ public class NoteController {
         return new NoteResponse(note.getNoteId(),
                 note.getUserId(),
                 note.getContent(),
-                note.getCreatedDateTime(),
-                note.getUpdatedDateTime());
+                new ZonedDateTimeConverter().convert(note.getCreatedDateTime()),
+                new ZonedDateTimeConverter().convert(note.getUpdatedDateTime()));
     }
 }

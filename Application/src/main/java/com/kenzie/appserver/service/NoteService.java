@@ -32,10 +32,10 @@ public class NoteService {
         return noteById.isPresent();
     }
 
-    public boolean isValidUserId(String userId) {
-        Optional<MemberRecord> userById = memberRepository.findById(userId);
-        return userById.isPresent();
-    }
+//    public boolean isValidUserId(String userId) {
+//        Optional<MemberRecord> userById = memberRepository.findById(userId);
+//        return userById.isPresent();
+//    }
 
     public Note createNote(Note note) {
 

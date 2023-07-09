@@ -55,7 +55,9 @@ public class StudyGroupController {
         StudyGroup newStudyGroup = studyGroupService.addNewStudyGroup(group);
 
         AddStudyGroupResponse studyGroupResponse = convertToStudyGroupResponse(newStudyGroup);
-        return ResponseEntity.created(URI.create("/group/" + studyGroupResponse.getGroupId())).body(studyGroupResponse);
+        return ResponseEntity.created(URI.create("/group/" + studyGroupResponse
+                        .getGroupId()))
+                .body(studyGroupResponse);
     }
 
     // Route to the groups [study groups] endpoint, for adding a member to a study group
