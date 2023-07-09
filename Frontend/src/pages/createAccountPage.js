@@ -24,14 +24,6 @@ class CreateAccountPage extends BaseClass {
         this.profileClient = new UserProfileClient();
     }
 
-    async reserveFlight(flightId1, errorHandler1) {
-        const reservedFlight = await this.client.reserveTicket(flightId1, errorHandler1);
-
-        const ticketId = reservedFlight.ticketId;
-        localStorage.setItem("reservedTicketId", ticketId);
-        window.location='checkout.html';
-    }
-
 
     // Helper Methods --------------------------------------------------------------------------------------------------
 
@@ -91,6 +83,11 @@ class CreateAccountPage extends BaseClass {
         const pswd = document.getElementById('pswd').value;
         const retypePswd = document.getElementById('retype-pswd').value;
 
+//        const moment = require('moment-timezone');
+//        const formattedDateTime = "<formattedDateTime>"; // Replace with the value from Java
+//        const zonedDateTime = moment.tz(formattedDateTime, "YYYY-MM-DDTHH:mm:ss.SSSZ", "UTC"); // Adjust the format according to your Java output
+//        const jsDate = zonedDateTime.toDate();
+
         let validEntries = this.emailPasswordValidation(email, pswd, retypePswd);
         if(validEntries) {
             console.log("2");
@@ -98,11 +95,11 @@ class CreateAccountPage extends BaseClass {
             let user = await this.loginClient.registerUser(email, pswd, this.errorHandler);
 
             if(user) {
-                let profile = await this.profileClient.addNewUser(firstName, lastName, email, pswd, creationDate, this.errorHandler);
+                let profile = await this.profileClient.addNewUser(firstName, lastName, email, pswd, this.errorHandler);
 
-                const userId = user.userId;
+                const userId = user.email;
                 localStorage.setItem("userId", userId);
-                window.location='dashboard.html';
+                window.location='my-account.html';
             }
         }
 

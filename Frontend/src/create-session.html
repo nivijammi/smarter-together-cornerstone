@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>Smarter Together | Sessions</title>
+    <script rel="script" type="text/javascript" src="createSessionPage.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/create-session-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -68,6 +69,7 @@
                 <input id="duration" type="number" placeholder="Duration in minutes" required>
                 <input id="date" type="date" placeholder="Date" required>
                 <input id="resources" type="text" placeholder="Resources eg. zoom link, notes, links, books" required>
+                <p id="create-error"></p>
                 <button id="topic-submit">Create</button>
             </form>
 
@@ -81,12 +83,13 @@
 
             <h2>Update Session</h2>
             <form>
-                <select id="Update">
+                <select id="update">
                     <option>Select a session</option>
                 </select>
                 <input id="date" type="date">
                 <input id="duration" type="number" placeholder="Duration in minutes">
                 <input id="resources" type="text" placeholder="Resources eg. zoom link, notes, links, books">
+                <p id="update-error"></p>
                 <button id="update-submit">Update</button>
             </form>
 
@@ -98,6 +101,7 @@
                 <select id="delete">
                     <option>Select a session</option>
                 </select>
+                <p id="delete-error"></p>
                 <button id="delete-submit">Delete</button>
             </form>
         </div>

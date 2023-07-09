@@ -1,5 +1,5 @@
 import BaseClass from "../util/baseClass";
-import axios from 'axios'
+import axios from 'axios';
 
 export default class UserLoginClient extends BaseClass {
 
@@ -27,8 +27,7 @@ export default class UserLoginClient extends BaseClass {
             {
                 "email": email,
                 "password": password
-            }
-            );
+            });
             return response.data;
         } catch (error) {
             this.handleError("loginAsync", error, errorCallback)
@@ -38,7 +37,7 @@ export default class UserLoginClient extends BaseClass {
     async registerUser(email, password, errorCallback){
     console.log(email, password);
         try{
-            const response = await this.client.post(`/v1/users/register`,
+            const response = await this.client.post('/v1/users/register',
             {
                 "email": email,
                 "password": password

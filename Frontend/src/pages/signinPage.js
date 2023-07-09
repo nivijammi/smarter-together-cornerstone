@@ -71,19 +71,13 @@ class SigninPage extends BaseClass {
         console.log(email);
         console.log(pswd);
 
-        let validEntries = this.emailPasswordValidation(email, pswd);
-        if(validEntries == true) {
-            console.log("2");
-
-            let user = await this.loginClient.registerUser(email, pswd, this.errorHandler);
+            let user = await this.loginClient.loginAsync(email, pswd, this.errorHandler);
 
             if(user) {
                 const userId = user.userId;
                 localStorage.setItem("userId", userId);
                 window.location='dashboard.html';
             }
-        }
-
     }
 }
 

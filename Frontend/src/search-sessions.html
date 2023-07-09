@@ -12,7 +12,7 @@
     <div class="header">
         <div class="inner-header">
             <div class="logo">
-                <div class="img-container"><img src="images/4(1).png"></div>
+                <div class="img-container"><img src="css/logo.png"></div>
                 <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
             </div>
 
@@ -46,7 +46,7 @@
 
         <div class="acheivements">
             <h2>My Achievements</h2>
-            <p id="achievements">No achievements yet.</p>>
+            <p id="achievements">Coming Soon...</p>>
         </div>
 
         <div class="leaderboard">
@@ -63,12 +63,18 @@
             <h2>Search Sessions</h2>
 
             <form>
-                <input id="topic-name" type="text" placeholder="Topic name">
-                <p>Or</p>
-                <input id="session-id" type="text" placeholder="Session id">
+                <div class="search-type">
+                    <label for="search-topic">Topic</label>
+                    <input id="search-topic" type="radio" value="topic" name="search-type">
+                    <label for="search-id">Session Id</label>
+                    <input  id="search-id" type="radio" value="session-id" name="search-type">
+                    <label for="search-all">All</label>
+                    <input id="search-all" type="radio" value="all" name="search-type">
+                </div>
+
+                <input id="input" type="text" placeholder="Topic Name or Session Id" name="search-type">
                 <button id="submit">Search</button>
             </form>
-            <button id="search-all">Search All</button>
 
         </div>
 
@@ -78,10 +84,8 @@
         <div class="results">
             <h2>My Sessions</h2>
 
-            <div class="print">
-                <h3 id="topic">Topic Name</h3>
-                <h4 id="date">Date</h4>
-                <p id="results">results here</p>
+            <div class="print" id="results">
+
             </div>
         </div>
     </div>

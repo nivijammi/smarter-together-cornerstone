@@ -21,7 +21,7 @@ export default class UserProfileClient extends BaseClass {
         }
     }
 
-    async addNewUser(firstName, lastName, email, password, creationDate, errorCallback) {
+    async addNewUser(firstName, lastName, email, password, errorCallback) {
         try {
             const response = await this.client.post(`/v1/users`,
             {
@@ -29,7 +29,6 @@ export default class UserProfileClient extends BaseClass {
                 lastName: lastName,
                 email: email,
                 password: password,
-                creationDate: creationDate
             });
             return response.data;
         } catch (error) {

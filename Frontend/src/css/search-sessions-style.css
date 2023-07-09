@@ -279,6 +279,26 @@
     border: none;
     border: solid 2px #003e29;
 }
+
+.search-type input{
+    height: 20px;
+    width: 20px;
+    margin-top: 5px;
+    outline: none;
+    border: none;
+    border: solid 2px #003e29;
+}
+
+.search-type label{
+    font-size: 16;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin-left: 30px;
+}
+
+.search-type label:first-child{
+    margin-left: 10px;
+}
+
 .search p{
     font-size: 16;
     font-family: 'Roboto Condensed', sans-serif;
