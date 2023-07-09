@@ -35,6 +35,7 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
         }
         UserRecord record = createUserRecord(userProfileRequest, email);
+
         userRepository.save(record);
 
         return recordToResponse(record);
@@ -76,7 +77,7 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    private boolean isValidUserId(String id) {
+    public boolean isValidUserId(String id) {
         return  userRepository.existsById(id);
     }
 
@@ -86,12 +87,12 @@ public class UserService {
         record.setPassword(userProfileRequest.getPassword());
         record.setLastName(userProfileRequest.getLastName());
         record.setFirstName(userProfileRequest.getFirstName());
-        record.setDateCreated(ZonedDateTime.now());
+        record.setDateCreated(new ZonedDateTimeConverter().unconvert(userProfileRequest.getCreationDate()));
 
         return record;
     }
 
-    private UserProfileResponse recordToResponse(UserRecord record) {
+    public UserProfileResponse recordToResponse(UserRecord record) {
 
         if (record == null) {
             return null;
