@@ -302,6 +302,11 @@ input[type="date"]::-webkit-calendar-picker-indicator{
     color: FEFEE2;
 }
 
+.session p{
+    color: red;
+    margin-left: 10px;
+}
+
 .edit-container{
     grid-area: 2 / 2 / 3 / 3;
     height: 100%;

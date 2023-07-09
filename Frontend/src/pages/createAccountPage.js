@@ -97,8 +97,7 @@ class CreateAccountPage extends BaseClass {
             if(user) {
                 let profile = await this.profileClient.addNewUser(firstName, lastName, email, pswd, this.errorHandler);
 
-                const userId = user.email;
-                localStorage.setItem("userId", userId);
+                localStorage.setItem("userId", email);
                 window.location='my-account.html';
             }
         }

@@ -281,7 +281,7 @@
     margin-bottom: 20px;
 }
 
-.group-container{
+.leaderboard-container{
     grid-area: 2 / 3 / 3 / 4;
     background-color: #fafaf0;
     border: solid 2px #02bd7f;
@@ -289,22 +289,15 @@
     overflow-y: auto;
 }
 
-.my-groups h2{
+.leaderboard h2{
     font-size: 20;
     font-family: 'Roboto Condensed', sans-serif;
     margin-bottom: 20px;
 }
 
-.my-groups p{
+.leaderboard p{
     font-size: 16;
     font-family: 'Roboto Condensed', sans-serif;
-    margin-bottom: 20px;
-}
-
-.my-groups a{
-    font-size: 16;
-    font-family: 'Roboto Condensed', sans-serif;
-    color: #02bd7f;
     margin-bottom: 20px;
 }
 

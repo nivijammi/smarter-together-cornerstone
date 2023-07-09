@@ -9,8 +9,8 @@ import LambdaClient from "../api/LambdaClient";
 class CreateSessionsPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['onCreate', 'onSubmit', 'onDelete', 'onLoad', 'errorHandler', 'getBySessionId', 'getBySubject', 'upcomingSessions',
-        'getAllForUser', 'renderSessions', 'loadDropDowns'], this);
+        this.bindClassMethods(['onCreate', 'onSubmit', 'onDelete', 'onLoad', 'errorHandler', 'getBySessionId',
+        'getBySubject', 'upcomingSessions', 'getAllForUser', 'renderSessions', 'loadDropDowns'], this);
         this.dataStore = new DataStore();
     }
 
@@ -84,34 +84,45 @@ class CreateSessionsPage extends BaseClass {
 
     async getAllForUser() {
         let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId);
+        console.log(userId);
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions);
 
         return sessions;
     }
 
     async upcomingSessions() {
-        let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId);
-        let currentDate = new ZoneDateTime();
-        let tilDate = new ZoneDateTime().plusWeeks(1);
+        let sessions = this.getAllForUser();
 
         if(sessions) {
-        let sessionResults = document.getElementById('sessions');
-        let sessionHtml = "";
+            let currentDate = new Date().now();
+            let currentMonth = currentDate.getMonth();
+            let currentDay = currentDate.getDay();
 
-            for(session of sessions) {
-                if(session.date <= tilDate) {
-                    sessionHtml += `
-                        <div class="upcoming-sessions">
-                            <p>Subject: ${session.subject}</p>
-                            <p>Date: ${session.date}</p>
-                            <p>Duration: ${session.duration}</p>
-                        </div>
-                    `
+            let sessionResults = document.getElementById('sessions');
+            let sessionHtml = "";
+
+            for(const session of sessions) {
+                let sessionDate = new Date().of(session.date);
+                let month = sessionDate.getMonth();
+                let day = sessionDate.getDay();
+
+                if(month == currentMonth) {
+                    if(day > currentDay) {
+                        sessionHtml += `
+                            <div class="upcoming-sessions">
+                                <p>Subject: ${session.subject}</p>
+                                <p>Date: ${session.date}</p>
+                                <p>Duration: ${session.duration}</p>
+                            </div>
+                        `
+                    }
                 }
             }
+            if(sessionHtml != ""){
+                sessionResults = sessionHtml;
+            }
         }
-
     }
 
     async loadDropDowns() {
@@ -127,7 +138,8 @@ class CreateSessionsPage extends BaseClass {
             let deleteDropDown = document.getElementById('delete');
 
             //Gather sessions
-            for(session of sessions) {
+            console.log(sessions);
+            for(const session of sessions) {
                 dropDownHtml += '<option value="${session.sessionId}">Topic: ${session.subject} ${session.date}</option>'
             }
 
@@ -152,26 +164,37 @@ class CreateSessionsPage extends BaseClass {
 
             goalContainer.innerHTML = goalHtml;
         }
+
+        this.loadDropDowns();
     }
 
     async onCreate(event) {
         event.preventDefault();
 
-                 console.log("create");
+         console.log("create");
 
-                 let userId = localStorage.getItem("userId");
-                 let topicName = document.getElementById('topic-name').value;
-                 let duration = document.getElementById('duration').value;
-                 let date = document.getElementById('date').value;
-                 let resources = document.getElementById('resources').value;
+         let userId = localStorage.getItem("userId");
+         let topicName = document.getElementById('topic-name').value;
+         let duration = document.getElementById('duration-create').value;
+         let date = document.getElementById('date-create').value;
+         let resources = document.getElementById('resources-create').value;
+         console.log(1);
+         console.log(userId);
+         let createdSession = await this.lambda.addStudySession(userId, topicName, duration, date, resources, this.errorHandler);
+         console.log(2);
+         console.log(createdSession);
+         if(!createdSession) {
+             let errorMessage = document.getElementById("create-error");
+             let errorHtml = '<p>Could not create session. Try again.</p>';
+             errorMessage.innerHTML = errorHtml;
+         }
 
-                 let createdSession = await this.lambda.addStudySession(user, topicName, duration, date, resources, this.errorHandler);
+         let sessionId = createdSession.sessionId;
+         console.log(sessionId);
+         let testSession = await this.lambda.getStudySessionBySessionId(sessionId);
+         console.log(testSession);
 
-                 if(!createdSession) {
-                     let errorMessage = document.getElementById("create-error");
-                     let errorHtml = '<p>Could not create session. Try again.</p>';
-                     errorMessage.innerHTML = errorMessage;
-                 }
+         this.onLoad();
     }
 
     async onSubmit(event) {
@@ -185,30 +208,53 @@ class CreateSessionsPage extends BaseClass {
         let session = this.getBySessionId(sessionId);
 
         if(session) {
+            let sessionDuration = session.duration;
+            let sessionDate = session.date;
+            let sessionNotes = session.notes;
 
+            //Delete
+
+            //Create
+            let userId = localStorage.getItem("userId");
+            let topicName = session.subject;
+
+            //entries
+            let duration = document.getElementById('duration').value;
+            let date = document.getElementById('date').value;
+            let resources = document.getElementById('resources').value;
+
+            if(duration == "" || duration == null) {
+                duration = sessionDuration;
+            }
+            if(date == "" || date == null) {
+                date = sessionDate;
+            }
+            if(resources == "" || resources == null) {
+                resources = sessionNotes;
+            }
+
+            let createdSession = await this.lambda.addStudySession(userId, topicName, duration, date, resources, this.errorHandler);
+
+            if(!createdSession) {
+                let errorMessage = document.getElementById("create-error");
+                let errorHtml = '<p>Could not update session. Try again.</p>';
+                errorMessage.innerHTML = errorHtml;
+            } else {
+                await this.lambda.deleteStudySessionBySessionId(sessionId);
+            }
         }
 
-        let sessionName = session.subject;
-        let sessionDuration = session.duration;
-        let sessionDate = session.date;
-        let sessionNotes = session.notes;
+        this.onLoad();
+    }
 
-        //Delete
+    async onDelete(event) {
+        event.preventDefault();
 
-        //Create
-        let userId = localStorage.getItem("userId");
-        let topicName = document.getElementById('topic-name').value;
-        let duration = document.getElementById('duration').value;
-        let date = document.getElementById('date').value;
-        let resources = document.getElementById('resources').value;
+        let sessionId = document.getElementById('delete').value;
+        console.log(sessionId);
+        await this.lambda.deleteStudySessionBySessionId(sessionId);
 
-        let createdSession = await this.lambda.addStudySession(user, topicName, duration, date, resources, this.errorHandler);
-
-        if(!createdSession) {
-            let errorMessage = document.getElementById("create-error");
-            let errorHtml = '<p>Could not create session. Try again.</p>';
-            errorMessage.innerHTML = errorMessage;
-        }
+        this.onLoad();
     }
 }
 

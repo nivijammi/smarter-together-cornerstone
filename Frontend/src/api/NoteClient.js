@@ -21,12 +21,6 @@ export default class NoteClient extends BaseClass {
         }
     }
 
- /**
-     * Gets the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     * @returns the flight
-     */
     async createNote(noteId, userId, content, createdDateTime, updatedDateTime, errorCallback) {
         try {
             const response = await this.client.post(`/v1/notes/create`);
@@ -36,11 +30,6 @@ export default class NoteClient extends BaseClass {
         }
     }
 
-/**
-     * Deletes the flight for the given ID.
-     * @param id Unique identifier for a concert
-     * @param errorCallback (Optional) A function to execute if the call fails.
-     */
     async getNoteById(noteId, errorCallback){
         try{
             const response = await this.client.get(`/v1/notes/{noteId}`);

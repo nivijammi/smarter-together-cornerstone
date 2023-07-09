@@ -2,7 +2,6 @@ import BaseClass from '../util/baseClass';
 import DataStore from '../util/DataStore';
 import Toastify from "toastify-js";
 import LambdaClient from "../api/LambdaClient";
-import StudyGroupClient from "../api/StudyGroupClient";
 
 /**
  * Logic needed for the create an account for the website.
@@ -11,7 +10,7 @@ class DashboardPage extends BaseClass {
     constructor() {
         super();
         this.bindClassMethods(['renderGraph', 'errorHandler', 'onLoad', 'renderGraph', 'goal', 'renderSessions', 'renderUpcomingSessions',
-        'renderGroups', 'renderResources'], this);
+        'renderResources', 'studyHours'], this);
         this.dataStore = new DataStore();
     }
 
@@ -19,11 +18,9 @@ class DashboardPage extends BaseClass {
      * Once the page has loaded, set up the event handlers and fetch the flight list.
      */
     mount() {
-        this.onLoad();
-        this.renderGraph();
+        window.addEventListener('load', this.onLoad());
 
         this.lambda = new LambdaClient();
-        this.client = new StudyGroupClient();
     }
 
 
@@ -51,44 +48,128 @@ class DashboardPage extends BaseClass {
         }
     }
 
-    async renderSessions(userId) {
+    async getAllForUser() {
+        let userId = localStorage.getItem("userId");
+        console.log(userId);
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions);
 
+        return sessions;
     }
 
-    async renderUpcomingSessions(userId) {
+    async renderSessions() {
+        let sessions = this.getAllForUser();
+        let allSessions = document.getElementById('my-sessions');
+        let allHtml = "";
 
+        if(sessions) {
+            for(const session of sessions){
+                allHtml += `
+                    <div class="sessions-content">
+                        <p>${session.subject}</p>
+                        <p>Date: ${session.date}</p>
+                        <p>Duration: ${session.duration}</p>
+                        <p>Resources: ${session.notes}</p>
+                    </div>
+                `
+            }
+        }
     }
 
-    async renderGroups(userId) {
+    async renderUpcomingSessions() {
+        let sessions = this.getAllForUser();
 
+        if(sessions) {
+            let currentDate = new Date();
+            let currentMonth = currentDate.getMonth();
+            let currentDay = currentDate.getDay();
+
+            let sessionResults = document.getElementById('sessions');
+            let sessionHtml = "";
+
+            for(session of sessions) {
+                let sessionDate = new Date().of(session.date);
+                let month = sessionDate.getMonth();
+                let day = sessionDate.getDay();
+
+                if(month == currentMonth) {
+                    if(day > currentDay) {
+                        sessionHtml += `
+                            <div class="upcoming-sessions">
+                                <p>Subject: ${session.subject}</p>
+                                <p>Date: ${session.date}</p>
+                                <p>Duration: ${session.duration}</p>
+                            </div>
+                        `
+                    }
+                }
+            }
+            if(sessionHtml != ""){
+                sessionResults = sessionHtml;
+            }
+        }
     }
 
-    async renderResources(userId) {
+    async renderResources() {
+        let sessions = this.getAllForUser();
+        let resources = document.getElementById("resource-list");
+        let resourceHtml = "";
 
+        if(sessions) {
+            for(const session of sessions) {
+                resourceHtml += `
+                    <div class="results">
+                        <p>Topic: ${session.subject}</p>
+                        <p>Resources: ${session.note}</p>
+                    </div>
+                `
+            }
+        }
     }
 
     async studyHours(weekNumber) {
-        let userId = localStorage.getItem("userId");
-        //date and grab current month and year.
-        let currentYear = new Date().getFullYear();
-        let currentMonth = new Date().getMonth();
-
         //call getStudySessionsByUserId to get all their sessions.
-        let sessions = await this.lambda.getStudySessionsByUserId(userId);
+        let sessions = this.getAllForUser();
 
-        if(!session) {
+        if(!sessions) {
             return 0;
         } else {
+            //date and grab current month and year.
+            let currentYear = new Date().getFullYear();
+            let currentMonth = new Date().getMonth();
+
+            let totalMinutes = 0;
             //get days of the week pertaining to the specific week ex. week 1 etc.
-            if(weekNumber == 1) {
+            for(session of sessions){
+                let sessionDate = new Date().of(session.date);
+                let sessionMonth = sessionDate.getMonth();
+                let sessionDay = sessionDate.getDay();
+                let sessionYear = sessionDate.getYear();
 
-            } else if(weekNumber == 2) {
-
-            } else if(weekNumber == 3) {
-
-            } else if(weekNumber == 4) {
-
+                if(sessionYear == currentYear){
+                    if(sessionMonth == currentMonth) {
+                        if(weekNumber == 1) {
+                            if(sessionDay <= 7) {
+                                totalMinutes += session.duration;
+                            }
+                        } else if(weekNumber == 2) {
+                            if(sessionDay > 7 && sessionDay <= 14) {
+                                totalMinutes += session.duration;
+                            }
+                        } else if(weekNumber == 3) {
+                            if(sessionDay > 14 && sessionDay <= 21) {
+                                totalMinutes += session.duration;
+                            }
+                        } else if(weekNumber == 4) {
+                            if(sessionDay > 21) {
+                                totalMinutes += session.duration;
+                            }
+                        }
+                    }
+                }
             }
+
+            return (totalMinutes / 60);
         }
 
 
@@ -97,64 +178,32 @@ class DashboardPage extends BaseClass {
         //return total duration for matching sessions divided by 60.
     }
 
-    async renderGraph(userId) {
+    async renderGraph() {
     //https://plotly.com/javascript/getting-started/
         let graph = document.getElementById('graph');
-//        Plotly.newPlot( graph, [{
-//        	x: ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5"],
-//        	y: [5, 10, 15, 20, 25, 30, 35, 40] }], {
-//        	margin: { t: 0 } } );
 
+        let week1 = this.studyHours(1);
+        let week2 = this.studyHours(2);
+        let week3 = this.studyHours(3);
+        let week4 = this.studyHours(4);
 
-
-        let soloWeek1 = this.studyHours(1);
-        let soloWeek2 =
-        let soloWeek3 =
-        let soloWeek4 =
-
-        let groupWeek1 =
-        let groupWeek2 =
-        let groupWeek3 =
-        let groupWeek4 =
-
-        let soloStudy = {
+        let study = [{
           x: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-          y: [soloWeek1, soloWeek2, soloWeek3, soloWeek4],
-          name: 'Solo Study',
+          y: [week1, week2, week3, week4],
           type: 'bar'
-        };
+        }];
 
-        let groupStudy = {
-          x: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-          y: [groupWeek1, groupWeek2, groupWeek3, groupWeek4],
-          name: 'Group Study',
-          type: 'bar'
-        };
-
-        let totalStudy = {
-          x: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-          y: [soloWeek1 + groupWeek1, soloWeek2 + groupWeek2, soloWeek3 + groupWeek3, soloWeek4 + groupWeek4],
-          name: 'Total Study',
-          type: 'bar'
-        };
-
-        let data = [trace1, trace2, trace3];
-
-        let layout = {barmode: 'group'};
-
-        Plotly.newPlot(graph, data, layout);
+        Plotly.newPlot(graph, study);
     }
 
     // Event Handlers --------------------------------------------------------------------------------------------------
 
     async onLoad() {
-        let userId = localStorage.getItem("userId");
         this.goal();
-        this.renderSessions(userId);
-        this.renderUpcomingSessions(userId);
-        this.renderGroups(userId);
-        this.renderResources(userId);
-        this.renderGraph(userId);
+        this.renderSessions();
+        this.renderUpcomingSessions();
+        this.renderResources();
+        this.renderGraph()
     }
 }
 

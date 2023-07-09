@@ -74,8 +74,7 @@ class SigninPage extends BaseClass {
             let user = await this.loginClient.loginAsync(email, pswd, this.errorHandler);
 
             if(user) {
-                const userId = user.userId;
-                localStorage.setItem("userId", userId);
+                localStorage.setItem("userId", email);
                 window.location='dashboard.html';
             }
     }
