@@ -24,9 +24,9 @@ public class UserProfileResponse {
 
     @NotEmpty
     @JsonProperty("creationDate")
-    private ZonedDateTime creationDate;
+    private String creationDate;
 
-    public UserProfileResponse(String email, String password, String firstName, String lastName, ZonedDateTime creationDate) {
+    public UserProfileResponse(String email, String password, String firstName, String lastName, String creationDate) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
@@ -66,11 +66,11 @@ public class UserProfileResponse {
         this.lastName = lastName;
     }
 
-    public ZonedDateTime getCreationDate() {
+    public String getCreationDate() {
         return creationDate;
     }
 
-    public void setCreationDate(ZonedDateTime creationDate) {
+    public void setCreationDate(String creationDate) {
         this.creationDate = creationDate;
     }
 }

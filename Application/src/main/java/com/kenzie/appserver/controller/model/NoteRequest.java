@@ -20,11 +20,11 @@ public class NoteRequest {
 
     @NotEmpty
     @JsonProperty("createdDateTime")
-    private ZonedDateTime createdDateTime;
+    private String createdDateTime;
 
     @NotEmpty
     @JsonProperty("updatedDateTime")
-    private ZonedDateTime updatedDateTime;
+    private String updatedDateTime;
 
     // getter and setters
 
@@ -49,13 +49,13 @@ public class NoteRequest {
         this.content = content;
     }
 
-    public ZonedDateTime getCreatedDateTime() {
+    public String getCreatedDateTime() {
         return createdDateTime;
     }
-    public void setCreatedDateTime(ZonedDateTime password) {
+    public void setCreatedDateTime(String password) {
         this.createdDateTime = createdDateTime;
     }
 
-    public ZonedDateTime getUpdatedDateTime() {return updatedDateTime;}
-    public void setUpdatedDateTime(ZonedDateTime updatedDateTime) {this.updatedDateTime = updatedDateTime;}
+    public String getUpdatedDateTime() {return updatedDateTime;}
+    public void setUpdatedDateTime(String updatedDateTime) {this.updatedDateTime = updatedDateTime;}
 }

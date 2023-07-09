@@ -4,8 +4,10 @@ import com.kenzie.appserver.controller.model.UserProfileRequest;
 import com.kenzie.appserver.controller.model.UserProfileResponse;
 import com.kenzie.appserver.exception.UserNotFoundException;
 import com.kenzie.appserver.repositories.UserRepository;
+import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.repositories.model.UserRecord;
 import com.kenzie.appserver.service.model.User;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
@@ -16,7 +18,7 @@ import java.util.Optional;
 
 @Service
 public class UserService {
-
+    @Autowired
     private UserRepository userRepository;
 
     public UserService(UserRepository userRepository) {
@@ -25,11 +27,15 @@ public class UserService {
 
     public UserProfileResponse addNewUser(UserProfileRequest userProfileRequest) {
         String email = userProfileRequest.getEmail();
-        if (email != null && !isValidUserId(email)) {
+
+        if (email != null && email.isEmpty()) { //&& !isValidUserId(email)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
+        }
+        if(isValidUserId(email)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
         }
         UserRecord record = createUserRecord(userProfileRequest, email);
-        this.userRepository.save(record);
+        userRepository.save(record);
 
         return recordToResponse(record);
     }
@@ -70,8 +76,8 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    private boolean isValidUserId(String userId) {
-        return this.userRepository.existsById(userId);
+    private boolean isValidUserId(String id) {
+        return  userRepository.existsById(id);
     }
 
     private UserRecord createUserRecord(UserProfileRequest userProfileRequest, String userId) {
@@ -95,7 +101,7 @@ public class UserService {
                 record.getPassword(),
                 record.getFirstName(),
                 record.getLastName(),
-                record.getDateCreated());
+                new ZonedDateTimeConverter().convert(record.getDateCreated()));
     }
 
     private User buildUser(UserRecord record) {

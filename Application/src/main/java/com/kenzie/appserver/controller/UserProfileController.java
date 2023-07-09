@@ -3,9 +3,12 @@ package com.kenzie.appserver.controller;
 import com.kenzie.appserver.controller.model.NoteResponse;
 import com.kenzie.appserver.controller.model.UserProfileRequest;
 import com.kenzie.appserver.controller.model.UserProfileResponse;
+import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.service.UserService;
 import com.kenzie.appserver.service.model.Note;
 import com.kenzie.appserver.service.model.User;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +20,8 @@ import java.time.ZonedDateTime;
 @RestController
 @RequestMapping("/v1")
 public class UserProfileController {
+    // todo: missing an annotation
+    @Autowired
     private UserService userService;
 
     UserProfileController(UserService userService) {
@@ -48,7 +53,7 @@ public class UserProfileController {
         existingUser.setPassword(userProfileRequest.getPassword());
         existingUser.setLastName(userProfileRequest.getLastName());
         existingUser.setFirstName(userProfileRequest.getFirstName());
-        existingUser.setCreationDate(userProfileRequest.getCreationDate());
+        existingUser.setCreationDate(new ZonedDateTimeConverter().unconvert(userProfileRequest.getCreationDate()));
 
         userService.updateUser(existingUser);
 
@@ -69,7 +74,7 @@ public class UserProfileController {
                 user.getPassword(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getCreationDate());
+                new ZonedDateTimeConverter().convert(user.getCreationDate()));
     }
 
     @DeleteMapping("/{userID}")

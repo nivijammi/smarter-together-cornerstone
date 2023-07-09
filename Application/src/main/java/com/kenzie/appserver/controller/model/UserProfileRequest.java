@@ -24,7 +24,7 @@ public class UserProfileRequest {
 
     @NotEmpty
     @JsonProperty("creationDate")
-    private ZonedDateTime creationDate;
+    private String creationDate;
 
     // getter and setters
 
@@ -32,17 +32,17 @@ public class UserProfileRequest {
         return firstName;
     }
 
-    public void setFirstName(String email) {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
+    }// todo:FirstName
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String email) {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
+    }//todo: lastName
     public String getEmail() {
         return email;
     }
@@ -59,7 +59,7 @@ public class UserProfileRequest {
         this.password = password;
     }
 
-    public ZonedDateTime getCreationDate() {return creationDate;}
+    public String getCreationDate() {return creationDate;}
 
-    public void setCreationDate(ZonedDateTime creationDate) {this.creationDate = creationDate;}
+    public void setCreationDate(String creationDate) {this.creationDate = creationDate;}
 }

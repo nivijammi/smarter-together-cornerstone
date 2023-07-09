@@ -54,15 +54,16 @@ public class StudyGroupControllerTest {
 
     @Test
     public void addStudyGroup_addsAStudyGroup() throws Exception {
+
         String groupId = UUID.randomUUID().toString();
         String groupName = mockNeat.strings().valStr();
         String discussionTopic = "discussionTopic";
         ZonedDateTime date = ZonedDateTime.now();
         boolean active = false;
 
-        StudyGroup studyGroup = new StudyGroup(groupId, groupName, discussionTopic, date, active);
+        //StudyGroup studyGroup= new StudyGroup(groupId, groupName, discussionTopic, date, active);
 
-        studyGroupService.addNewStudyGroup(studyGroup);
+        //studyGroupService.addNewStudyGroup(studyGroup);
 
         AddStudyGroupRequest studyGroupRequest = new AddStudyGroupRequest();
         studyGroupRequest.setGroupName(groupName);
@@ -82,7 +83,7 @@ public class StudyGroupControllerTest {
         assertThat(response.getGroupName()).isEqualTo(studyGroupRequest.getGroupName()).as("The name is correct");
         assertThat(response.isActive()).isTrue();
 
-        studyGroupService.deleteStudyGroup(groupId);
+        //studyGroupService.deleteStudyGroup(groupId);
     }
 
     /**
