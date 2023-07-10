@@ -107,7 +107,13 @@ class MyGroupPage extends BaseClass {
     async loadDropDowns() {
         let userId = localStorage.getItem("userId");
         console.log(new Date());
-        let groups = await this.groupClient.getAllStudyGroups(this.errorHandler);
+        let groups = ""
+
+        try{
+            groups = await this.groupClient.getAllStudyGroups(this.errorHandler);
+        } catch (error) {
+            groups = null;
+        }
 
 
         if(groups){

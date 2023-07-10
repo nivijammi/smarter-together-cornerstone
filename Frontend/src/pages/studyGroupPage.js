@@ -21,7 +21,6 @@ class StudyGroupPage extends BaseClass {
      */
     mount() {
         document.getElementById('submit').addEventListener('click', this.onSubmit);
-//        document.getElementById('select').addEventListener('click', this.joinGroup);
         this.onLoad();
 
         this.lambda = new LambdaClient();

@@ -10,7 +10,7 @@ class SearchSessionsPage extends BaseClass {
     constructor() {
         super();
         this.bindClassMethods(['onSubmit', 'onLoad', 'errorHandler', 'getBySessionId', 'getBySubject', 'upcomingSessions',
-        'getAllForUser', 'renderSessions', 'sidebar'], this);
+        'renderSessions', 'sidebar'], this);
         this.dataStore = new DataStore();
     }
 
@@ -104,18 +104,10 @@ class SearchSessionsPage extends BaseClass {
         }
     }
 
-    async getAllForUser() {
-        let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId);
-
-        if(sessions) {
-            this.dataStore.set("sessions", sessions);
-            this.renderSessions();
-        }
-    }
-
     async upcomingSessions() {
-        let sessions = this.getAllForUser();
+         let userId = localStorage.getItem("userId");
+         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+
 
         if(sessions) {
             let currentDate = new Date().now();

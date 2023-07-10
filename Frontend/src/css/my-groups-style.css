@@ -116,6 +116,10 @@
     color: FEFEE2;
 }
 
+#remove{
+    width: 150px;
+}
+
 .groups-container h2{
     font-size: 22;
     font-family: 'Roboto Condensed', sans-serif;

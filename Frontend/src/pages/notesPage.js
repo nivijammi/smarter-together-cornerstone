@@ -3,9 +3,7 @@ import DataStore from '../util/DataStore';
 import Toastify from "toastify-js";
 import NoteClient from "../api/NoteClient";
 
-/**
- * Logic needed for the create an account for the website.
- */
+
 class NotesPage extends BaseClass {
     constructor() {
         super();

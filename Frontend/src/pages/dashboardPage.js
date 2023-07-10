@@ -18,8 +18,7 @@ class DashboardPage extends BaseClass {
      * Once the page has loaded, set up the event handlers and fetch the flight list.
      */
     mount() {
-        window.addEventListener('load', this.onLoad);
-//        document.getElementById('graph-canvas').addEventListener('load', this.renderGraph);
+        this.onLoad();
 
         this.lambda = new LambdaClient();
     }

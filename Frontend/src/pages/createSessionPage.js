@@ -82,15 +82,6 @@ class CreateSessionsPage extends BaseClass {
         }
     }
 
-//    async getAllForUser() {
-//        let userId = localStorage.getItem("userId");
-//        console.log(userId);
-//        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-//        console.log(sessions);
-//
-//        return sessions;
-//    }
-
     async upcomingSessions() {
         let userId = localStorage.getItem("userId");
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
@@ -151,7 +142,6 @@ class CreateSessionsPage extends BaseClass {
     }
 
     async loadDropDowns() {
-//        let sessions = this.getAllForUser();
         let userId = localStorage.getItem("userId");
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
 
@@ -216,10 +206,6 @@ class CreateSessionsPage extends BaseClass {
              let errorHtml = '<p>Could not create session. Try again.</p>';
              errorMessage.innerHTML = errorHtml;
          }
-
-         let sessionId = createdSession.sessionId;
-         let sessionById = await this.lambda.getStudySessionBySessionId(sessionId);
-         console.log(sessionById);
 
          this.onLoad();
     }

@@ -19,7 +19,7 @@ class MyAccountPage extends BaseClass {
     mount() {
         document.getElementById('topic-submit').addEventListener('click', this.topic);
         document.getElementById('goal-submit').addEventListener('click', this.goal);
-        addEventListener('load', this.onLoad);
+        this.onLoad();
 
         this.lambda = new LambdaClient();
     }
