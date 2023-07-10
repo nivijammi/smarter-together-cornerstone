@@ -21,7 +21,7 @@ public class StudySessionConverter {
         record.setUserId(request.getUserId());
         record.setSubject(request.getSubject());
         record.setDuration(request.getDuration());
-        record.setDate(ZonedDateTime.now());  //why does this not have be be converted? but recordToREsponse does?
+        record.setDate(converter.unconvert(request.getDate()));
         record.setNotes(request.getNotes());
         return record;
     }
