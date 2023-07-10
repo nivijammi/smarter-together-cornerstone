@@ -10,7 +10,7 @@ class CreateSessionsPage extends BaseClass {
     constructor() {
         super();
         this.bindClassMethods(['onCreate', 'onSubmit', 'onDelete', 'onLoad', 'errorHandler', 'getBySessionId',
-        'getBySubject', 'upcomingSessions', 'getAllForUser', 'sidebar', 'renderSessions', 'loadDropDowns'], this);
+        'getBySubject', 'upcomingSessions', 'sidebar', 'renderSessions', 'loadDropDowns'], this);
         this.dataStore = new DataStore();
     }
 
@@ -82,48 +82,59 @@ class CreateSessionsPage extends BaseClass {
         }
     }
 
-    async getAllForUser() {
-        let userId = localStorage.getItem("userId");
-        console.log(userId);
-        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
-
-        return sessions;
-    }
+//    async getAllForUser() {
+//        let userId = localStorage.getItem("userId");
+//        console.log(userId);
+//        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+//        console.log(sessions);
+//
+//        return sessions;
+//    }
 
     async upcomingSessions() {
-        let sessions = this.getAllForUser();
+        let userId = localStorage.getItem("userId");
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
         console.log(sessions)
 
-//        if(sessions) {
-//            let currentDate = new Date();
-//            let currentMonth = currentDate.getMonth();
-//            let currentDay = currentDate.getDay();
-//
-//            let sessionResults = document.getElementById('sessions');
-//            let sessionHtml = "";
-//
-//            for(const session of sessions) {
-//                let sessionDate = new Date().of(session.date);
-//                let month = sessionDate.getMonth();
-//                let day = sessionDate.getDay();
-//
-//                if(month == currentMonth) {
-//                    if(day > currentDay) {
-//                        sessionHtml += `
-//                            <div class="upcoming-sessions">
-//                                <p>Subject: ${session.subject}</p>
-//                                <p>Date: ${session.date}</p>
-//                                <p>Duration: ${session.duration}</p>
-//                            </div>
-//                        `
-//                    }
-//                }
-//            }
-//            if(sessionHtml != ""){
-//                sessionResults = sessionHtml;
-//            }
-//        } todo
+        if(sessions) {
+            let currentDate = new Date();
+            let currentYear = currentDate.getYear();
+            let currentMonth = currentDate.getMonth() + 1;
+            console.log(currentMonth);
+            let currentDay = currentDate.getDay();
+            console.log(currentDay);
+
+            let sessionResults = document.getElementById('sessions');
+            let sessionHtml = "";
+
+            for(const session of sessions) {
+                let sessionDate = session.date;
+                let year = sessionDate.substring(0,4);
+                let month = sessionDate.substring(5, 7);
+                let day = sessionDate.substring(8);
+
+            console.log(sessionHtml);
+
+                if(year == currentYear){
+                    if(month == currentMonth) {
+                        if(day > currentDay) {
+                            sessionHtml += `
+                                <div class="upcoming-sessions">
+                                    <p>Subject: ${session.subject}</p>
+                                    <p>Date: ${session.date}</p>
+                                    <p>Duration: ${session.duration}</p>
+                                </div>
+                            `
+                        }
+                    }
+                }
+                console.log(sessionHtml);
+            }
+            if(sessionHtml != ""){
+                sessionResults = sessionHtml;
+                console.log(sessionHtml);
+            }
+        }
     }
 
     async sidebar() {
@@ -146,7 +157,9 @@ class CreateSessionsPage extends BaseClass {
     }
 
     async loadDropDowns() {
-        let sessions = this.getAllForUser();
+//        let sessions = this.getAllForUser();
+        let userId = localStorage.getItem("userId");
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
 
         if(sessions){
             let dropDownHtml = "";
@@ -158,10 +171,9 @@ class CreateSessionsPage extends BaseClass {
             let deleteDropDown = document.getElementById('delete');
 
             //Gather sessions
-            console.log(sessions);
-//            for(const session of sessions) {
-//                dropDownHtml += '<option value="${session.sessionId}">Topic: ${session.subject} ${session.date}</option>'
-//            } //todo
+            for(const session of sessions) {
+                dropDownHtml += `<option value="${session.sessionId}">Topic: ${session.subject} Date: ${session.date}</option>`
+            }
 
             updateDropDown.innerHTML = dropDownHtml;
             deleteDropDown.innerHTML = dropDownHtml;
@@ -198,6 +210,7 @@ class CreateSessionsPage extends BaseClass {
          let topicName = document.getElementById('topic-name').value;
          let duration = document.getElementById('duration-create').value;
          let date = document.getElementById('date-create').value;
+         console.log(date);
          let resources = document.getElementById('resources-create').value;
          console.log(1);
          console.log(userId);
@@ -219,7 +232,6 @@ class CreateSessionsPage extends BaseClass {
 
     async onSubmit(event) {
         // Prevent the form from refreshing the page
-        event.preventDefault();
 
         console.log("update");
 
@@ -268,7 +280,6 @@ class CreateSessionsPage extends BaseClass {
     }
 
     async onDelete(event) {
-        event.preventDefault();
 
         let sessionId = document.getElementById('delete').value;
         console.log(sessionId);

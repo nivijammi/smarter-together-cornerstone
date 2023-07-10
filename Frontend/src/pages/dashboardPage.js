@@ -49,17 +49,19 @@ class DashboardPage extends BaseClass {
         }
     }
 
-    async getAllForUser() {
+//    async getAllForUser() {
+//        let userId = localStorage.getItem("userId");
+//        console.log(userId);
+//        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+//        console.log(sessions);
+//
+//        return sessions;
+//    }
+
+    async renderSessions() {
         let userId = localStorage.getItem("userId");
         console.log(userId);
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
-
-        return sessions;
-    }
-
-    async renderSessions() {
-        let sessions = this.getAllForUser();
         let allSessions = document.getElementById('my-sessions');
         let allHtml = "";
 
@@ -78,7 +80,9 @@ class DashboardPage extends BaseClass {
     }
 
     async renderUpcomingSessions() {
-        let sessions = this.getAllForUser();
+        let userId = localStorage.getItem("userId");
+        console.log(userId);
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
 
         if(sessions) {
             let currentDate = new Date();
@@ -112,7 +116,10 @@ class DashboardPage extends BaseClass {
     }
 
     async renderResources() {
-        let sessions = this.getAllForUser();
+        let userId = localStorage.getItem("userId");
+        console.log(userId);
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+
         let resources = document.getElementById("resource-list");
         let resourceHtml = "";
 
@@ -130,22 +137,26 @@ class DashboardPage extends BaseClass {
 
     async studyHours(weekNumber) {
         //call getStudySessionsByUserId to get all their sessions.
-        let sessions = this.getAllForUser();
+        let userId = localStorage.getItem("userId");
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions);
 
         if(!sessions) {
             return 0;
         } else {
             //date and grab current month and year.
             let currentYear = new Date().getFullYear();
-            let currentMonth = new Date().getMonth();
+            let currentMonth = new Date().getMonth() + 1;
+
+            console.log(weekNumber);
 
             let totalMinutes = 0;
             //get days of the week pertaining to the specific week ex. week 1 etc.
-            for(session of sessions){
-                let sessionDate = new Date().of(session.date);
-                let sessionMonth = sessionDate.getMonth();
-                let sessionDay = sessionDate.getDay();
-                let sessionYear = sessionDate.getYear();
+            for(const session of sessions){
+                let sessionDate = session.date;
+                let sessionYear = sessionDate.substring(0,4);
+                let sessionMonth = sessionDate.substring(5, 7);
+                let sessionDay = sessionDate.substring(8);
 
                 if(sessionYear == currentYear){
                     if(sessionMonth == currentMonth) {
@@ -155,22 +166,23 @@ class DashboardPage extends BaseClass {
                             }
                         } else if(weekNumber == 2) {
                             if(sessionDay > 7 && sessionDay <= 14) {
-                                totalMinutes += session.duration;
+                               totalMinutes += session.duration;
                             }
                         } else if(weekNumber == 3) {
                             if(sessionDay > 14 && sessionDay <= 21) {
-                                totalMinutes += session.duration;
+                              totalMinutes += session.duration;
                             }
                         } else if(weekNumber == 4) {
                             if(sessionDay > 21) {
-                                totalMinutes += session.duration;
+                             totalMinutes += session.duration;
                             }
                         }
                     }
                 }
             }
-
-            return (totalMinutes / 60);
+            let result = (totalMinutes / 60);
+            console.log(result);
+            return result;
         }
 
 
@@ -184,15 +196,63 @@ class DashboardPage extends BaseClass {
         let graph = document.getElementById("graph");
         let goal = localStorage.getItem("goal");
 
+        //call getStudySessionsByUserId to get all their sessions.
+        let userId = localStorage.getItem("userId");
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions);
+
+        if(!sessions) {
+            return 0;
+        } else {
+            //date and grab current month and year.
+            let currentYear = new Date().getFullYear();
+            let currentMonth = new Date().getMonth() + 1;
+
+            let totalMinutes1 = 0;
+            let totalMinutes2 = 0;
+            let totalMinutes3 = 0;
+            let totalMinutes4 = 0;
+            //get days of the week pertaining to the specific week ex. week 1 etc.
+            for(const session of sessions){
+                let sessionDate = session.date;
+                let sessionYear = sessionDate.substring(0,4);
+                let sessionMonth = sessionDate.substring(5, 7);
+                let sessionDay = sessionDate.substring(8);
+
+                if(sessionYear == currentYear){
+                    if(sessionMonth == currentMonth) {
+                        if(sessionDay <= 7) {
+                            totalMinutes1 += session.duration;
+                        }
+                        if(sessionDay > 7 && sessionDay <= 14) {
+                           totalMinutes2 += session.duration;
+                        }
+                        if(sessionDay > 14 && sessionDay <= 21) {
+                          totalMinutes3 += session.duration;
+                        }
+                        if(sessionDay > 21) {
+                         totalMinutes4 += session.duration;
+                        }
+                    }
+                }
+            }
+
+            let week1 = (totalMinutes1 / 60);
+            let week2 = (totalMinutes2 / 60);
+            let week3 = (totalMinutes3 / 60);
+            let week4 = (totalMinutes4 / 60);
+
+
 //        let week1 = this.studyHours(1);
 //        let week2 = this.studyHours(2);
 //        let week3 = this.studyHours(3);
 //        let week4 = this.studyHours(4);
 
-        let week1 = 33;
-        let week2 = 20;
-        let week3 = 5;
-        let week4 = 40;
+
+//        let week1 = 33;
+//        let week2 = 20;
+//        let week3 = 5;
+//        let week4 = 40;
         //https://plotly.com/javascript/bar-charts/
         var trace1 = {
           x: ["Week 1", "Week 2", "Week 3", "Week 4"],
@@ -256,6 +316,7 @@ class DashboardPage extends BaseClass {
 //        ];
 //
 //        Plotly.newPlot(graph, data);
+        }
     }
 
     // Event Handlers --------------------------------------------------------------------------------------------------
