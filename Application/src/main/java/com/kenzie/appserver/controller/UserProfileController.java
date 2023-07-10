@@ -18,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+
+
 import java.net.URI;
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -115,9 +117,10 @@ public class UserProfileController {
     }
 
     // public StudySession getStudySessionBySessionId(String sessionId) {
-    @GetMapping("studysession/session/{sessionId}")
+    @GetMapping("/studysession/session/{sessionId}")
     public ResponseEntity<StudySession> getStudySessionBySessionId(@PathVariable("sessionId") String sessionId) {
         StudySession studySession = studySessionServiceClient.getStudySessionBySessionId(sessionId);
+
 
         if (studySession == null) {
             return ResponseEntity.notFound().build();
@@ -127,7 +130,7 @@ public class UserProfileController {
 
 
     //public List<StudySession> getStudySessionsByUserId(String userId) {
-    @GetMapping("studysession/{userId}")
+    @GetMapping("/studysession/{userId}")
     public ResponseEntity<List<StudySession>> getStudySessionsByUserId(@PathVariable("userId") String userId) {
         List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(userId);
 
@@ -139,7 +142,7 @@ public class UserProfileController {
 
     }
 
-    @GetMapping("studysession/subject/{subject}")
+    @GetMapping("/studysession/subject/{subject}")
     public ResponseEntity<List<StudySession>> getStudySessionsBySubject(@PathVariable("subject") String subject) {
         List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsBySubject(subject);
 
@@ -150,7 +153,7 @@ public class UserProfileController {
         return ResponseEntity.ok(studySessionList);
     }
 
-    @GetMapping("studysession/all")
+    @GetMapping("/studysession/all")
     public ResponseEntity<List<StudySession>> getAllStudySessions() {
         List<StudySession> studySessionList = studySessionServiceClient.getAllStudySessions();
 

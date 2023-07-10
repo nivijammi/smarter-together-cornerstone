@@ -2,6 +2,8 @@ package com.kenzie.capstone.service.converter;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -12,8 +14,14 @@ public class ZonedDateTimeConverter implements DynamoDBTypeConverter<String, Zon
         return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE);
     }
 
+//    @Override
+//    public ZonedDateTime unconvert(String dateTimeRepresentation) {
+//        return ZonedDateTime.parse(dateTimeRepresentation);
+//    }
+
     @Override
     public ZonedDateTime unconvert(String dateTimeRepresentation) {
-        return ZonedDateTime.parse(dateTimeRepresentation);
+        LocalDate localDate = LocalDate.parse(dateTimeRepresentation, DateTimeFormatter.ISO_LOCAL_DATE);
+        return localDate.atStartOfDay(ZoneOffset.UTC);
     }
 }
