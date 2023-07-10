@@ -1,11 +1,8 @@
 package com.kenzie.appserver.service;
 
-import com.kenzie.appserver.config.CacheStore;
 import com.kenzie.appserver.exception.NoteNotFoundException;
-import com.kenzie.appserver.exception.StudyGroupNotFoundException;
 import com.kenzie.appserver.repositories.MemberRepository;
 import com.kenzie.appserver.repositories.NoteRepository;
-import com.kenzie.appserver.repositories.model.MemberRecord;
 import com.kenzie.appserver.repositories.model.NoteRecord;
 import com.kenzie.appserver.service.model.Note;
 import org.springframework.beans.factory.annotation.Autowired;
