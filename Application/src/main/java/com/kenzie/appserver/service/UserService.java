@@ -41,7 +41,6 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
         }
         if(isValidUserId(email)){
-            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
             UserRecord existingRecord = createUserRecord(userProfileRequest, email);
             return recordToResponse(existingRecord);
 
@@ -93,7 +92,7 @@ public class UserService {
         return  userRepository.existsById(email); // false
     }
 
-    private UserRecord createUserRecord(UserProfileRequest userProfileRequest, String userId) {
+    public UserRecord createUserRecord(UserProfileRequest userProfileRequest, String userId) {
         UserRecord record = new UserRecord();
         record.setEmail(userId);
         record.setPassword(userProfileRequest.getPassword());
@@ -131,50 +130,45 @@ public class UserService {
      * .... methods are required for the lambda connection
      */
 
-    public StudySessionResponse addStudySession(StudySessionRequest studySessionRequest) {
-        StudySessionResponse response = studySessionServiceClient.addStudySession(studySessionRequest);
-
-        return response;
-    }
-    //delete
-    public boolean deleteStudySessionBySessionId(String sessionId) {
-        boolean outcome = studySessionServiceClient.deleteStudySessionBySessionId(sessionId);
-
-        return outcome;
-    }
-
-    public StudySession getStudySessionBySessionId(String sessionId) {
-        StudySession studySession = studySessionServiceClient.getStudySessionBySessionId(sessionId);
-
-        return studySession;
-    }
-
-
-    public List<StudySession> getStudySessionsByUserId(String userId) {
-        List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(userId);
-
-        return studySessionList;
-    }
-
-
-    // public List<StudySession> getStudySessionsBySubject(String subject) {
-    public List<StudySession> getStudySessionsByUserSubject(String subject) {
-        List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(subject);
-
-        return studySessionList;
-    }
-
-
-    //   public List<StudySession> getAllStudySessions() {
-    public List<StudySession> getAllStudySessions() {
-        List<StudySession> studySessionList = studySessionServiceClient.getAllStudySessions();
-
-        return studySessionList;
-    }
-
-
-
-
-
+//    public StudySessionResponse addStudySession(StudySessionRequest studySessionRequest) {
+//        StudySessionResponse response = studySessionServiceClient.addStudySession(studySessionRequest);
+//
+//        return response;
+//    }
+//    //delete
+//    public boolean deleteStudySessionBySessionId(String sessionId) {
+//        boolean outcome = studySessionServiceClient.deleteStudySessionBySessionId(sessionId);
+//
+//        return outcome;
+//    }
+//
+//    public StudySession getStudySessionBySessionId(String sessionId) {
+//        StudySession studySession = studySessionServiceClient.getStudySessionBySessionId(sessionId);
+//
+//        return studySession;
+//    }
+//
+//
+//    public List<StudySession> getStudySessionsByUserId(String userId) {
+//        List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(userId);
+//
+//        return studySessionList;
+//    }
+//
+//
+//    // public List<StudySession> getStudySessionsBySubject(String subject) {
+//    public List<StudySession> getStudySessionsByUserSubject(String subject) {
+//        List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(subject);
+//
+//        return studySessionList;
+//    }
+//
+//
+//    //   public List<StudySession> getAllStudySessions() {
+//    public List<StudySession> getAllStudySessions() {
+//        List<StudySession> studySessionList = studySessionServiceClient.getAllStudySessions();
+//
+//        return studySessionList;
+//    }
 
 }
