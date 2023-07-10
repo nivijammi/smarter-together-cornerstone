@@ -133,7 +133,8 @@ public class StudyGroupControllerTest {
         String discussionTopic = "discussionTopic";
         ZonedDateTime date = ZonedDateTime.now();
         boolean active = false;
-        String memberId = "person1@aol.com";
+        String memberEmailPrefix = mockNeat.strings().valStr();
+        String memberId = memberEmailPrefix + "@" + "aol.com";
         String password = "Password1!";
 
         StudyGroup studyGroup = new StudyGroup(groupId, groupName, discussionTopic, date, active);
@@ -142,10 +143,17 @@ public class StudyGroupControllerTest {
         studyGroupService.addNewStudyGroup(studyGroup);
 
         // Add Member
-        UserLoginRequest request = getUserLoginRequest(memberId, password);
-        userLogInController.registerUser(request);
+        //UserLoginRequest request = getUserLoginRequest(memberId, password);
+        //userLogInController.registerUser(request);
+        StudyGroupMemberRequest request = new StudyGroupMemberRequest();
+        request.setGroupId(groupId);
+        request.setGroupName(groupName);
+        request.setDiscussionTopic(discussionTopic);
+        request.setCreationDate(String.valueOf(date));
+        request.setActive(active);
 
         ResultActions actions = mvc.perform(post("/v1/groups/{groupId}/members/{memberId}", groupId, memberId)
+                        .content(mapper.writeValueAsString(request))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());

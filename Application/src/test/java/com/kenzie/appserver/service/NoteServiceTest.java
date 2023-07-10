@@ -28,7 +28,7 @@ public class NoteServiceTest {
     }
 
     @Test
-    void createNote_successful(){
+    void createNote_createdAndSavedNote(){
 
         String noteId = UUID.randomUUID().toString();
         String userId = "person1@aol.com";
@@ -65,7 +65,7 @@ public class NoteServiceTest {
     }
 
     @Test
-    void createNote_unsuccessful(){
+    void createNote_noteFailedToSave(){
         String noteId = UUID.randomUUID().toString();
         String userId = "person1@aol.com";
         String content = "ZonedDateTime is an immutable representation of a date-time with a time-zone. " +
