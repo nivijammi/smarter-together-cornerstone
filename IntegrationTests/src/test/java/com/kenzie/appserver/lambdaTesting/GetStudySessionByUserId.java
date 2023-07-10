@@ -23,7 +23,7 @@ public class GetStudySessionByUserId {
 
     @Test
     void studySessionServiceClient_getStudySessionByUserId_isValid() {
-        String userId = "Tester";
+        String userId = "NewTester";
         String subject = "testSubject";
         int duration = 10;
         String date = "2023-10-10"; //zoneddatetime.now?
@@ -71,11 +71,16 @@ public class GetStudySessionByUserId {
         List<StudySession> studySessions = client.getStudySessionsByUserId(userId);
 
         assertNotNull(studySessions, "The StudySessions exist");
-
         assertEquals(2, studySessions.size(), "There are two study sessions");
+
+        for(StudySession session : studySessions) {
+            client.deleteStudySessionBySessionId(session.getSessionId());
+        }
         //assert great than or equal to the number
         //do a for loop on the things returned
         //and make sure that the things looking for are apart of the list
+
+
 
     }
 }

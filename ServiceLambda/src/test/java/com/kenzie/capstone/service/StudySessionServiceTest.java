@@ -53,7 +53,7 @@ public class StudySessionServiceTest {
         String userId = "testcustomerId";
         String subject = "testSubject";
         int duration = 10;
-        String date = "testdate";
+        String date = "2023-07-12";
         String notes = "testNotes";
 
         StudySessionRequest request = new StudySessionRequest();

@@ -24,13 +24,13 @@ public class GetStudySessionBySubject {
     @Test
     void studySessionServiceClient_getStudySessionBySubject_isValid() {
         String userId = "Tester";
-        String subject = "Sub";
+        String subject = "NewSubject1";
         int duration = 10;
         String date = "2023-10-10"; //zoneddatetime.now?
         String notes = "testNotes";
 
         String userId2 = userId;
-        String subject2 = "Sub";
+        String subject2 = "NewSubject1";
         int duration2 = 12;
         String date2 = "2023-10-10"; //zoneddatetime.now?
         String notes2 = "testNotes2";
@@ -71,7 +71,11 @@ public class GetStudySessionBySubject {
         List<StudySession> studySessions = client.getStudySessionsBySubject(subject);
 
         assertNotNull(studySessions, "The StudySessions exist");
-
         assertEquals(2, studySessions.size(), "There are two study sessions");
+
+        //Cleanup
+        for(StudySession session : studySessions) {
+            client.deleteStudySessionBySessionId(session.getSessionId());
+        }
     }
 }
