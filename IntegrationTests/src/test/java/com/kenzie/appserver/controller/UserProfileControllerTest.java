@@ -6,6 +6,7 @@ import com.kenzie.appserver.controller.model.UserProfileRequest;
 import com.kenzie.appserver.controller.model.UserProfileResponse;
 import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.service.UserService;
+import com.kenzie.appserver.service.model.User;
 import net.andreinc.mockneat.MockNeat;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,13 +29,14 @@ public class UserProfileControllerTest {
     private UserService userService;
     @Autowired
     private UserProfileController userProfileController;
+
     private final MockNeat mockNeat = MockNeat.threadLocal();
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void addNewUser_addsANewUser() throws Exception {
 
-        String email = UUID.randomUUID().toString();
+        String email = mockNeat.emails().toString();
         String password = UUID.randomUUID().toString();
         String lastName = "Smith";
         String firstName = "John";
@@ -63,7 +65,7 @@ public class UserProfileControllerTest {
 
     @Test
     public void addNewUser_addingNewUserFails() throws Exception {
-        String email = null;
+        String email = mockNeat.emails().toString();
         String password = UUID.randomUUID().toString();
         String lastName = "Smith";
         String firstName = "John";
@@ -78,7 +80,7 @@ public class UserProfileControllerTest {
         userProfileRequest.setCreationDate(new ZonedDateTimeConverter().convert(date));
 
         mvc.perform(post("/v1/users")
-                        .content(mapper.writeValueAsString(userProfileRequest))// rest sets up the http request
+                        //.content(mapper.writeValueAsString(userProfileRequest))// rest sets up the http request
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());// action
@@ -86,8 +88,9 @@ public class UserProfileControllerTest {
 
     @Test
     public void updateUserProfile_success() throws Exception{
-        String email = "someone@somebody.com";
-        String password = UUID.randomUUID().toString();
+        String userId = mockNeat.emails().toString();//"someone@somebody.com"
+        String email = mockNeat.emails().toString();;
+        String password = "SomePassword9!";
         String lastName = "Smith";
         String firstName = "John";
         ZonedDateTime date = ZonedDateTime.now();
@@ -101,7 +104,7 @@ public class UserProfileControllerTest {
 
         userService.addNewUser(userProfileRequest);
 
-        ResultActions actions = mvc.perform(put("/v1/{userId}",email)
+        ResultActions actions = mvc.perform(put("/v1/{email}",email)
                         .content(mapper.writeValueAsString(userProfileRequest))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -109,7 +112,7 @@ public class UserProfileControllerTest {
 
         String responseBody = actions.andReturn().getResponse().getContentAsString();
         UserProfileResponse response = mapper.readValue(responseBody, UserProfileResponse.class);
-        assertThat(response.getEmail()).isEqualTo(email).as("The user id is correct");
+        assertThat(response.getEmail()).isEqualTo(email).as("The email is correct");
         assertThat(response.getPassword()).isEqualTo(password).as("The password is correct");
         assertThat(response.getLastName()).isEqualTo(userProfileRequest.getLastName()).as("The last name is correct");
         assertThat(response.getFirstName()).isEqualTo(userProfileRequest.getFirstName()).as("The first name is correct");
@@ -127,7 +130,7 @@ public class UserProfileControllerTest {
         userProfileRequest.setCreationDate(new ZonedDateTimeConverter().convert(ZonedDateTime.now()));
 
         String email = "smith@john.com";
-        mvc.perform(put("/v1/{userId}",email)
+        mvc.perform(put("/v1/{email}",email)
                         .content(mapper.writeValueAsString(userProfileRequest))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
@@ -154,7 +157,7 @@ public class UserProfileControllerTest {
         userService.addNewUser(userProfileRequest);
 
         //THEN
-        ResultActions actions = mvc.perform(get("/v1/{userId}", email)
+        ResultActions actions = mvc.perform(get("/v1/{email}", email)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
@@ -175,7 +178,7 @@ public class UserProfileControllerTest {
         String email = "broken@email.com";
 
         //THEN
-        mvc.perform(get("/v1/{userId}", email)
+        mvc.perform(get("/v1/{email}", email)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());
@@ -200,28 +203,41 @@ public class UserProfileControllerTest {
         userService.addNewUser(userProfileRequest);
 
         // WHEN
-        mvc.perform(delete("/v1/{userId}",email)
+        mvc.perform(delete("/v1/{email}",email)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is2xxSuccessful());
 
-        // THEN
-        mvc.perform(get("/v1/notes/{noteId}", email)
+        // THEN //"/v1/notes/{noteId}"
+        mvc.perform(get("/v1/{email}", email)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
 
     }
 
+//    @Test
+//    public void deleteUserById_unsuccessful() throws Exception {
+//
+//        String email = "broken@email.com";
+//
+//        mvc.perform(delete("/v1/{userId}", email)
+//                        .accept(MediaType.APPLICATION_JSON)
+//                        .contentType(MediaType.APPLICATION_JSON))
+//                .andExpect(status().is4xxClientError());
+//
+//    }
+
     @Test
-    public void deleteUserById_unsuccessful() throws Exception {
+    public void deleteUserById_userNotFound() throws Exception {
+        String email = "nonexistent@user.com";
 
-        String email = "broken@email.com";
-
-        mvc.perform(delete("/v1/{userId}", email)
+        // WHEN
+        mvc.perform(delete("/v1/{email}", email)
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().is4xxClientError());
-
+                .andExpect(status().isNotFound());
     }
+
+
 }

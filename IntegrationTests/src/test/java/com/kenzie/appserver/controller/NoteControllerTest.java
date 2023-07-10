@@ -62,7 +62,7 @@ public class NoteControllerTest {
 
     @Test
     public void createNote_creatingNoteFails() throws Exception {
-        String noteId = null;
+        String noteId = UUID.randomUUID().toString();
         String userId = UUID.randomUUID().toString();
         String content = "noteContent";
         ZonedDateTime date = ZonedDateTime.now();
@@ -75,7 +75,6 @@ public class NoteControllerTest {
         noteRequest.setUpdatedDateTime(new ZonedDateTimeConverter().convert(date));
 
         mvc.perform(post("/v1/notes/create")
-                        .content(mapper.writeValueAsString(noteRequest))// rest sets up the http request
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError());// action

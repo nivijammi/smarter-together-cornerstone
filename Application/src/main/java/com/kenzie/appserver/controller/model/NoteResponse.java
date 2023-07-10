@@ -1,5 +1,6 @@
 package com.kenzie.appserver.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotEmpty;
@@ -26,7 +27,8 @@ public class NoteResponse {
     @JsonProperty("updatedDateTime")
     private String updatedDateTime;
 
-    public NoteResponse(String noteId, String userId, String content, String createdDateTime, String updatedDateTime) {
+    @JsonCreator
+    public NoteResponse(@JsonProperty("noteId") String noteId, @JsonProperty("userId")String userId, @JsonProperty("content")String content, @JsonProperty("createdDateTime")String createdDateTime, @JsonProperty("updatedDateTime")String updatedDateTime) {
         this.noteId = noteId;
         this.userId = userId;
         this.content = content;

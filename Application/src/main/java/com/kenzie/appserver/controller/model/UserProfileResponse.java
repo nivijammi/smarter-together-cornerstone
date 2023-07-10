@@ -1,5 +1,6 @@
 package com.kenzie.appserver.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotEmpty;
@@ -26,7 +27,8 @@ public class UserProfileResponse {
     @JsonProperty("creationDate")
     private String creationDate;
 
-    public UserProfileResponse(String email, String password, String firstName, String lastName, String creationDate) {
+    @JsonCreator
+    public UserProfileResponse(@JsonProperty("email") String email,@JsonProperty("password") String password, @JsonProperty("firstName") String firstName, @JsonProperty("lastName") String lastName, @JsonProperty("creationDate") String creationDate) {
         this.email = email;
         this.password = password;
         this.firstName = firstName;
