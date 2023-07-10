@@ -8,6 +8,7 @@ import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.repositories.model.UserRecord;
 import com.kenzie.appserver.service.model.User;
 import com.kenzie.capstone.service.client.StudySessionServiceClient;
+import com.kenzie.capstone.service.model.StudySession;
 import com.kenzie.capstone.service.model.StudySessionRequest;
 import com.kenzie.capstone.service.model.StudySessionResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -121,12 +123,50 @@ public class UserService {
     /**
      * StudySessionServiceClient methods
      * Lambda fun
+     * .... hindsight, I dont think these are necessary at all
+     * .... might end up deleting, because I think only the controller
+     * .... methods are required for the lambda connection
      */
 
     public StudySessionResponse addStudySession(StudySessionRequest studySessionRequest) {
         StudySessionResponse response = studySessionServiceClient.addStudySession(studySessionRequest);
 
         return response;
+    }
+    //delete
+    public boolean deleteStudySessionBySessionId(String sessionId) {
+        boolean outcome = studySessionServiceClient.deleteStudySessionBySessionId(sessionId);
+
+        return outcome;
+    }
+
+    public StudySession getStudySessionBySessionId(String sessionId) {
+        StudySession studySession = studySessionServiceClient.getStudySessionBySessionId(sessionId);
+
+        return studySession;
+    }
+
+
+    public List<StudySession> getStudySessionsByUserId(String userId) {
+        List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(userId);
+
+        return studySessionList;
+    }
+
+
+    // public List<StudySession> getStudySessionsBySubject(String subject) {
+    public List<StudySession> getStudySessionsByUserSubject(String subject) {
+        List<StudySession> studySessionList = studySessionServiceClient.getStudySessionsByUserId(subject);
+
+        return studySessionList;
+    }
+
+
+    //   public List<StudySession> getAllStudySessions() {
+    public List<StudySession> getAllStudySessions() {
+        List<StudySession> studySessionList = studySessionServiceClient.getAllStudySessions();
+
+        return studySessionList;
     }
 
 
