@@ -1,0 +1,21 @@
+Resources:
+  UserTable2:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      "AttributeDefinitions":
+        - "AttributeName": "sessionId"
+          "AttributeType": "S"
+      "KeySchema":
+        - "AttributeName": "sessionId"
+          "KeyType": "HASH"
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false
+      BillingMode: PAY_PER_REQUEST
+      TableName: "StudySessionTable"
+      GlobalSecondaryIndexes:
+        - IndexName: "userIdIndex"
+          KeySchema:
+            - AttributeName: "userId"
+              KeyType: "HASH"
+          Projection:
+            ProjectionType: ALL

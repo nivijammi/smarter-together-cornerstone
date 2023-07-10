@@ -90,8 +90,14 @@ public class EndpointUtility {
                 .header("Accept", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(data))
                 .build();
+        System.out.println("client: " + client.toString());
+        System.out.println("uri :" + uri.toString());
+        System.out.println("http request" + request.toString());
+
         try {
             HttpResponse<String> httpResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("http response: " + httpResponse.body());
 
             int statusCode = httpResponse.statusCode();
             if (statusCode == 200) {
@@ -104,6 +110,7 @@ public class EndpointUtility {
             return e.getMessage();
         }
     }
+
 
     public String getEndpoint(String endpoint) {
         String api = getApiEndpint();
