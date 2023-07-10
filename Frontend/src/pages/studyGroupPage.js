@@ -3,6 +3,7 @@ import DataStore from '../util/DataStore';
 import Toastify from "toastify-js";
 import LambdaClient from "../api/LambdaClient";
 import StudyGroupClient from "../api/StudyGroupClient";
+import StudyGroupReviewClient from "../api/StudyGroupReviewClient";
 
 /**
  * Logic needed for the create an account for the website.
@@ -10,8 +11,8 @@ import StudyGroupClient from "../api/StudyGroupClient";
 class StudyGroupPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['onSubmit', 'onLoad', 'errorHandler', 'getByGroupId', 'getByRating', 'getAllGroups', 'upcomingSessions',
-        'getAllForUser', 'renderSessions', 'sidebar'], this);
+        this.bindClassMethods(['onSubmit', 'onLoad', 'joinGroup', 'errorHandler', 'getByGroupId', 'getByRatings',
+        'getAllGroups', 'upcomingSessions', 'renderGroups', 'sidebar'], this);
         this.dataStore = new DataStore();
     }
 
@@ -20,35 +21,58 @@ class StudyGroupPage extends BaseClass {
      */
     mount() {
         document.getElementById('submit').addEventListener('click', this.onSubmit);
+//        document.getElementById('select').addEventListener('click', this.joinGroup);
         this.onLoad();
 
         this.lambda = new LambdaClient();
-        this.client = new StudyGroupClient();
+        this.groupClient = new StudyGroupClient();
+        this.reviewClient = new StudyGroupReviewClient();
     }
 
     //Render Method
 
-    async renderSessions() {
-        let sessionResults = document.getElementById('results');
-        let sessions = this.dataStore.get("sessions");
-        let sessionHtml = "";
+    async renderGroups() {
+        let groupResults = document.getElementById('results');
+        let groups = this.dataStore.get("groups");
+        let groupHtml = "";
 
         if(sessions) {
-            for(const session of sessions) {
-                sessionHtml += `
+            for(const group of groups) {
+            let averageRating = await this.reviewClient.getAverageRatingById(group.groupId, this.errorHandler);
+                groupHtml += `
                     <div class="results-content">
-                        <h3>${session.subject}</h3>
-                        <h4>Date: ${session.date}</h4>
-                        <p>Duration: ${session.duration}</p>
-                        <p>Resources: ${session.notes}</p>
+                        <h3>${group.groupName}</h3>
+                        <h4>Date: ${group.discussionTopic}</h4>
+                        <p>Rating: ${averageRating}</p>
+                        <p>Members:
+                `
+                let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorHandler);
+                if(members){
+                    for(const member of members) {
+                        groupHtml += `
+                            ${member.memberId}
+                        `
+                    }
+                    groupHtml += `
+                        </p>
+                    `
+                } else {
+                    groupHtml += `
+                        None</p>
+                    `
+                }
+                groupHtml += `
+                    <button id='select' value=group.groupId>Join Group<button>
                     </div>
                 `
             }
         } else {
-            sessionHtml += '<p>No sessions...</p>'
+            sessionHtml += '<p>No groups...</p>'
         }
 
-        sessionResults.innerHTML = sessionHtml;
+        groupResults.innerHTML = groupHtml;
+
+        document.getElementById('select').addEventListener('click', this.joinGroup);
     }
 
 
@@ -88,7 +112,7 @@ class StudyGroupPage extends BaseClass {
         }
     }
 
-    async getBySessionId(sessionId) {
+    async getByGroupId(groupId) {
         let sessions = await this.lambda.getStudySessionBySessionId(sessionId, this.errorHandler);
 
         if(sessions) {
@@ -97,8 +121,8 @@ class StudyGroupPage extends BaseClass {
         }
     }
 
-    async getBySubject(subject) {
-        let sessions = await this.lambda.getStudySessionsBySubject(subject, this.errorHandler);
+    async getByRatings(topic, minRating) {
+        let sessions = await this.reviewClient.getGroupsWithDesiredAvgRatingByTopic(minRating, topic, this.errorHandler);
 
         if(sessions) {
             this.dataStore.set("sessions", sessions);
@@ -106,47 +130,52 @@ class StudyGroupPage extends BaseClass {
         }
     }
 
-    async getAllForUser() {
-        let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId);
+    async getAllGroups() {
+        let groups = await this.groupClient.getAllStudyGroups(this.errorHandler);
 
-        if(sessions) {
-            this.dataStore.set("sessions", sessions);
-            this.renderSessions();
+        if(groups) {
+            this.dataStore.set("groups", groups);
+            this.renderGroups();
         }
     }
 
     async upcomingSessions() {
-        let sessions = this.getAllForUser();
+        let userId = localStorage.getItem("userId");
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions)
 
         if(sessions) {
-            let currentDate = new Date().now();
-            let currentMonth = currentDate.getMonth();
-            let currentDay = currentDate.getDay();
+            let currentDate = new Date();
+            let currentYear = currentDate.getFullYear();
+            let currentMonth = currentDate.getMonth() + 1;
+            console.log(currentMonth);
+            let currentDay = currentDate.getDate();
+            console.log(currentDay);
 
             let sessionResults = document.getElementById('sessions');
             let sessionHtml = "";
 
             for(const session of sessions) {
-                let sessionDate = new Date().of(session.date);
-                let month = sessionDate.getMonth();
-                let day = sessionDate.getDay();
+                let sessionDate = session.date;
+                let year = sessionDate.substring(0,4);
+                let month = sessionDate.substring(5, 7);
+                let day = sessionDate.substring(8);
 
-                if(month == currentMonth) {
-                    if(day > currentDay) {
-                        sessionHtml += `
-                            <div class="upcoming-sessions">
-                                <p>Subject: ${session.subject}</p>
-                                <p>Date: ${session.date}</p>
-                                <p>Duration: ${session.duration}</p>
-                            </div>
-                        `
+                if(year == currentYear){
+                    if(month == currentMonth) {
+                        if(day > currentDay) {
+                            sessionHtml += `
+                                <div class="upcoming-sessions">
+                                    <p>Subject: ${session.subject}
+                                    </br>Date: ${session.date}
+                                    </br>Duration: ${session.duration} minutes</p>
+                                </div>
+                            `
+                        }
                     }
                 }
             }
-            if(sessionHtml != ""){
-                sessionResults = sessionHtml;
-            }
+            sessionResults.innerHTML = sessionHtml;
         }
     }
 
@@ -168,24 +197,40 @@ class StudyGroupPage extends BaseClass {
         console.log("1");
 
         // Get the values from the form inputs
+        let idSearch = document.getElementById('search-id');
+        let ratingsSearch = document.getElementById('search-rating');
+        let allSearch = document.getElementById('search-all');
+
         let searchType = "";
-        if(document.getElementById('search-topic').checked) {
-            searchType = "topic";
-        } else if(document.getElementById('seach-id').checked) {
-            searchType = "sessionId";
-        } else if(document.getElementById('search-all').checked) {
-            searchType = "all";
-        }
+                if(document.getElementById('search-id').checked) {
+                    searchType = "groupId";
+                } else if(document.getElementById('search-rating').checked) {
+                    searchType = "rating";
+                } else if(document.getElementById('search-all').checked) {
+                    searchType = "all";
+                }
 
-        let input = document.getElementById('input').value;
+                let groupId = document.getElementById('group-id').value;
+                let topicName = document.getElementById('topic-search').value;
+                let rating = document.getElementById('rating').value;
 
-        if(searchType == "topic") {
-            this.getBySubject(input);
-        } else if(searchType == "all") {
-            this.getBySessionId(input);
-        } else {
-            this.getStudySessionsByUserId();
-        }
+                if(searchType == "groupId") {
+                    this.getByGroupId(groupId);
+                } else if(searchType == "rating") {
+                    this.getByRatings(topicName, rating);
+                } else {
+                    this.getAllGroups();
+                }
+    }
+
+    async joinGroup(event) {
+        event.preventDefault();
+
+        console.log(join);
+        let userId = localStorage.getItem("userId");
+        let groupId = document.getElementById('select').value;
+        await this.groupClient.addMemberToStudyGroup(groupId, userId, this.errorHandler);
+        window.location("my-group.html");
     }
 }
 

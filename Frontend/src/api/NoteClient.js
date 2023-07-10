@@ -5,7 +5,7 @@ export default class NoteClient extends BaseClass {
 
     constructor(props = {}){
         super();
-        this.bindClassMethods(['clientLoaded', 'createNote', 'getNoteById', 'updateNote', 'deleteStudyGroup'], this);
+        this.bindClassMethods(['clientLoaded', 'createNote', 'getNoteById', 'updateNote', 'deleteNote'], this);
         this.props = props;
         this.clientLoaded(axios);
     }
@@ -23,7 +23,14 @@ export default class NoteClient extends BaseClass {
 
     async createNote(noteId, userId, content, createdDateTime, updatedDateTime, errorCallback) {
         try {
-            const response = await this.client.post(`/v1/notes/create`);
+            const response = await this.client.post(`/v1/notes/create`,
+            {
+                noteId: noteId,
+                userId: userId,
+                content: content,
+                createdDateTime: createdDateTime,
+                updatedDateTime: updatedDateTime
+            });
             return response.data;
         } catch (error) {
             this.handleError("createNote", error, errorCallback)
@@ -32,7 +39,7 @@ export default class NoteClient extends BaseClass {
 
     async getNoteById(noteId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/notes/{noteId}`);
+            const response = await this.client.get(`/v1/notes/${noteId}`);
             return response.data;
         } catch (error) {
             this.handleError("getNoteById", error, errorCallback);
@@ -41,16 +48,22 @@ export default class NoteClient extends BaseClass {
 
     async updateNote(noteId, userId, content, createdDateTime, updatedDateTime, errorCallback){
         try{
-            const response = await this.client.put(`/v1/notes/{noteId}`);
+            const response = await this.client.put(`/v1/notes/${noteId}`,
+                {
+                    userId: userId,
+                    content: content,
+                    createdDateTime: createdDateTime,
+                    updatedDateTime: updatedDateTime
+                });
             return response.data;
         } catch (error) {
             this.handleError("updateNote", error, errorCallback);
         }
     }
 
-    async deleteStudyGroup(noteId, errorCallback){
+    async deleteNote(noteId, errorCallback){
         try{
-            const response = await this.client.delete(`/v1/notes/{noteId}`);
+            const response = await this.client.delete(`/v1/notes/${noteId}`);
             return response.data;
         } catch (error) {
             this.handleError("deleteStudyGroup", error, errorCallback);

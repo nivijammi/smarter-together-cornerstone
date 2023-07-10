@@ -1,10 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Smarter Together | Analytics</title>
+    <script rel="script" type="text/javascript" src="analyticsPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/analytics-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
 </head>
 <body>
 
+<header>
+    <div class="header">
+        <div class="inner-header">
+            <div class="logo">
+                <div class="img-container"><img src="css/logo.png"></div>
+                <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
+            </div>
+
+            <ul class="navigation">
+                <a href="notes.html"><li>Notes</li></a>
+                <a href="study-group.html"><li>Study Groups</li></a>
+                <a href="search-sessions.html"><li>My Sessions</li></a>
+                <a href="create-session.html"><li>Edit Sessions</li></a>
+                <a href="my-group.html"><li>My Groups</li></a>
+                <a href="my-account.html"><li>My Account</li></a>
+                <a href="dashboard.html"><li>Dashboard</li></a>
+                <a href="index.html"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+</header>
+
+
+
+<div class="body">
+
+    <div class="analytics-container">
+
+        <div class="title">
+            <h1>My Progress Analytics</h1>
+
+        </div>
+
+        <div class="analytics-results">
+            <h2 id="topic">My Topic</h2>
+            <ul>
+                <li><h3>I have spent <span id="total-hours">0</span> hours studying.</h3></li>
+                <li><h4>My goal was to study <span id="goal">0</span> hours a week.</h4></li>
+                <li><p>On average, that goal <span id="goal-met">has not</span> been met.</p></li>
+            </ul>
+
+        </div>
+
+        <div class="graph-container">
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<footer>
+    <div class="footer">
+        <div class="inner-footer">
+            <div class="logo-container">
+                <h1>Smarter<span>Together</span></h1>
+            </div>
+
+            <div class="footer-third">
+                <h1>Legal</h1>
+                <a>Terms & Conditions</a>
+                <a>Privacy Policy</a>
+                <a>Cookie Policy</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Learn More</h1>
+                <a>Community</a>
+                <a>Product Help</a>
+                <a>Contact Us</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Company</h1>
+                <a>Careers</a>
+                <a>Affiliates</a>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

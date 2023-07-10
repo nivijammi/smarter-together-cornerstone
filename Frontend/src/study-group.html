@@ -68,37 +68,34 @@
                 <div class="search-type">
 
                     <label>By GroupId</label>
-                    <input type="radio" name="search-select" id="search-id" checked="checked" onclick="searchGroupId()">
+                    <input type="radio" name="search-select" id="search-id" checked="checked">
 
                     <label>By Rating</label>
-                    <input type="radio" name="search-select" id="search-rating" onclick="searchRating()">
+                    <input type="radio" name="search-select" id="search-rating">
 
                     <label>All</label>
-                    <input type="radio" name="search-select" id="search-all" onclick="searchAll()">
+                    <input type="radio" name="search-select" id="search-all">
                 </div>
+                <div class="form-container">
+                    <div class="search-id" id="search-by-id">
+                        <input id="group-id" type="text" placeholder="Group Id">
 
-                <div class="search-id" id="search-by-id">
-                    <input id="group-id" type="text" placeholder="Group Id">
-                </div>
+                        <input id="topic-search" type="text" placeholder="Topic">
+                        <select id="rating">
+                            <option hidden>Minimum rating</option>
+                            <option value="1">1 Star</option>
+                            <option value="2">2 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="5">5 Stars</option>
+                        </select>
+                    </div>
 
-                <div class="search-rating" id="search-by-rating" style="display: none;">
-                    <input id="topic-search" type="text" placeholder="Topic">
-                    <select id="rating">
-                        <option hidden>Minimum rating</option>
-                        <option value="1">1 Star</option>
-                        <option value="2">2 Stars</option>
-                        <option value="3">3 Stars</option>
-                        <option value="4">4 Stars</option>
-                        <option value="5">5 Stars</option>
-                    </select>
-                </div>
-                <div class="search-by-all">
-                    <p></p>
                 </div>
                 <button id="submit">Search</button>
             </form>
 
-            <script>
+            <!-- <script>
                 function searchGroupId(){
                     document.getElementById('search-by-id').style.display ='block';
                     document.getElementById('search-by-rating').style.display ='none';
@@ -115,7 +112,7 @@
                     document.getElementById('search-by-rating').style.display ='none';
                     document.getElementById('search-by-all').style.display ='flex';
                 }
-            </script>
+            </script> -->
 
         </div>
 
@@ -124,10 +121,7 @@
     <div class="results-container">
         <div class="results">
             <h2>Available Groups</h2>
-            <h3 id="topic-result">Group Name</h3>
-            <h4 id="date">Date Created</h4>
-            <p id="results">description here</p>
-            <button id="select">Join</button>
+            <p id="results"></p>
         </div>
     </div>
 </div>

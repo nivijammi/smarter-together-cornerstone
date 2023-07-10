@@ -98,10 +98,10 @@ class CreateSessionsPage extends BaseClass {
 
         if(sessions) {
             let currentDate = new Date();
-            let currentYear = currentDate.getYear();
+            let currentYear = currentDate.getFullYear();
             let currentMonth = currentDate.getMonth() + 1;
             console.log(currentMonth);
-            let currentDay = currentDate.getDay();
+            let currentDay = currentDate.getDate();
             console.log(currentDay);
 
             let sessionResults = document.getElementById('sessions');
@@ -113,27 +113,21 @@ class CreateSessionsPage extends BaseClass {
                 let month = sessionDate.substring(5, 7);
                 let day = sessionDate.substring(8);
 
-            console.log(sessionHtml);
-
                 if(year == currentYear){
                     if(month == currentMonth) {
                         if(day > currentDay) {
                             sessionHtml += `
                                 <div class="upcoming-sessions">
-                                    <p>Subject: ${session.subject}</p>
-                                    <p>Date: ${session.date}</p>
-                                    <p>Duration: ${session.duration}</p>
+                                    <p>Subject: ${session.subject}
+                                    </br>Date: ${session.date}
+                                    </br>Duration: ${session.duration} minutes</p>
                                 </div>
                             `
                         }
                     }
                 }
-                console.log(sessionHtml);
             }
-            if(sessionHtml != ""){
-                sessionResults = sessionHtml;
-                console.log(sessionHtml);
-            }
+            sessionResults.innerHTML = sessionHtml;
         }
     }
 

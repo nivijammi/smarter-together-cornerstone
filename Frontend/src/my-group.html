@@ -1,10 +1,183 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Smarter Together | My Groups</title>
+    <script rel="script" type="text/javascript" src="myGroupPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/my-groups-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
 </head>
 <body>
 
+<header>
+    <div class="header">
+        <div class="inner-header">
+            <div class="logo">
+                <div class="img-container"><img src="css/logo.png"></div>
+                <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
+            </div>
+
+            <ul class="navigation">
+                <a href="study-group.html"><li>Study Groups</li></a>
+                <a href="search-sessions.html"><li>My Sessions</li></a>
+                <a href="create-session.html"><li>Edit Sessions</li></a>
+                <a href="notes.html"><li>My Notes</li></a>
+                <a href="my-account.html"><li>My Account</li></a>
+                <a href="dashboard.html"><li>Dashboard</li></a>
+                <a href="index.html"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+</header>
+
+
+
+<div class="body">
+
+    <div class="groups-container">
+
+        <div class="my-groups-container">
+            <h2>My Groups</h2>
+            <select id="my-groups">
+                <option hidden>Please select a group</option>
+            </select>
+            <div class="my-groups-results">
+                <p id="results"></p>
+            </div>
+        </div>
+
+        <div class="create-group-container">
+            <div class="create-group">
+                <h2>Create Group</h2>
+                <form>
+                    <input id="name" type="text" placeholder="Group Name">
+                    <input id="group-topic" type="text" placeholder="Discussion Topic">
+                    <p id="error"></p>
+                    <button id="create">Create</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="delete-group-container">
+            <div class="delete-group">
+                <h2>Delete Group</h2>
+
+                <div class="my-groups-results">
+                    <p id="group-name"></p>
+                </div>
+
+                <form>
+                    <button id="delete">Delete</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="add-member-container">
+            <h2>Add Member</h2>
+
+            <div class="my-groups-results">
+                <p id="results"></p>
+            </div>
+
+            <form>
+                <input id="add-member" type="email" placeholder="Member Email">
+                <button id="add">Add Member</button>
+            </form>
+        </div>
+
+        <div class="remove-member-container">
+            <div class="remove-member">
+                <h2>Remove Member</h2>
+
+                <div class="my-groups-results">
+                    <p id="results"></p>
+                </div>
+
+                <form>
+                    <input id="remove-member" type="email" placeholder="Member Email">
+                    <button id="remove">Remove Member</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="submit-review-container">
+            <div class="submit-review">
+                <h2>Submit Review</h2>
+                <!-- https://medium.com/codex/create-a-star-rating-widget-with-css-in-9-steps-fe323352dba4 -->
+                <div class="star-rating">
+                    <input type="radio" name="stars" id="star-a" value="5"/>
+                    <label for="star-a"></label>
+
+                    <input type="radio" name="stars" id="star-b" value="4"/>
+                    <label for="star-b"></label>
+
+                    <input type="radio" name="stars" id="star-c" value="3"/>
+                    <label for="star-c"></label>
+
+                    <input type="radio" name="stars" id="star-d" value="2"/>
+                    <label for="star-d"></label>
+
+                    <input type="radio" name="stars" id="star-e" value="1"/>
+                    <label for="star-e"></label>
+                </div>
+
+                <form>
+                    <input id="review-text" type="text" placeholder="Tell us what you think.">
+                    <p id="review-error"></p>
+                    <button id="review">Submit</button>
+                </form>
+
+            </div>
+        </div>
+
+        <div class="group-notes-container">
+            <div class="group-notes">
+                <h2>Group Notes</h2>
+
+                <div class="my-groups-results">
+                    <p id="group-name"></p>
+                </div>
+
+                <p>Coming Soon: See notes from all your group members.</p>
+
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<footer>
+    <div class="footer">
+        <div class="inner-footer">
+            <div class="logo-container">
+                <h1>Smarter<span>Together</span></h1>
+            </div>
+
+            <div class="footer-third">
+                <h1>Legal</h1>
+                <a>Terms & Conditions</a>
+                <a>Privacy Policy</a>
+                <a>Cookie Policy</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Learn More</h1>
+                <a>Community</a>
+                <a>Product Help</a>
+                <a>Contact Us</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Company</h1>
+                <a>Careers</a>
+                <a>Affiliates</a>
+            </div>
+        </div>
+    </div>
+</footer>
 </body>
 </html>

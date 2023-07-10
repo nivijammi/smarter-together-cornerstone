@@ -9,8 +9,8 @@ import LambdaClient from "../api/LambdaClient";
 class DashboardPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['renderGraph', 'errorHandler', 'onLoad', 'renderGraph', 'goal', 'renderSessions', 'renderUpcomingSessions',
-        'renderResources', 'studyHours'], this);
+        this.bindClassMethods(['renderGraph', 'errorHandler', 'onLoad', 'renderGraph', 'goal', 'renderSessions',
+        'renderResources', 'studyHours', 'upcomingSessions'], this);
         this.dataStore = new DataStore();
     }
 
@@ -79,41 +79,49 @@ class DashboardPage extends BaseClass {
         }
     }
 
-    async renderUpcomingSessions() {
-        let userId = localStorage.getItem("userId");
-        console.log(userId);
-        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+    async upcomingSessions() {
+            let userId = localStorage.getItem("userId");
+            let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+            console.log(sessions)
 
-        if(sessions) {
-            let currentDate = new Date();
-            let currentMonth = currentDate.getMonth();
-            let currentDay = currentDate.getDay();
+            if(sessions) {
+                let currentDate = new Date();
+                let currentYear = currentDate.getFullYear();
+                let currentMonth = currentDate.getMonth() + 1;
+                console.log(currentMonth);
+                let currentDay = currentDate.getDate();
+                console.log(currentDay);
 
-            let sessionResults = document.getElementById('sessions');
-            let sessionHtml = "";
+                let sessionResults = document.getElementById('upcoming-sessions');
+                let sessionHtml = "";
 
-            for(session of sessions) {
-                let sessionDate = new Date().of(session.date);
-                let month = sessionDate.getMonth();
-                let day = sessionDate.getDay();
+                for(const session of sessions) {
+                    let sessionDate = session.date;
+                    let year = sessionDate.substring(0,4);
+                    let month = sessionDate.substring(5, 7);
+                    let day = sessionDate.substring(8);
 
-                if(month == currentMonth) {
-                    if(day > currentDay) {
-                        sessionHtml += `
-                            <div class="upcoming-sessions">
-                                <p>Subject: ${session.subject}</p>
-                                <p>Date: ${session.date}</p>
-                                <p>Duration: ${session.duration}</p>
-                            </div>
-                        `
+                console.log(sessionHtml);
+
+                    if(year == currentYear){
+                        if(month == currentMonth) {
+                            if(day > currentDay) {
+                                sessionHtml += `
+                                    <div class="upcoming-sessions">
+                                        <p>Subject: ${session.subject}
+                                        </br>Date: ${session.date}
+                                        </br>Duration: ${session.duration}</p>
+                                    </div>
+                                `
+                            }
+                        }
                     }
+                    console.log(sessionHtml);
                 }
-            }
-            if(sessionHtml != ""){
-                sessionResults = sessionHtml;
+                sessionResults.innerHTML = sessionHtml;
+                console.log(sessionHtml);
             }
         }
-    }
 
     async renderResources() {
         let userId = localStorage.getItem("userId");

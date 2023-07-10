@@ -1,15 +1,16 @@
 import BaseClass from '../util/baseClass';
 import DataStore from '../util/DataStore';
 import Toastify from "toastify-js";
-import LambdaClient from "../api/LambdaClient";
+import NoteClient from "../api/NoteClient";
 
 /**
  * Logic needed for the create an account for the website.
  */
-class MyAccountPage extends BaseClass {
+class NotesPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['topic', 'goal', 'onLoad', 'upcomingSessions', 'sidebar', 'getAllForUser', 'errorHandler'], this);
+        this.bindClassMethods(['onCreate', 'onDelete', 'onUpdate', 'onLoad', 'upcomingSessions',
+        'sidebar', 'renderNotes', 'errorHandler'], this);
         this.dataStore = new DataStore();
     }
 
@@ -17,15 +18,39 @@ class MyAccountPage extends BaseClass {
      * Once the page has loaded, set up the event handlers and fetch the flight list.
      */
     mount() {
-        document.getElementById('topic-submit').addEventListener('click', this.topic);
-        document.getElementById('goal-submit').addEventListener('click', this.goal);
-        addEventListener('load', this.onLoad);
+        document.getElementById('create').addEventListener('click', this.onCreate);
+        document.getElementById('delete').addEventListener('click', this.onDelete);
+        document.getElementById('update').addEventListener('click', this.onUpdate);
 
-        this.lambda = new LambdaClient();
+        this.onLoad();
+        this.dataStore.addChangeListener(this.renderNotes);
+
+        this.client = new NoteClient();
+
     }
 
 
     // Helper Methods --------------------------------------------------------------------------------------------------
+
+    async renderNotes() {
+        let notes = this.dataStore.get("notes");
+        console.log(notes);
+        let noteResults = document.getElementById("results");
+        let noteHtml = "";
+
+        if(notes){
+            noteHtml += `
+                <div>
+                    <h3>${notes.noteId}</h3>
+                    <p>${notes.content}</p>
+                </div>
+            `
+        } else {
+            noteHtml += `<p>No notes.</p>`;
+        }
+
+        noteResults.innerHTML = noteHtml;
+    }
 
     async errorHandler(error) {
         Toastify({
@@ -38,15 +63,6 @@ class MyAccountPage extends BaseClass {
                 background: "linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113))"
             }
         }).showToast();
-    }
-
-    async getAllForUser() {
-        let userId = localStorage.getItem("userId");
-        console.log(userId);
-        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
-
-        return sessions;
     }
 
     async upcomingSessions() {
@@ -108,41 +124,74 @@ class MyAccountPage extends BaseClass {
         }
     }
 
+
     // Event Handlers --------------------------------------------------------------------------------------------------
 
     /**
      * Method to run when the search flights submit button is pressed.
      */
-    async onLoad(event) {
+    async onLoad() {
         this.sidebar();
         this.upcomingSessions();
+        this.renderNotes();
     }
 
-    async topic(event) {
+    async onCreate(event) {
         // Prevent the form from refreshing the page
         event.preventDefault();
+        let userId = localStorage.getItem("userId");
 
         console.log("1");
 
         // Get the values from the form inputs
-        const topic = document.getElementById('topic-name').value;
+        let noteId = document.getElementById('notes-topic').value
+        let content = document.getElementById('notes').value;
+        let date = new Date();
 
-        localStorage.setItem("topic", topic);
-        this.onLoad();
-        document.getElementById('topic-name').innerHTML = "";
+        let notes = await this.client.createNote(noteId, userId, content, date, date, this.errorHandler);
+        document.getElementById('notes-topic').innerHTML = "";
+        document.getElementById('notes').innerHTML = "";
+
+        this.dataStore.set("notes", notes);
     }
 
-    async goal(event) {
+    async onDelete(event) {
         // Prevent the form from refreshing the page
         event.preventDefault();
 
         console.log("2");
 
         // Get the values from the form inputs
-        const goal = document.getElementById('goal-input').value;
+        let noteId = document.getElementById('notes-id').value
 
-        localStorage.setItem("goal", goal);
-        this.onLoad();
+        let notes = await this.client.deleteNote(noteId, this.errorHandler);
+        this.dataStore.remove("notes", notes);
+    }
+
+    async onUpdate(event) {
+        event.preventDefault();
+        let userId = localStorage.getItem("userId");
+
+        console.log(3);
+
+
+        //Get the values from the form inputs
+        let noteId = document.getElementById('update-note-id').value
+        let content = document.getElementById('update-notes').value;
+        let date = new Date();
+
+        //Get existing note
+        let oldNote = await this.client.getNoteById(noteId, this.errorHandler);
+
+        let createDate = oldNote.createdDateTime;
+        console.log(createDate);
+
+        //delete the old note
+        await this.client.deleteNote(noteId, this.errorHandler);
+
+        //Create a new note
+        let notes = await this.client.createNote(noteId, userId, content, createDate, date, this.errorHandler);
+        this.dataStore.set("notes", notes);
     }
 }
 
@@ -150,8 +199,8 @@ class MyAccountPage extends BaseClass {
  * Main method to run when the page contents have loaded.
  */
 const main = async () => {
-    const myAccountPage = new MyAccountPage();
-    myAccountPage.mount();
+    const notesPage = new NotesPage();
+    notesPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded', main);

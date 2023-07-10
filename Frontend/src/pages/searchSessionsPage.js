@@ -169,7 +169,7 @@ class SearchSessionsPage extends BaseClass {
         let searchType = "";
         if(document.getElementById('search-topic').checked) {
             searchType = "topic";
-        } else if(document.getElementById('seach-id').checked) {
+        } else if(document.getElementById('search-id').checked) {
             searchType = "sessionId";
         } else if(document.getElementById('search-all').checked) {
             searchType = "all";
