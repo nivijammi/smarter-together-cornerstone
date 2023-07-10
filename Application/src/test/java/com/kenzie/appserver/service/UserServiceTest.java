@@ -7,8 +7,10 @@ import com.kenzie.appserver.repositories.UserRepository;
 import com.kenzie.appserver.repositories.converter.ZonedDateTimeConverter;
 import com.kenzie.appserver.repositories.model.UserRecord;
 import com.kenzie.appserver.service.model.User;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -64,6 +66,50 @@ public class UserServiceTest {
         assertNotNull(response.getPassword());
         assertNotNull(response.getCreationDate());
 
+    }
+    @Test
+    public void ValidUserId_validId() {
+        String validId = "validId";
+        when(userRepository.existsById(validId)).thenReturn(true);
+
+        assertDoesNotThrow(() -> {
+            subject.isValidUserId(validId);
+        });
+        verify(userRepository, times(1)).existsById(validId);
+    }
+
+    @Test
+    public void createUserRecord_createsARecord() {
+
+        UserProfileRequest userProfileRequest = new UserProfileRequest();
+        String firstName = "name1";
+        String lastName = "lastName1";
+        String email = "name.lastname1@aol.com";
+        String password = "Password1!";
+        String creationDate = "2016-08-22";
+
+        userProfileRequest.setEmail(email);
+        userProfileRequest.setPassword(password);
+        userProfileRequest.setLastName(lastName);
+        userProfileRequest.setFirstName(firstName);
+        userProfileRequest.setCreationDate(creationDate);
+
+        String userId = email;
+
+        UserRecord record = subject.createUserRecord(userProfileRequest, userId);
+
+        Assertions.assertEquals(userId, record.getEmail());
+        Assertions.assertEquals(userProfileRequest.getPassword(), record.getPassword());
+        Assertions.assertEquals(userProfileRequest.getLastName(), record.getLastName());
+        Assertions.assertEquals(userProfileRequest.getFirstName(), record.getFirstName());
+
+    }
+
+    @Test
+    public void recordToResponse_WithNullRecord() {
+        UserRecord record = null;
+        UserProfileResponse response = subject.recordToResponse(record);
+        assertNull(response);
     }
 
     @Test
@@ -187,6 +233,7 @@ public class UserServiceTest {
         assertEquals(user.getCreationDate(), existingUserRecord.getDateCreated());
     }
 
+
     @Test
     void updateUser_nonExistingUser_throwUserNotFoundException() {
         String firstName3 = "name3";
@@ -269,22 +316,6 @@ public class UserServiceTest {
     }
 
 
-    @Test
-    public void ValidUserId_validId() {
-        String validId = "validId";
-        when(userRepository.existsById(validId)).thenReturn(true);
 
-        assertDoesNotThrow(() -> {
-            subject.isValidUserId(validId);
-        });
-        verify(userRepository, times(1)).existsById(validId);
-    }
-
-    @Test
-    public void recordToResponse_WithNullRecord() {
-        UserRecord record = null;
-        UserProfileResponse response = subject.recordToResponse(record);
-        assertNull(response);
-    }
 
 }
