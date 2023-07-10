@@ -70,7 +70,7 @@ public class StudyGroupController {
         }
 
         Member member = studyGroupService.findMemberById(memberId);
-        if(member == null) {
+        if(member != null) { // idempotence
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Member is already part of the group " + memberId);
         }
 

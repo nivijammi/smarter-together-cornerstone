@@ -29,7 +29,7 @@ public class UserServiceTest {
     }
 
     @Test
-    void addNewUser_successful(){
+    void addNewUser_validUserId_addsUser(){
         UserProfileRequest request = new UserProfileRequest();
         String firstName = "name1";
         String lastName = "lastName1";
@@ -286,19 +286,5 @@ public class UserServiceTest {
         UserProfileResponse response = subject.recordToResponse(record);
         assertNull(response);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }

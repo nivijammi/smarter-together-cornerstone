@@ -83,7 +83,7 @@ public class NoteController {
         existingNote.setUserId(noteRequest.getUserId());
         existingNote.setContent(noteRequest.getContent());
         existingNote.setCreatedDateTime(new ZonedDateTimeConverter().unconvert(noteRequest.getCreatedDateTime()));
-        existingNote.setUpdatedDateTime(ZonedDateTime.now());
+        existingNote.setUpdatedDateTime(new ZonedDateTimeConverter().unconvert(noteRequest.getUpdatedDateTime()));
 
         noteService.updateNote(existingNote);
 

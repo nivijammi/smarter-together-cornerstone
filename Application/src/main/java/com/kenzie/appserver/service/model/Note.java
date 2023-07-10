@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.constraints.NotEmpty;
 import java.time.ZonedDateTime;
 
+
 public class Note {
     private String noteId;
     private String userId;

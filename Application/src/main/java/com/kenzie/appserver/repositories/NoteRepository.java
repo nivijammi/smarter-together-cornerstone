@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @EnableScan
 public interface NoteRepository extends CrudRepository<NoteRecord, String> {
-    Optional<NoteRecord> findById(String noteId);
+    //Optional<NoteRecord> findById(String noteId);
 }
