@@ -2,14 +2,15 @@ import BaseClass from '../util/baseClass';
 import DataStore from '../util/DataStore';
 import Toastify from "toastify-js";
 import LambdaClient from "../api/LambdaClient";
+import StudyGroupClient from "../api/StudyGroupClient";
 
 /**
  * Logic needed for the create an account for the website.
  */
-class SearchSessionsPage extends BaseClass {
+class StudyGroupPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['onSubmit', 'onLoad', 'errorHandler', 'getBySessionId', 'getBySubject', 'upcomingSessions',
+        this.bindClassMethods(['onSubmit', 'onLoad', 'errorHandler', 'getByGroupId', 'getByRating', 'getAllGroups', 'upcomingSessions',
         'getAllForUser', 'renderSessions', 'sidebar'], this);
         this.dataStore = new DataStore();
     }
@@ -22,6 +23,7 @@ class SearchSessionsPage extends BaseClass {
         this.onLoad();
 
         this.lambda = new LambdaClient();
+        this.client = new StudyGroupClient();
     }
 
     //Render Method
@@ -191,8 +193,8 @@ class SearchSessionsPage extends BaseClass {
  * Main method to run when the page contents have loaded.
  */
 const main = async () => {
-    const searchSessionsPage = new SearchSessionsPage();
-    searchSessionsPage.mount();
+    const studyGroupPage = new StudyGroupPage();
+    studyGroupPage.mount();
 };
 
 window.addEventListener('DOMContentLoaded', main);

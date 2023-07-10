@@ -189,10 +189,10 @@ class DashboardPage extends BaseClass {
 //        let week3 = this.studyHours(3);
 //        let week4 = this.studyHours(4);
 
-        let week1 = 10;
-        let week2 = 2;
-        let week3 = 13;
-        let week4 = 4;
+        let week1 = 33;
+        let week2 = 20;
+        let week3 = 5;
+        let week4 = 40;
         //https://plotly.com/javascript/bar-charts/
         var trace1 = {
           x: ["Week 1", "Week 2", "Week 3", "Week 4"],
@@ -213,7 +213,7 @@ class DashboardPage extends BaseClass {
         var data = [trace1, trace2];
 
         var layout = {
-          title: 'My Study Progress'
+          title: 'My Study Progress',
           paper_bgcolor: 'FEFEE2',
           plot_bgcolor: 'FEFEE2',
           xaxis: {tickfont: {

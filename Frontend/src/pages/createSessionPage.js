@@ -93,40 +93,40 @@ class CreateSessionsPage extends BaseClass {
 
     async upcomingSessions() {
         let sessions = this.getAllForUser();
+        console.log(sessions)
 
-        if(sessions) {
-            let currentDate = new Date();
-            let currentMonth = currentDate.getMonth();
-            let currentDay = currentDate.getDay();
-
-            let sessionResults = document.getElementById('sessions');
-            let sessionHtml = "";
-
-            for(const session of sessions) {
-                let sessionDate = new Date().of(session.date);
-                let month = sessionDate.getMonth();
-                let day = sessionDate.getDay();
-
-                if(month == currentMonth) {
-                    if(day > currentDay) {
-                        sessionHtml += `
-                            <div class="upcoming-sessions">
-                                <p>Subject: ${session.subject}</p>
-                                <p>Date: ${session.date}</p>
-                                <p>Duration: ${session.duration}</p>
-                            </div>
-                        `
-                    }
-                }
-            }
-            if(sessionHtml != ""){
-                sessionResults = sessionHtml;
-            }
-        }
+//        if(sessions) {
+//            let currentDate = new Date();
+//            let currentMonth = currentDate.getMonth();
+//            let currentDay = currentDate.getDay();
+//
+//            let sessionResults = document.getElementById('sessions');
+//            let sessionHtml = "";
+//
+//            for(const session of sessions) {
+//                let sessionDate = new Date().of(session.date);
+//                let month = sessionDate.getMonth();
+//                let day = sessionDate.getDay();
+//
+//                if(month == currentMonth) {
+//                    if(day > currentDay) {
+//                        sessionHtml += `
+//                            <div class="upcoming-sessions">
+//                                <p>Subject: ${session.subject}</p>
+//                                <p>Date: ${session.date}</p>
+//                                <p>Duration: ${session.duration}</p>
+//                            </div>
+//                        `
+//                    }
+//                }
+//            }
+//            if(sessionHtml != ""){
+//                sessionResults = sessionHtml;
+//            }
+//        } todo
     }
 
     async sidebar() {
-        console.log("sidebar");
         let goal = localStorage.getItem("goal");
         let topic = localStorage.getItem("topic");
 
@@ -159,9 +159,9 @@ class CreateSessionsPage extends BaseClass {
 
             //Gather sessions
             console.log(sessions);
-            for(const session of sessions) {
-                dropDownHtml += '<option value="${session.sessionId}">Topic: ${session.subject} ${session.date}</option>'
-            }
+//            for(const session of sessions) {
+//                dropDownHtml += '<option value="${session.sessionId}">Topic: ${session.subject} ${session.date}</option>'
+//            } //todo
 
             updateDropDown.innerHTML = dropDownHtml;
             deleteDropDown.innerHTML = dropDownHtml;
@@ -209,6 +209,10 @@ class CreateSessionsPage extends BaseClass {
              let errorHtml = '<p>Could not create session. Try again.</p>';
              errorMessage.innerHTML = errorHtml;
          }
+
+         let sessionId = createdSession.sessionId;
+         let sessionById = await this.lambda.getStudySessionBySessionId(sessionId);
+         console.log(sessionById);
 
          this.onLoad();
     }

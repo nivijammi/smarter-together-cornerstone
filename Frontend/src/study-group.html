@@ -1,7 +1,8 @@
 <html>
 <head>
     <title>Smarter Together | Groups</title>
-    <link rel="stylesheet" type="text/css" href="./css/search-sessions-style.css">
+    <script rel="script" type="text/javascript" src="studyGroupPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/search-groups-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
@@ -12,14 +13,15 @@
     <div class="header">
         <div class="inner-header">
             <div class="logo">
-                <div class="img-container"><img src="images/4(1).png"></div>
+                <div class="img-container"><img src="css/logo.png"></div>
                 <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
             </div>
 
             <ul class="navigation">
-                <a href="search-sessions.html"><li>Study Sessions</li></a>
+                <a href="search-sessions.html"><li>My Sessions</li></a>
                 <a href="my-group.html"><li>My Groups</li></a>
-                <a href="create-session.html"><li>My Sessions</li></a>
+                <a href="create-session.html"><li>Edit Sessions</li></a>
+                <a href="notes.html"><li>My Notes</li></a>
                 <a href="dashboard.html"><li>Dashboard</li></a>
                 <a href="index.html"><li>Logout</li></a>
             </ul>
@@ -41,18 +43,18 @@
 
         <div class="sessions">
             <h2>Upcoming Sessions</h2>
-            <p id="sessions">No sessions. Find a new session <a href="search-sessions.html">here</a>.</p>
+            <p id="sessions">No sessions.</p>
         </div>
 
         <div class="acheivements">
             <h2>My Achievements</h2>
-            <p id="achievements">No achievements yet.</p>>
+            <p id="achievements">Coming Soon.</p>
         </div>
 
         <div class="leaderboard">
             <h2>Leaderboard</h2>
             <ol id="leaderboard">
-                <li>No candidates yet.</li>
+                <li>Coming Soon.</li>
             </ol>
         </div>
     </div>
@@ -63,9 +65,57 @@
             <h2>Search Groups</h2>
 
             <form>
-                <input id="group-id" placeholder="Group Id">
+                <div class="search-type">
+
+                    <label>By GroupId</label>
+                    <input type="radio" name="search-select" id="search-id" checked="checked" onclick="searchGroupId()">
+
+                    <label>By Rating</label>
+                    <input type="radio" name="search-select" id="search-rating" onclick="searchRating()">
+
+                    <label>All</label>
+                    <input type="radio" name="search-select" id="search-all" onclick="searchAll()">
+                </div>
+
+                <div class="search-id" id="search-by-id">
+                    <input id="group-id" type="text" placeholder="Group Id">
+                </div>
+
+                <div class="search-rating" id="search-by-rating" style="display: none;">
+                    <input id="topic-search" type="text" placeholder="Topic">
+                    <select id="rating">
+                        <option hidden>Minimum rating</option>
+                        <option value="1">1 Star</option>
+                        <option value="2">2 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="5">5 Stars</option>
+                    </select>
+                </div>
+                <div class="search-by-all">
+                    <p></p>
+                </div>
                 <button id="submit">Search</button>
             </form>
+
+            <script>
+                function searchGroupId(){
+                    document.getElementById('search-by-id').style.display ='block';
+                    document.getElementById('search-by-rating').style.display ='none';
+                    document.getElementById('search-by-all').style.display ='none';
+                }
+                function searchRating(){
+                    document.getElementById('search-by-rating').style.display ='flex';
+                    document.getElementById('search-by-rating').style.flexDirection ='column';
+                    document.getElementById('search-by-id').style.display = 'none';
+                    document.getElementById('search-by-all').style.display ='none';
+                }
+                function searchAll(){
+                    document.getElementById('search-by-id').style.display = 'none';
+                    document.getElementById('search-by-rating').style.display ='none';
+                    document.getElementById('search-by-all').style.display ='flex';
+                }
+            </script>
 
         </div>
 
@@ -74,7 +124,7 @@
     <div class="results-container">
         <div class="results">
             <h2>Available Groups</h2>
-            <h3 id="topic">Group Name</h3>
+            <h3 id="topic-result">Group Name</h3>
             <h4 id="date">Date Created</h4>
             <p id="results">description here</p>
             <button id="select">Join</button>

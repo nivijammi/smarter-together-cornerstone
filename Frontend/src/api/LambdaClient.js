@@ -40,7 +40,7 @@ export default class LambdaClient extends BaseClass {
 
     async getStudySessionBySessionId(sessionId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/session/{sessionId}`);
+            const response = await this.client.get(`/v1/studysession/session/${sessionId}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudySessionBySessionId", error, errorCallback);
@@ -49,7 +49,7 @@ export default class LambdaClient extends BaseClass {
 
     async getStudySessionsBySubject(subject, errorCallback){
         try{
-            const response = await this.client.get(`/v1/studysession/subject/{subject}`);
+            const response = await this.client.get(`/v1/studysession/subject/${subject}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudySessionsBySubject", error, errorCallback);
@@ -58,7 +58,7 @@ export default class LambdaClient extends BaseClass {
 
     async getStudySessionsByUserId(userId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/studysession/{userId}`);
+            const response = await this.client.get(`/v1/studysession/${userId}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudySessionsByUserId", error, errorCallback);
@@ -76,7 +76,7 @@ export default class LambdaClient extends BaseClass {
 
     async deleteStudySessionBySessionId(sessionId, errorCallback){
         try{
-            const response = await this.client.delete(`/v1/studysession/delete/{sessionId}`);
+            const response = await this.client.delete(`/v1/studysession/delete/${sessionId}`);
             return response.data;
         } catch (error) {
             this.handleError("deleteStudySessionBySessionId", error, errorCallback);
