@@ -24,7 +24,7 @@ export default class LambdaClient extends BaseClass {
 
     async addStudySession(userId, subject, duration, date, notes, errorCallback) {
         try {
-            const response = await this.client.post(`https:/\/zzkt3vinxo4lxqhicfnpbxtv4y0dqxui.lambda-url.us-east-1.on.aws/`,
+            const response = await this.client.post(`/v1/studysession/add`,
             {
                 userId: userId,
                 subject: subject,
@@ -40,7 +40,7 @@ export default class LambdaClient extends BaseClass {
 
     async getStudySessionBySessionId(sessionId, errorCallback){
         try{
-            const response = await this.client.get(`https:/\/4q331eezsk.execute-api.us-east-1.amazonaws.com/Prod/studysession/session/{sessionId}`);
+            const response = await this.client.get(`/v1/session/{sessionId}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudySessionBySessionId", error, errorCallback);
@@ -49,7 +49,7 @@ export default class LambdaClient extends BaseClass {
 
     async getStudySessionsBySubject(subject, errorCallback){
         try{
-            const response = await this.client.get(`https:/\/4q331eezsk.execute-api.us-east-1.amazonaws.com/Prod/studysession/subject/{subject}`);
+            const response = await this.client.get(`/v1/studysession/subject/{subject}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudySessionsBySubject", error, errorCallback);
@@ -58,7 +58,7 @@ export default class LambdaClient extends BaseClass {
 
     async getStudySessionsByUserId(userId, errorCallback){
         try{
-            const response = await this.client.get(`https:/\/jjry2vxcndicwc42ul4fd2kqku0obopq.lambda-url.us-east-1.on.aws/`);
+            const response = await this.client.get(`/v1/studysession/{userId}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudySessionsByUserId", error, errorCallback);
@@ -67,7 +67,7 @@ export default class LambdaClient extends BaseClass {
 
     async getAllStudySessions(errorCallback){
         try{
-            const response = await this.client.get(`https:/\/4q331eezsk.execute-api.us-east-1.amazonaws.com/Prod/studysession/all`);
+            const response = await this.client.get(`/v1/studysession/all`);
             return response.data;
         } catch (error) {
             this.handleError("getAllStudySessions", error, errorCallback);
@@ -76,7 +76,7 @@ export default class LambdaClient extends BaseClass {
 
     async deleteStudySessionBySessionId(sessionId, errorCallback){
         try{
-            const response = await this.client.delete(`https:/\/4q331eezsk.execute-api.us-east-1.amazonaws.com/Prod/studysession/delete/{sessionId}`);
+            const response = await this.client.delete(`/v1/studysession/delete/{sessionId}`);
             return response.data;
         } catch (error) {
             this.handleError("deleteStudySessionBySessionId", error, errorCallback);

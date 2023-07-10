@@ -18,7 +18,8 @@ class DashboardPage extends BaseClass {
      * Once the page has loaded, set up the event handlers and fetch the flight list.
      */
     mount() {
-        window.addEventListener('load', this.onLoad());
+        window.addEventListener('load', this.onLoad);
+//        document.getElementById('graph-canvas').addEventListener('load', this.renderGraph);
 
         this.lambda = new LambdaClient();
     }
@@ -44,7 +45,7 @@ class DashboardPage extends BaseClass {
     async goal() {
         let goal = localStorage.getItem("goal");
         if(goal) {
-            document.getElementById("goal").innerHTML = '<p>My goal is to study ${goal} hours per week.</p>'
+            document.getElementById("goal").innerHTML = `<p>Study ${goal} hours per week.</p>`;
         }
     }
 
@@ -179,31 +180,93 @@ class DashboardPage extends BaseClass {
     }
 
     async renderGraph() {
-    //https://plotly.com/javascript/getting-started/
-        let graph = document.getElementById('graph');
+        //https://plotly.com/javascript/getting-started/
+        let graph = document.getElementById("graph");
+        let goal = localStorage.getItem("goal");
 
-        let week1 = this.studyHours(1);
-        let week2 = this.studyHours(2);
-        let week3 = this.studyHours(3);
-        let week4 = this.studyHours(4);
+//        let week1 = this.studyHours(1);
+//        let week2 = this.studyHours(2);
+//        let week3 = this.studyHours(3);
+//        let week4 = this.studyHours(4);
 
-        let study = [{
-          x: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+        let week1 = 10;
+        let week2 = 2;
+        let week3 = 13;
+        let week4 = 4;
+        //https://plotly.com/javascript/bar-charts/
+        var trace1 = {
+          x: ["Week 1", "Week 2", "Week 3", "Week 4"],
           y: [week1, week2, week3, week4],
+          name: 'Hours Studied',
+          marker: {color: '#02bd7f'},
           type: 'bar'
-        }];
+        };
 
-        Plotly.newPlot(graph, study);
+        var trace2 = {
+          x: ["Week 1", "Week 2", "Week 3", "Week 4"],
+          y: [goal, goal, goal, goal],
+          name: 'Goal Hours Studied',
+          marker: {color: '#003e29'},
+          type: 'bar'
+        };
+
+        var data = [trace1, trace2];
+
+        var layout = {
+          title: 'My Study Progress'
+          paper_bgcolor: 'FEFEE2',
+          plot_bgcolor: 'FEFEE2',
+          xaxis: {tickfont: {
+              title: 'Week',
+              color: 'rgb(0, 0, 0)',
+              size: 14,
+              color: 'rgb(0, 0, 0)'
+            }},
+          yaxis: {
+            title: 'Time (hours)',
+            color: 'rgb(0, 0, 0)',
+            titlefont: {
+              size: 16,
+              color: 'rgb(0, 0, 0)'
+            },
+            tickfont: {
+              size: 14,
+              color: 'rgb(0, 0, 0)'
+            }
+          },
+          legend: {
+            x: 0,
+            y: 1.5,
+            bgcolor: 'FEFEE2',
+            bordercolor: '#003e29'
+          },
+          barmode: 'group',
+          bargap: 0.15,
+          bargroupgap: 0.1
+        };
+
+        Plotly.newPlot(graph, data, layout);
+
+//        var data = [
+//          {
+//            x: ['giraffes', 'orangutans', 'monkeys'],
+//            y: [20, 14, 23],
+//            type: 'bar'
+//          }
+//        ];
+//
+//        Plotly.newPlot(graph, data);
     }
 
     // Event Handlers --------------------------------------------------------------------------------------------------
 
-    async onLoad() {
+    async onLoad(event) {
+        event.preventDefault();
         this.goal();
-        this.renderSessions();
-        this.renderUpcomingSessions();
-        this.renderResources();
-        this.renderGraph()
+//        this.renderSessions();
+//        this.renderUpcomingSessions();
+//        this.renderResources();
+        this.renderGraph();
     }
 }
 

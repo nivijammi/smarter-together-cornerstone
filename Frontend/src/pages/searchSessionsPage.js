@@ -11,7 +11,7 @@ class SearchSessionsPage extends BaseClass {
     constructor() {
         super();
         this.bindClassMethods(['onSubmit', 'onLoad', 'errorHandler', 'getBySessionId', 'getBySubject', 'upcomingSessions',
-        'getAllForUser', 'renderSessions'], this);
+        'getAllForUser', 'renderSessions', 'sidebar'], this);
         this.dataStore = new DataStore();
     }
 
@@ -20,7 +20,7 @@ class SearchSessionsPage extends BaseClass {
      */
     mount() {
         document.getElementById('submit').addEventListener('click', this.onSubmit);
-        this.onLoad;
+        this.onLoad();
 
         this.lambda = new LambdaClient();
         this.client = new StudyGroupClient();
@@ -67,6 +67,27 @@ class SearchSessionsPage extends BaseClass {
         }).showToast();
     }
 
+    async sidebar() {
+        console.log("sidebar");
+        let goal = localStorage.getItem("goal");
+        let topic = localStorage.getItem("topic");
+
+        if(goal != null) {
+            let goalContainer = document.getElementById("goal");
+            console.log(goalContainer);
+            let goalHtml = `<p>Study ${goal} hours per week</p>`;
+
+            goalContainer.innerHTML = goalHtml;
+        }
+
+        if(topic != null) {
+            let topicContainer = document.getElementById('topics');
+            let topicHtml = `<p>${topic}</p>`;
+
+            topicContainer.innerHTML = topicHtml;
+        }
+    }
+
     async getBySessionId(sessionId) {
         let sessions = await this.lambda.getStudySessionBySessionId(sessionId, this.errorHandler);
 
@@ -96,46 +117,45 @@ class SearchSessionsPage extends BaseClass {
     }
 
     async upcomingSessions() {
-        let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId);
-        let currentDate = new ZoneDateTime();
-        let tilDate = new ZoneDateTime().plusWeeks(1);
+        let sessions = this.getAllForUser();
 
         if(sessions) {
-        let sessionResults = document.getElementById('sessions');
-        let sessionHtml = "";
+            let currentDate = new Date().now();
+            let currentMonth = currentDate.getMonth();
+            let currentDay = currentDate.getDay();
 
-            for(session of sessions) {
-                if(session.date <= tilDate) {
-                    sessionHtml += `
-                        <div class="upcoming-sessions">
-                            <p>Subject: ${session.subject}</p>
-                            <p>Date: ${session.date}</p>
-                            <p>Duration: ${session.duration}</p>
-                        </div>
-                    `
+            let sessionResults = document.getElementById('sessions');
+            let sessionHtml = "";
+
+            for(const session of sessions) {
+                let sessionDate = new Date().of(session.date);
+                let month = sessionDate.getMonth();
+                let day = sessionDate.getDay();
+
+                if(month == currentMonth) {
+                    if(day > currentDay) {
+                        sessionHtml += `
+                            <div class="upcoming-sessions">
+                                <p>Subject: ${session.subject}</p>
+                                <p>Date: ${session.date}</p>
+                                <p>Duration: ${session.duration}</p>
+                            </div>
+                        `
+                    }
                 }
             }
+            if(sessionHtml != ""){
+                sessionResults = sessionHtml;
+            }
         }
-
     }
 
     // Event Handlers --------------------------------------------------------------------------------------------------
 
-    /**
-    * Fills sidebar with current data
-    */
     async onLoad() {
-        let goal = localStorage.getItem("goal");
-        let topic = localStorage.getItem("topic");
-        let upcomingSessions = this.upcomingSessions();
-
-        if(goal != null) {
-            let goalContainer = document.getElementById("goal");
-            let goalHtml = `<p>My goal is to study ${goal} hours per month</p>`;
-
-            goalContainer.innerHTML = goalHtml;
-        }
+        console.log("load method");
+        this.sidebar();
+        this.upcomingSessions();
     }
 
     /**

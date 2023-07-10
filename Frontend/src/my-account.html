@@ -1,6 +1,7 @@
 <html>
 <head>
     <title>Smarter Together | My Account</title>
+    <script rel="script" type="text/javascript" src="myAccountPage.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/my-account-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,7 +13,7 @@
     <div class="header">
         <div class="inner-header">
             <div class="logo">
-                <div class="img-container"><img src="images/4(1).png"></div>
+                <div class="img-container"><img src="css/logo.png"></div>
                 <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
             </div>
 
@@ -21,8 +22,9 @@
                 <a href="search-sessions.html"><li>Study Sessions</li></a>
                 <a href="my-group.html"><li>My Groups</li></a>
                 <a href="create-session.html"><li>My Sessions</li></a>
+                <a href="notes.html"><li>My Notes</li></a>
                 <a href="dashboard.html"><li>Dashboard</li></a>
-                <a href="index.html"><li>Logout</li></a>
+                <a class="logout" href="index.html"><li>Logout</li></a>
             </ul>
         </div>
     </div>
@@ -42,18 +44,18 @@
 
         <div class="sessions">
             <h2>Upcoming Sessions</h2>
-            <p id="sessions">No sessions. Find a new session <a href="search-sessions.html">here</a>.</p>
+            <p id="sessions">No sessions.</p>
         </div>
 
         <div class="acheivements">
             <h2>My Achievements</h2>
-            <p id="achievements">No achievements yet.</p>>
+            <p id="achievements">Coming Soon.</p>
         </div>
 
         <div class="leaderboard">
             <h2>Leaderboard</h2>
             <ol id="leaderboard">
-                <li>No candidates yet.</li>
+                <li>Coming Soon.</li>
             </ol>
         </div>
     </div>
@@ -66,7 +68,6 @@
 
             <form>
                 <input id="topic-name" placeholder="Topic name eg.HTML">
-                <input id="subtopic-name" placeholder="Subtopic eg.Divs">
                 <button id="topic-submit">Save</button>
             </form>
 
@@ -81,21 +82,20 @@
             <h2>Set a goal</h2>
 
             <form>
-                <input id="topic-name" placeholder="Topic name">
-                <input id="goal" type="number" placeholder="Goal hours to study">
+                <input id="goal-input" type="number" placeholder="Goal hours to study">
                 <button id="goal-submit">Save</button>
             </form>
 
         </div>
 
-        <div class="resources">
-            <h2>Save a resource</h2>
-            <form>
-                <input id="resource-input" type="text" placeholder="Resource eg. book name, link, etc,">
-                <input id="resource-type" type="text" placeholder="Resource type eg. link, book, etc.">
-                <button id="resource-submit">Save</button>
-            </form>
-        </div>
+<!--        <div class="resources">-->
+<!--            <h2>Save a resource</h2>-->
+<!--            <form>-->
+<!--                <input id="resource-input" type="text" placeholder="Resource eg. book name, link, etc,">-->
+<!--                <input id="resource-type" type="text" placeholder="Resource type eg. link, book, etc.">-->
+<!--                <button id="resource-submit">Save</button>-->
+<!--            </form>-->
+<!--        </div>-->
 
         <div class="user-info">
 

@@ -1,8 +1,7 @@
 <html>
 <head>
     <title>Smarter Together | Dashboard</title>
-    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
-
+    <script rel="script" type="text/javascript" src="dashboardPage.js"></script>
     <link rel="stylesheet" type="text/css" href="./css/dashboard-style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,11 +19,11 @@
             </div>
 
             <ul class="navigation">
-                <a href="notes.html"><li>Notes</li></a>
                 <a href="study-group.html"><li>Study Groups</li></a>
                 <a href="search-sessions.html"><li>Study Sessions</li></a>
                 <a href="my-group.html"><li>My Groups</li></a>
                 <a href="create-session.html"><li>My Sessions</li></a>
+                <a href="notes.html"><li>My Notes</li></a>
                 <a href="my-account.html"><li>My Account</li></a>
                 <a href="index.html"><li>Logout</li></a>
             </ul>
@@ -40,7 +39,7 @@
 
         <div class="graph-container">
 
-            <div class="graph">
+            <div class="graph" id="graph">
 
             </div>
 
@@ -87,7 +86,7 @@
 
             <div class="upcoming">
                 <h2>Upcoming Sessions</h2>
-                <p id="upcoming-sessions">No sessions. Search for a session to join <a href="search-sessions.html">here</a>.</p>
+                <p id="upcoming-sessions">No sessions.</p>
             </div>
 
         </div>
@@ -144,6 +143,5 @@
         </div>
     </div>
 </footer>
-        <script rel="script" type="text/javascript" src="dashboardPage.js"></script>
 </body>
 </html>

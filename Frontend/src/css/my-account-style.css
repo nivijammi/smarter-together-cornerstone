@@ -349,7 +349,7 @@
     height: 180px;
     flex-direction: column;
     display: table;
-    margin-bottom: 30px;
+    margin: 30px 0px;
 }
 
 .user-info h2{
@@ -383,6 +383,7 @@
     color: FEFEE2;
 }
 
+/*
 .resources{
     border: double 3px #003e29;
     width: 45%;
@@ -423,6 +424,7 @@
     background-color: #003e29;
     color: FEFEE2;
 }
+*/
 
 /* Footer */
 

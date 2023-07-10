@@ -10,7 +10,7 @@ class CreateSessionsPage extends BaseClass {
     constructor() {
         super();
         this.bindClassMethods(['onCreate', 'onSubmit', 'onDelete', 'onLoad', 'errorHandler', 'getBySessionId',
-        'getBySubject', 'upcomingSessions', 'getAllForUser', 'renderSessions', 'loadDropDowns'], this);
+        'getBySubject', 'upcomingSessions', 'getAllForUser', 'sidebar', 'renderSessions', 'loadDropDowns'], this);
         this.dataStore = new DataStore();
     }
 
@@ -21,7 +21,7 @@ class CreateSessionsPage extends BaseClass {
         document.getElementById('topic-submit').addEventListener('click', this.onCreate);
         document.getElementById('update-submit').addEventListener('click', this.onSubmit);
         document.getElementById('delete-submit').addEventListener('click', this.onDelete);
-        this.onLoad;
+        addEventListener('load', this.onLoad);
 
         this.lambda = new LambdaClient();
     }
@@ -95,7 +95,7 @@ class CreateSessionsPage extends BaseClass {
         let sessions = this.getAllForUser();
 
         if(sessions) {
-            let currentDate = new Date().now();
+            let currentDate = new Date();
             let currentMonth = currentDate.getMonth();
             let currentDay = currentDate.getDay();
 
@@ -122,6 +122,26 @@ class CreateSessionsPage extends BaseClass {
             if(sessionHtml != ""){
                 sessionResults = sessionHtml;
             }
+        }
+    }
+
+    async sidebar() {
+        console.log("sidebar");
+        let goal = localStorage.getItem("goal");
+        let topic = localStorage.getItem("topic");
+
+        if(goal != null) {
+            let goalContainer = document.getElementById("goal");
+            let goalHtml = `<p>Study ${goal} hours per week</p>`;
+
+            goalContainer.innerHTML = goalHtml;
+        }
+
+        if(topic != null) {
+            let topicContainer = document.getElementById('topics');
+            let topicHtml = `<p>${topic}</p>`;
+
+            topicContainer.innerHTML = topicHtml;
         }
     }
 
@@ -153,7 +173,7 @@ class CreateSessionsPage extends BaseClass {
     /**
     * Fills sidebar with current data
     */
-    async onLoad() {
+    async onLoad(event) {
         let goal = localStorage.getItem("goal");
         let topic = localStorage.getItem("topic");
         let upcomingSessions = this.upcomingSessions();
@@ -166,6 +186,7 @@ class CreateSessionsPage extends BaseClass {
         }
 
         this.loadDropDowns();
+        this.sidebar();
     }
 
     async onCreate(event) {
@@ -188,11 +209,6 @@ class CreateSessionsPage extends BaseClass {
              let errorHtml = '<p>Could not create session. Try again.</p>';
              errorMessage.innerHTML = errorHtml;
          }
-
-         let sessionId = createdSession.sessionId;
-         console.log(sessionId);
-         let testSession = await this.lambda.getStudySessionBySessionId(sessionId);
-         console.log(testSession);
 
          this.onLoad();
     }
