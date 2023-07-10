@@ -52,7 +52,7 @@ public class NoteRequest {
     public String getCreatedDateTime() {
         return createdDateTime;
     }
-    public void setCreatedDateTime(String password) {
+    public void setCreatedDateTime(String createdDateTime) {
         this.createdDateTime = createdDateTime;
     }
 

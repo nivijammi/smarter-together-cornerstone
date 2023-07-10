@@ -92,7 +92,7 @@ public class NoteController {
     }
 
     @DeleteMapping("/notes/{noteId}")
-    public ResponseEntity deleteStudyGroup(@PathVariable String noteId) {
+    public ResponseEntity<NoteResponse> deleteNote(@PathVariable String noteId) {
 
         Note existingNote = noteService.findByNoteId(noteId);
         if (existingNote == null) {
