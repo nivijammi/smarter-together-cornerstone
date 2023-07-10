@@ -50,7 +50,7 @@ public class UserProfileController {
         return ResponseEntity.created(URI.create("/users/" + response.getEmail())).body(response);
     }
 
-    @PutMapping("/{userID}")
+    @PutMapping("/{email}")
     public ResponseEntity<UserProfileResponse> updateUserProfile(@PathVariable String email, @RequestBody UserProfileRequest userProfileRequest) {
         if (userProfileRequest.getEmail() == null || userProfileRequest.getEmail().isEmpty()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User ID is required");
@@ -72,9 +72,9 @@ public class UserProfileController {
         return ResponseEntity.ok(userResponse);
     }
 
-    @GetMapping("/{userID}")
-    public ResponseEntity<UserProfileResponse> getUserById(@PathVariable("userId") String userId) {
-        UserProfileResponse userProfileResponse = userService.getUser(userId);
+    @GetMapping("/{email}")
+    public ResponseEntity<UserProfileResponse> getUserById(@PathVariable("email") String email) {
+        UserProfileResponse userProfileResponse = userService.getUser(email);
         if (userProfileResponse == null) {
             return ResponseEntity.notFound().build();
         }
@@ -89,10 +89,16 @@ public class UserProfileController {
                 new ZonedDateTimeConverter().convert(user.getCreationDate()));
     }
 
-    @DeleteMapping("/{userID}")
-    public ResponseEntity deleteUserById(@PathVariable("userId") String userId) {
-        userService.deleteUser(userId);
-        return ResponseEntity.ok().build();
+    @DeleteMapping("/{email}")
+    public ResponseEntity deleteUserById(@PathVariable("email") String email) {
+        // todo
+        User byUserId = userService.findByUserId(email);
+
+        if(byUserId == null){
+                return ResponseEntity.notFound().build();
+        }
+        userService.deleteUser(email);
+        return ResponseEntity.noContent().build();
     }
 
     /**

@@ -35,7 +35,7 @@ public class UserServiceTest {
         String lastName = "lastName1";
         String email = "name.lastname1@aol.com";
         String password = "Password1!";
-        String creationDate = "2016-08-22T14:30+02:00";
+        String creationDate = "2016-08-22";
 
         request.setFirstName(firstName);
         request.setLastName(lastName);
@@ -83,7 +83,7 @@ public class UserServiceTest {
         String lastName = "lastName1";
         String email = "name.lastname1@aol.com";
         String password = "Password1!";
-        String creationDate = "2016-08-22T14:30+02:00";
+        String creationDate = "2016-08-22";
 
         request.setFirstName(firstName);
         request.setLastName(lastName);
@@ -112,7 +112,7 @@ public class UserServiceTest {
         String lastName = "lastName2";
         String email = "name.lastname2@aol.com";
         String password = "Password1!";
-        String creationDate = "2016-08-22T14:30+02:00";
+        String creationDate = "2016-08-22";
 
 
         UserRecord record = new UserRecord();
@@ -154,12 +154,12 @@ public class UserServiceTest {
         String lastName3 = "lastName3";
         String email3 = "name.lastname3@aol.com";
         String password3 = "Password3!";
-        String creationDate3 = "2016-08-22T14:30+02:00";
+        String creationDate3 = "2016-08-22";
 
         String firstName4 = "name4";
         String lastName4 = "lastName4";
         String password4 = "Password4!";
-        String creationDate4 = "2016-08-22T14:30+02:00";
+        String creationDate4 = "2016-08-22";
 
 
         User user = new User(email3, password3,
@@ -193,7 +193,7 @@ public class UserServiceTest {
         String lastName3 = "lastName3";
         String email3 = "name.lastname3@aol.com";
         String password3 = "Password3!";
-        String creationDate3 = "2016-08-22T14:30+02:00";
+        String creationDate3 = "2016-08-22";
 
 
         User user = new User(email3, password3,
@@ -215,7 +215,7 @@ public class UserServiceTest {
         String lastName6 = "lastName6";
         String email6 = "name.lastname6@aol.com";
         String password6 = "Password6!";
-        String creationDate6 = "2016-08-22T14:30+02:00";
+        String creationDate6 = "2016-08-22";
 
         UserRecord userRecord = new UserRecord();
         userRecord.setEmail(email6);

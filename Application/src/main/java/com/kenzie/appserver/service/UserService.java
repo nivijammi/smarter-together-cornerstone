@@ -41,7 +41,10 @@ public class UserService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
         }
         if(isValidUserId(email)){
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
+            //throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid User Id");
+            UserRecord existingRecord = createUserRecord(userProfileRequest, email);
+            return recordToResponse(existingRecord);
+
         }
         UserRecord record = createUserRecord(userProfileRequest, email);
 
@@ -50,8 +53,8 @@ public class UserService {
         return recordToResponse(record);
     }
 
-    public User findByUserId(String userId) {
-        Optional<UserRecord> userById = userRepository.findById(userId);
+    public User findByUserId(String id) {
+        Optional<UserRecord> userById = userRepository.findById(id);
         if(userById.isEmpty()) {
             return null;
         }
@@ -86,8 +89,8 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public boolean isValidUserId(String id) {
-        return  userRepository.existsById(id);
+    public boolean isValidUserId(String email) {
+        return  userRepository.existsById(email); // false
     }
 
     private UserRecord createUserRecord(UserProfileRequest userProfileRequest, String userId) {

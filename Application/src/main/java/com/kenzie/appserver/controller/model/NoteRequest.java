@@ -26,6 +26,8 @@ public class NoteRequest {
     @JsonProperty("updatedDateTime")
     private String updatedDateTime;
 
+
+
     // getter and setters
 
     public String getNoteId() {
