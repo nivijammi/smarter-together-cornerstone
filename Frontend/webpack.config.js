@@ -9,17 +9,17 @@ module.exports = {
   },
   entry: {
     examplePage: path.resolve(__dirname, 'src', 'pages', 'examplePage.js'),
-    analyticsPage: path.resolve(__dirname, 'src', 'pages', 'AnalyticsPage.js'),
-    createAccountPage: path.resolve(__dirname, 'src', 'pages', 'CreateAccountPage.js'),
-    createSessionPage: path.resolve(__dirname, 'src', 'pages', 'CreateSessionPage.js'),
-    dashboardPage: path.resolve(__dirname, 'src', 'pages', 'DashboardPage.js'),
+    analyticsPage: path.resolve(__dirname, 'src', 'pages', 'analyticsPage.js'),
+    createAccountPage: path.resolve(__dirname, 'src', 'pages', 'createAccountPage.js'),
+    createSessionPage: path.resolve(__dirname, 'src', 'pages', 'createSessionPage.js'),
+    dashboardPage: path.resolve(__dirname, 'src', 'pages', 'dashboardPage.js'),
     indexPage: path.resolve(__dirname, 'src', 'pages', 'IndexPage.js'),
-    myAccountPage: path.resolve(__dirname, 'src', 'pages', 'MyAccountPage.js'),
-    myGroupPage: path.resolve(__dirname, 'src', 'pages', 'MyGroupPage.js'),
-    notesPage: path.resolve(__dirname, 'src', 'pages', 'NotesPage.js'),
-    searchSessionsPage: path.resolve(__dirname, 'src', 'pages', 'SearchSessionsPage.js'),
-    signinPage: path.resolve(__dirname, 'src', 'pages', 'SigninPage.js'),
-    studyGroupPage: path.resolve(__dirname, 'src', 'pages', 'StudyGroupPage.js')
+    myAccountPage: path.resolve(__dirname, 'src', 'pages', 'myAccountPage.js'),
+    myGroupPage: path.resolve(__dirname, 'src', 'pages', 'myGroupPage.js'),
+    notesPage: path.resolve(__dirname, 'src', 'pages', 'notesPage.js'),
+    searchSessionsPage: path.resolve(__dirname, 'src', 'pages', 'searchSessionsPage.js'),
+    signinPage: path.resolve(__dirname, 'src', 'pages', 'signinPage.js'),
+    studyGroupPage: path.resolve(__dirname, 'src', 'pages', 'studyGroupPage.js')
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
