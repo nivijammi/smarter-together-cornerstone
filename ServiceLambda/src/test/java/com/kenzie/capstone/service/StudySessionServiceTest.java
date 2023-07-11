@@ -295,6 +295,20 @@ public class StudySessionServiceTest {
 //        verify(studySessionDao.findAllSessions().size() == 2);
 //        verify(studySessionList.size() == 2);
 //        assertNotNull(record, "The record is not null");
+    }
+
+    @Test
+    void getAllStudySession_null_record_throwsException() {
+        // GIVEN
+        StudySessionRecord record = null;
+
+        //WHEN
+        when(studySessionDao.findAllSessions()).thenReturn(null);
+
+        //THEN
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
+                () -> studySessionService.getAllStudySessions());
+        assertEquals("Request must contain a valid record", exception.getMessage());
 
 
     }
@@ -343,6 +357,16 @@ public class StudySessionServiceTest {
         assertEquals(session.getSubject(), studySession.getSubject());
         assertEquals(session.getDuration(), studySession.getDuration());
         assertEquals(session.getNotes(), studySession.getNotes());
+    }
+
+    @Test
+    void getStudySessionBySessionId_null_sessionId_throws_Exception() {
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
+                () -> studySessionService.getStudySessionBySessionId(null));
+        assertEquals("Request must contain a valid Session ID", exception.getMessage());
+
+
     }
 
 
@@ -426,6 +450,16 @@ public class StudySessionServiceTest {
 
     }
 
+    @Test
+    void getAllStudySessionByUser_null_userId_throws_Exception() {
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
+                () -> studySessionService.getAllStudySessionByUser(null));
+        assertEquals("Request must contain a valid userId", exception.getMessage());
+
+
+    }
+
 
     /*****************************************
 
@@ -503,6 +537,16 @@ public class StudySessionServiceTest {
         for (StudySession session : sessionList) {
             assertEquals(session.getSubject(), subject);
         }
+
+
+    }
+
+    @Test
+    void getAllStudySessionBySubject_null_subject_throws_exception() {
+
+        InvalidDataException exception = assertThrows(InvalidDataException.class,
+                () -> studySessionService.getAllStudySessionsBySubject(null));
+        assertEquals("Request must contain a valid subject", exception.getMessage());
 
 
     }

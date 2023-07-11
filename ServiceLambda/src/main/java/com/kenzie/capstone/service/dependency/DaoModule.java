@@ -1,7 +1,7 @@
 package com.kenzie.capstone.service.dependency;
 
 
-import com.kenzie.capstone.service.dao.ExampleDao;
+
 import com.kenzie.capstone.service.dao.NonCachingStudySessionDao;
 import com.kenzie.capstone.service.dao.StudySessionDao;
 import com.kenzie.capstone.service.util.DynamoDbClientProvider;
