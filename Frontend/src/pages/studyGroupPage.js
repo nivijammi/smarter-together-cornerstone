@@ -21,7 +21,7 @@ class StudyGroupPage extends BaseClass {
      */
     mount() {
         document.getElementById('submit').addEventListener('click', this.onSubmit);
-        this.onLoad();
+        window.addEventListener('load', this.onLoad);
 
         this.lambda = new LambdaClient();
         this.groupClient = new StudyGroupClient();
@@ -34,18 +34,23 @@ class StudyGroupPage extends BaseClass {
         let groupResults = document.getElementById('results');
         let groups = this.dataStore.get("groups");
         let groupHtml = "";
+        console.log(groups);
 
-        if(sessions) {
-            for(const group of groups) {
-            let averageRating = await this.reviewClient.getAverageRatingById(group.groupId, this.errorHandler);
+        if(groups) {
+            if(groups[1] == null) {
+            console.log(groups);
+             let groupIdTest = groups.groupId;
+                console.log(groupIdTest);
+                let averageRating = await this.reviewClient.getAverageRatingById(groupIdTest, this.errorHandler);
+
                 groupHtml += `
                     <div class="results-content">
-                        <h3>${group.groupName}</h3>
-                        <h4>Date: ${group.discussionTopic}</h4>
+                        <h3>${groups.groupName}</h3>
+                        <h4>Topic: ${groups.discussionTopic}</h4>
                         <p>Rating: ${averageRating}</p>
                         <p>Members:
                 `
-                let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorHandler);
+                let members = await this.groupClient.getStudyGroupMembers(groupIdTest, this.errorHandler);
                 if(members){
                     for(const member of members) {
                         groupHtml += `
@@ -61,17 +66,50 @@ class StudyGroupPage extends BaseClass {
                     `
                 }
                 groupHtml += `
-                    <button id='select' value=group.groupId>Join Group<button>
+                    <button id='select' value=groups.groupId>Join Group</button>
                     </div>
                 `
+            } else {
+
+                for(const group of groups) {
+                let averageRating = await this.reviewClient.getAverageRatingById(group.groupId, this.errorHandler);
+
+                    groupHtml += `
+                        <div class="results-content">
+                            <h3>${group.groupName}</h3>
+                            <h4>Topic: ${group.discussionTopic}</h4>
+                            <p>Rating: ${averageRating}</p>
+                            <p>Members:
+                    `
+                    let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorHandler);
+                    if(members){
+                        for(const member of members) {
+                            groupHtml += `
+                                ${member.memberId}
+                            `
+                        }
+                        groupHtml += `
+                            </p>
+                        `
+                    } else {
+                        groupHtml += `
+                            None</p>
+                        `
+                    }
+
+                    groupHtml += `
+                            <button id='select' value=group.groupId>Join Group</button>
+                        </div>
+                    `
+                }
             }
         } else {
-            sessionHtml += '<p>No groups...</p>'
+            groupHtml += '<p>No groups...</p>'
         }
 
         groupResults.innerHTML = groupHtml;
-
         document.getElementById('select').addEventListener('click', this.joinGroup);
+
     }
 
 
@@ -91,13 +129,11 @@ class StudyGroupPage extends BaseClass {
     }
 
     async sidebar() {
-        console.log("sidebar");
         let goal = localStorage.getItem("goal");
         let topic = localStorage.getItem("topic");
 
         if(goal != null) {
             let goalContainer = document.getElementById("goal");
-            console.log(goalContainer);
             let goalHtml = `<p>Study ${goal} hours per week</p>`;
 
             goalContainer.innerHTML = goalHtml;
@@ -112,20 +148,123 @@ class StudyGroupPage extends BaseClass {
     }
 
     async getByGroupId(groupId) {
-        let sessions = await this.lambda.getStudySessionBySessionId(sessionId, this.errorHandler);
+        let groups = await this.groupClient.getStudyGroupById(groupId, this.errorHandler);
 
-        if(sessions) {
-            this.dataStore.set("sessions", sessions);
-            this.renderSessions();
+        if(groups) {
+            this.dataStore.set("groups", groups);
+            this.renderGroups();
         }
     }
 
     async getByRatings(topic, minRating) {
-        let sessions = await this.reviewClient.getGroupsWithDesiredAvgRatingByTopic(minRating, topic, this.errorHandler);
+        console.log("By Rating");
+        let groupsByRating = await this.reviewClient.getGroupsWithDesiredAvgRatingByTopic(minRating, topic, this.errorHandler);
+        console.log(groupsByRating);
+        let index = 0;
 
-        if(sessions) {
-            this.dataStore.set("sessions", sessions);
-            this.renderSessions();
+
+        let groups = [];
+
+        if(groupsByRating) {
+            console.log(groupsByRating[1] == null);
+            if(groupsByRating[1] == null) {
+                let keys = ""
+                for(var key in groupsByRating) {
+                    keys = key;
+                }
+
+                groups[index] = (await this.groupClient.getStudyGroupById(keys, this.errorHandler));
+
+            } else {
+                let keys = ""
+                for(var key in groupsByRating) {
+                    keys = key;
+
+                    for(const group of groupsByRating) {
+                        groups[index] = (await this.groupClient.getStudyGroupById(keys, this.errorHandler));
+                        index += 1;
+                        console.log(index);
+                    }
+                }
+
+
+            }
+
+//            this.dataStore.set("groups", groups);
+            index = 0;
+            let groupResults = document.getElementById('results');
+            let groupHtml = "";
+
+            if(groups) {
+                        if(groups[1] == null) {
+                        console.log(groups);
+                         let groupIdTest = groups[0].groupId;
+                            console.log(groupIdTest);
+                            let averageRating = await this.reviewClient.getAverageRatingById(groups[0].groupId, this.errorHandler);
+
+                            groupHtml += `
+                                <div class="results-content">
+                                    <h3>${groups[0].groupName}</h3>
+                                    <h4>Topic: ${groups[0].discussionTopic}</h4>
+                                    <p>Rating: ${averageRating}</p>
+                                    <p>Members:
+                            `
+                            let members = await this.groupClient.getStudyGroupMembers(groups[0].groupId, this.errorHandler);
+                            if(members){
+                                for(const member of members) {
+                                    groupHtml += `
+                                        ${member.memberId}
+                                    `
+                                }
+                                groupHtml += `
+                                    </p>
+                                `
+                            } else {
+                                groupHtml += `
+                                    None</p>
+                                `
+                            }
+                            groupHtml += `
+                                <button id='select' value=groups.groupId>Join Group</button>
+                                </div>
+                            `
+                        } else {
+
+                            for(const group of groups) {
+                            let averageRating = await this.reviewClient.getAverageRatingById(group.groupId, this.errorHandler);
+
+                                groupHtml += `
+                                    <div class="results-content">
+                                        <h3>${group.groupName}</h3>
+                                        <h4>Topic: ${group.discussionTopic}</h4>
+                                        <p>Rating: ${averageRating}</p>
+                                        <p>Members:
+                                `
+                                let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorHandler);
+                                if(members){
+                                    for(const member of members) {
+                                        groupHtml += `
+                                            ${member.memberId}
+                                        `
+                                    }
+                                    groupHtml += `
+                                        </p>
+                                    `
+                                } else {
+                                    groupHtml += `
+                                        None</p>
+                                    `
+                                }
+
+                                groupHtml += `
+                                        <button id='select' value=group.groupId>Join Group</button>
+                                    </div>
+                                `
+                            }
+                        }
+                    } else {
+                        groupHtml += '<p>No groups...</p>'
+                    }
         }
     }
 
@@ -136,20 +275,18 @@ class StudyGroupPage extends BaseClass {
             this.dataStore.set("groups", groups);
             this.renderGroups();
         }
+
     }
 
     async upcomingSessions() {
         let userId = localStorage.getItem("userId");
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions)
 
         if(sessions) {
             let currentDate = new Date();
             let currentYear = currentDate.getFullYear();
             let currentMonth = currentDate.getMonth() + 1;
-            console.log(currentMonth);
             let currentDay = currentDate.getDate();
-            console.log(currentDay);
 
             let sessionResults = document.getElementById('sessions');
             let sessionHtml = "";
@@ -181,7 +318,6 @@ class StudyGroupPage extends BaseClass {
     // Event Handlers --------------------------------------------------------------------------------------------------
 
     async onLoad() {
-        console.log("load method");
         this.sidebar();
         this.upcomingSessions();
     }
@@ -193,13 +329,8 @@ class StudyGroupPage extends BaseClass {
         // Prevent the form from refreshing the page
         event.preventDefault();
 
-        console.log("1");
 
         // Get the values from the form inputs
-        let idSearch = document.getElementById('search-id');
-        let ratingsSearch = document.getElementById('search-rating');
-        let allSearch = document.getElementById('search-all');
-
         let searchType = "";
                 if(document.getElementById('search-id').checked) {
                     searchType = "groupId";
@@ -225,11 +356,11 @@ class StudyGroupPage extends BaseClass {
     async joinGroup(event) {
         event.preventDefault();
 
-        console.log(join);
         let userId = localStorage.getItem("userId");
         let groupId = document.getElementById('select').value;
-        await this.groupClient.addMemberToStudyGroup(groupId, userId, this.errorHandler);
-        window.location("my-group.html");
+        let added = await this.groupClient.addMemberToStudyGroup(groupId, userId, this.errorHandler);
+
+        window.location='my-group.html';
     }
 }
 

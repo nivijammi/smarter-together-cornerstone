@@ -7,8 +7,7 @@ import NoteClient from "../api/NoteClient";
 class NotesPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['onCreate', 'onDelete', 'onUpdate', 'onLoad', 'upcomingSessions',
-        'sidebar', 'renderNotes', 'errorHandler'], this);
+        this.bindClassMethods(['onCreate', 'onDelete', 'onUpdate', 'renderNotes', 'errorHandler'], this);
         this.dataStore = new DataStore();
     }
 
@@ -20,7 +19,7 @@ class NotesPage extends BaseClass {
         document.getElementById('delete').addEventListener('click', this.onDelete);
         document.getElementById('update').addEventListener('click', this.onUpdate);
 
-        this.onLoad();
+        window.addEventListener('load', this.onLoad);
         this.dataStore.addChangeListener(this.renderNotes);
 
         this.client = new NoteClient();
@@ -37,12 +36,23 @@ class NotesPage extends BaseClass {
         let noteHtml = "";
 
         if(notes){
-            noteHtml += `
-                <div>
-                    <h3>${notes.noteId}</h3>
-                    <p>${notes.content}</p>
-                </div>
-            `
+            if(notes[1] == null) {
+                noteHtml += `
+                    <div>
+                        <h3>${notes[0].noteId}</h3>
+                        <p>${notes[0].content}</p>
+                    </div>
+                `
+            } else {
+                for(const note of notes) {
+                    noteHtml += `
+                        <div>
+                            <h3>${note.noteId}</h3>
+                            <p>${note.content}</p>
+                        </div>
+                    `
+                }
+            }
         } else {
             noteHtml += `<p>No notes.</p>`;
         }
@@ -63,76 +73,12 @@ class NotesPage extends BaseClass {
         }).showToast();
     }
 
-    async upcomingSessions() {
-        let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions)
-
-        if(sessions) {
-            let currentDate = new Date();
-            let currentYear = currentDate.getFullYear();
-            let currentMonth = currentDate.getMonth() + 1;
-            console.log(currentMonth);
-            let currentDay = currentDate.getDate();
-            console.log(currentDay);
-
-            let sessionResults = document.getElementById('sessions');
-            let sessionHtml = "";
-
-            for(const session of sessions) {
-                let sessionDate = session.date;
-                let year = sessionDate.substring(0,4);
-                let month = sessionDate.substring(5, 7);
-                let day = sessionDate.substring(8);
-
-                if(year == currentYear){
-                    if(month == currentMonth) {
-                        if(day > currentDay) {
-                            sessionHtml += `
-                                <div class="upcoming-sessions">
-                                    <p>Subject: ${session.subject}
-                                    </br>Date: ${session.date}
-                                    </br>Duration: ${session.duration} minutes</p>
-                                </div>
-                            `
-                        }
-                    }
-                }
-            }
-            sessionResults.innerHTML = sessionHtml;
-        }
-    }
-
-    async sidebar() {
-        let goal = localStorage.getItem("goal");
-        let topic = localStorage.getItem("topic");
-
-        if(goal != null) {
-            let goalContainer = document.getElementById("goal");
-            let goalHtml = `<p>Study ${goal} hours per month</p> </br>`;
-
-            goalContainer.innerHTML = goalHtml;
-        }
-
-        if(topic != null) {
-            let topicContainer = document.getElementById('topics');
-            let topicHtml = `<p>${topic}</p>`;
-
-            topicContainer.innerHTML = topicHtml;
-        }
-    }
-
 
     // Event Handlers --------------------------------------------------------------------------------------------------
 
     /**
      * Method to run when the search flights submit button is pressed.
      */
-    async onLoad() {
-        this.sidebar();
-        this.upcomingSessions();
-        this.renderNotes();
-    }
 
     async onCreate(event) {
         // Prevent the form from refreshing the page
@@ -150,7 +96,25 @@ class NotesPage extends BaseClass {
         document.getElementById('notes-topic').innerHTML = "";
         document.getElementById('notes').innerHTML = "";
 
-        this.dataStore.set("notes", notes);
+        let allNotes = "";
+        let index = "";
+
+        if(this.dataStore.get("notes") == null) {
+            allNotes = [];
+            index = 0;
+        } else {
+            allNotes = this.dataStore.get("notes");
+            index = allNotes.length;
+        }
+
+
+        if(allNotes[1] == null) {
+            allNotes[index] = notes;
+        } else {
+            allNotes[index] = notes;
+        }
+
+        this.dataStore.set("notes", allNotes);
     }
 
     async onDelete(event) {
@@ -163,7 +127,7 @@ class NotesPage extends BaseClass {
         let noteId = document.getElementById('notes-id').value
 
         let notes = await this.client.deleteNote(noteId, this.errorHandler);
-        this.dataStore.remove("notes", notes);
+        this.dataStore.set("notes", null);
     }
 
     async onUpdate(event) {
@@ -189,7 +153,36 @@ class NotesPage extends BaseClass {
 
         //Create a new note
         let notes = await this.client.createNote(noteId, userId, content, createDate, date, this.errorHandler);
-        this.dataStore.set("notes", notes);
+
+
+
+            console.log(notes);
+            let noteResults = document.getElementById("results");
+            let noteHtml = "";
+
+            if(notes){
+                if(notes[1] == null) {
+                    noteHtml += `
+                        <div>
+                            <h3>${notes.noteId}</h3>
+                            <p>${notes.content}</p>
+                        </div>
+                    `
+                } else {
+                    for(const note of notes) {
+                        noteHtml += `
+                            <div>
+                                <h3>${note.noteId}</h3>
+                                <p>${note.content}</p>
+                            </div>
+                        `
+                    }
+                }
+            } else {
+                noteHtml += `<p>No notes.</p>`;
+            }
+
+            noteResults.innerHTML = noteHtml;
     }
 }
 

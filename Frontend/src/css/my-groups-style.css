@@ -169,6 +169,7 @@
     background-color: #fafaf0;
     border: solid 2px #02bd7f;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .create-group-container{
@@ -190,6 +191,7 @@
     background-color: #fafaf0;
     border: solid 2px #02bd7f;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .remove-member-container{
@@ -197,6 +199,7 @@
     background-color: #fafaf0;
     border: solid 2px #02bd7f;
     padding: 20px;
+    overflow-y: auto;
 }
 
 .submit-review-container{

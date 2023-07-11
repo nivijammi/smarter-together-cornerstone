@@ -129,6 +129,10 @@
     margin-top: 10px;
 }
 
+.analytics-results span{
+    color: #02bd7f;
+}
+
 .graph{
     grid-area: 3 / 1 / 4 / 2;
     padding: 10px 10px;

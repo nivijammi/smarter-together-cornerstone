@@ -10,7 +10,7 @@ class DashboardPage extends BaseClass {
     constructor() {
         super();
         this.bindClassMethods(['renderGraph', 'errorHandler', 'onLoad', 'renderGraph', 'goal', 'renderSessions',
-        'renderResources', 'studyHours', 'upcomingSessions'], this);
+        'renderResources', 'upcomingSessions', 'allSessions'], this);
         this.dataStore = new DataStore();
     }
 
@@ -18,7 +18,7 @@ class DashboardPage extends BaseClass {
      * Once the page has loaded, set up the event handlers and fetch the flight list.
      */
     mount() {
-        this.onLoad();
+        window.addEventListener('load', this.onLoad);
 
         this.lambda = new LambdaClient();
     }
@@ -61,20 +61,49 @@ class DashboardPage extends BaseClass {
         let userId = localStorage.getItem("userId");
         console.log(userId);
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        let allSessions = document.getElementById('my-sessions');
-        let allHtml = "";
 
         if(sessions) {
-            for(const session of sessions){
-                allHtml += `
-                    <div class="sessions-content">
-                        <p>${session.subject}</p>
-                        <p>Date: ${session.date}</p>
-                        <p>Duration: ${session.duration}</p>
-                        <p>Resources: ${session.notes}</p>
+            let sessionResults = document.getElementById('resources');
+            let sessionHtml = "";
+
+            for(const session of sessions) {
+                console.log(sessionHtml);
+                sessionHtml += `
+                    <div class="user-sessions">
+                        <p>Subject: ${session.subject}
+                        </br>Date: ${session.date}
+                        </br>Resources: ${session.notes}</p>
                     </div>
                 `
+
             }
+            sessionResults.innerHTML = sessionHtml;
+            console.log(sessionHtml);
+        }
+    }
+
+    async allSessions() {
+        let userId = localStorage.getItem("userId");
+        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions);
+
+        if(sessions) {
+            let sessionResults = document.getElementById('user-sessions');
+            let sessionHtml = "";
+
+            for(const session of sessions) {
+                console.log(sessionHtml);
+                sessionHtml += `
+                    <div class="user-sessions">
+                        <p>Subject: ${session.subject}
+                        </br>Date: ${session.date}
+                        </br>Duration: ${session.duration}</p>
+                    </div>
+                `
+
+            }
+            sessionResults.innerHTML = sessionHtml;
+            console.log(sessionHtml);
         }
     }
 
@@ -115,7 +144,6 @@ class DashboardPage extends BaseClass {
                             }
                         }
                     }
-                    console.log(sessionHtml);
                 }
                 sessionResults.innerHTML = sessionHtml;
                 console.log(sessionHtml);
@@ -142,61 +170,8 @@ class DashboardPage extends BaseClass {
         }
     }
 
-    async studyHours(weekNumber) {
-        //call getStudySessionsByUserId to get all their sessions.
-        let userId = localStorage.getItem("userId");
-        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
-
-        if(!sessions) {
-            return 0;
-        } else {
-            //date and grab current month and year.
-            let currentYear = new Date().getFullYear();
-            let currentMonth = new Date().getMonth() + 1;
-
-            console.log(weekNumber);
-
-            let totalMinutes = 0;
-            //get days of the week pertaining to the specific week ex. week 1 etc.
-            for(const session of sessions){
-                let sessionDate = session.date;
-                let sessionYear = sessionDate.substring(0,4);
-                let sessionMonth = sessionDate.substring(5, 7);
-                let sessionDay = sessionDate.substring(8);
-
-                if(sessionYear == currentYear){
-                    if(sessionMonth == currentMonth) {
-                        if(weekNumber == 1) {
-                            if(sessionDay <= 7) {
-                                totalMinutes += session.duration;
-                            }
-                        } else if(weekNumber == 2) {
-                            if(sessionDay > 7 && sessionDay <= 14) {
-                               totalMinutes += session.duration;
-                            }
-                        } else if(weekNumber == 3) {
-                            if(sessionDay > 14 && sessionDay <= 21) {
-                              totalMinutes += session.duration;
-                            }
-                        } else if(weekNumber == 4) {
-                            if(sessionDay > 21) {
-                             totalMinutes += session.duration;
-                            }
-                        }
-                    }
-                }
-            }
-            let result = (totalMinutes / 60);
-            console.log(result);
-            return result;
-        }
-
-
-
         //for loop to find sessions with matching month, year, and matching dates for the specific week
         //return total duration for matching sessions divided by 60.
-    }
 
     async renderGraph() {
         //https://plotly.com/javascript/getting-started/
@@ -314,15 +289,6 @@ class DashboardPage extends BaseClass {
 
         Plotly.newPlot(graph, data, layout);
 
-//        var data = [
-//          {
-//            x: ['giraffes', 'orangutans', 'monkeys'],
-//            y: [20, 14, 23],
-//            type: 'bar'
-//          }
-//        ];
-//
-//        Plotly.newPlot(graph, data);
         }
     }
 
@@ -331,10 +297,11 @@ class DashboardPage extends BaseClass {
     async onLoad(event) {
         event.preventDefault();
         this.goal();
-//        this.renderSessions();
-//        this.renderUpcomingSessions();
-//        this.renderResources();
+        this.renderSessions();
+        this.upcomingSessions();
+        this.renderResources();
         this.renderGraph();
+        this.allSessions();
     }
 }
 

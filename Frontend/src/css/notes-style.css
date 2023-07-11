@@ -94,6 +94,7 @@
     display: grid;
     grid-template-columns: .2fr .9fr;
     grid-template-rows: .25fr .75fr;
+
 }
 
 /* Sidebar with info */
@@ -249,6 +250,7 @@
     grid-row-gap: 15px;
     padding: 50px;
     margin-top: 50px;
+    margin-left: 55%;
 }
 
 .create-note-container{

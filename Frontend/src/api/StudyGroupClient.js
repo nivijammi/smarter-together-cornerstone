@@ -40,7 +40,7 @@ export default class StudyGroupClient extends BaseClass {
 
     async getStudyGroupById(groupId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/groups/{groupId}`);
+            const response = await this.client.get(`/v1/groups/${groupId}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudyGroupById", error, errorCallback);
@@ -58,7 +58,7 @@ export default class StudyGroupClient extends BaseClass {
 
     async updateStudyGroup(groupId, groupName, discussionTopic, creationDate, active, errorCallback){
         try{
-            const response = await this.client.put(`/v1/groups/{groupId}`,
+            const response = await this.client.put(`/v1/groups/${groupId}`,
             {
                 groupName: groupName,
                 discussionTopic: discussionTopic,
@@ -73,7 +73,7 @@ export default class StudyGroupClient extends BaseClass {
 
     async deleteStudyGroup(groupId, errorCallback){
         try{
-            const response = await this.client.delete(`/v1/groups/{groupId}`);
+            const response = await this.client.delete(`/v1/groups/${groupId}`);
             return response.data;
         } catch (error) {
             this.handleError("deleteStudyGroup", error, errorCallback);
@@ -83,7 +83,7 @@ export default class StudyGroupClient extends BaseClass {
     //Member Methods
     async addMemberToStudyGroup(groupId, memberId, errorCallback){
         try{
-            const response = await this.client.post(`/v1/groups/{groupId}/members/{memberId}`);
+            const response = await this.client.post(`/v1/groups/${groupId}/members/${memberId}`);
             return response.data;
         } catch (error) {
             this.handleError("addMemberToStudyGroup", error, errorCallback);
@@ -92,7 +92,7 @@ export default class StudyGroupClient extends BaseClass {
 
     async getStudyGroupMembers(groupId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/groups/{groupId}/members/`);
+            const response = await this.client.get(`/v1/groups/${groupId}/members/`);
             return response.data;
         } catch (error) {
             this.handleError("getStudyGroupMembers", error, errorCallback);
@@ -101,7 +101,7 @@ export default class StudyGroupClient extends BaseClass {
 
     async removeMemberFromStudyGroup(groupId, memberId, errorCallback){
         try{
-            const response = await this.client.delete(`/v1/groups/{groupId}/members/{memberId}`);
+            const response = await this.client.delete(`/v1/groups/${groupId}/members/${memberId}`);
             return response.data;
         } catch (error) {
             this.handleError("removeMemberFromStudyGroup", error, errorCallback);
@@ -110,7 +110,7 @@ export default class StudyGroupClient extends BaseClass {
 
     async removeAllMemberFromStudyGroup(groupId, errorCallback){
         try{
-            const response = await this.client.delete(`/v1/groups/{groupId}/members`);
+            const response = await this.client.delete(`/v1/groups/${groupId}/members`);
             return response.data;
         } catch (error) {
             this.handleError("removeAllMemberFromStudyGroup", error, errorCallback);

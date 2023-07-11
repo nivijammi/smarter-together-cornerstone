@@ -40,7 +40,7 @@ export default class StudyGroupReviewClient extends BaseClass {
 
     async getReviewByReviewId(reviewId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/studygroup/reviews/{reviewId}`);
+            const response = await this.client.get(`/v1/studygroup/reviews/${reviewId}`);
             return response.data;
         } catch (error) {
             this.handleError("getReviewByReviewId", error, errorCallback);
@@ -49,7 +49,7 @@ export default class StudyGroupReviewClient extends BaseClass {
 
     async getStudyGroupReviewsByTopic(discussionTopic, errorCallback){
         try{
-            const response = await this.client.get(`/v1/studygroup/reviews/discussionTopic/{discussionTopic}`);
+            const response = await this.client.get(`/v1/studygroup/reviews/discussionTopic/${discussionTopic}`);
             return response.data;
         } catch (error) {
             this.handleError("getStudyGroupReviewsByTopic", error, errorCallback);
@@ -58,7 +58,7 @@ export default class StudyGroupReviewClient extends BaseClass {
 
     async getGroupsWithDesiredAvgRatingByTopic(averageRating, discussionTopic, errorCallback){
         try{
-            const response = await this.client.get(`/v1/studygroup/ratings/{averageRating}/{discussionTopic}`);
+            const response = await this.client.get(`/v1/studygroup/ratings/${averageRating}/${discussionTopic}`);
             return response.data;
         } catch (error) {
             this.handleError("getGroupsWithDesiredAvgRatingByTopic", error, errorCallback);
@@ -67,7 +67,7 @@ export default class StudyGroupReviewClient extends BaseClass {
 
     async getAverageRatingById(groupId, errorCallback){
         try{
-            const response = await this.client.get(`/v1/studygroup/averageRating/{groupId}`);
+            const response = await this.client.get(`/v1/studygroup/averageRating/${groupId}`);
             return response.data;
         } catch (error) {
             this.handleError("getAverageRatingById", error, errorCallback);
