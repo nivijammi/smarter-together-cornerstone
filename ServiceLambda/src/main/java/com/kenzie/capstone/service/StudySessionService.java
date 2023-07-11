@@ -70,7 +70,13 @@ public class StudySessionService {
     }
 
     public StudySession getStudySessionBySessionId(String sessionId) {
+
+        if (sessionId == null) {
+            throw new InvalidDataException("Request must contain a valid Session ID");
+        }
+
         StudySessionRecord record = sessionDao.findStudySessionBySessionId(sessionId);
+
 
         StudySessionConverter studySessionConverter = new StudySessionConverter();
 
@@ -87,6 +93,11 @@ public class StudySessionService {
 //    }
 
     public List<StudySession> getAllStudySessionByUser(String userId) {
+
+        if (userId == null) {
+            throw new InvalidDataException("Request must contain a valid userId");
+        }
+
         List<StudySessionRecord> records = sessionDao.findSessionsByUserId(userId);
 
         return records.stream()
@@ -96,6 +107,11 @@ public class StudySessionService {
 
 
     public List<StudySession> getAllStudySessionsBySubject(String subject) {
+
+        if (subject == null) {
+            throw new InvalidDataException("Request must contain a valid subject");
+        }
+
         List<StudySessionRecord> records = sessionDao.findSessionBySubject(subject);
 
         return records.stream()
@@ -105,6 +121,10 @@ public class StudySessionService {
 
     public List<StudySession> getAllStudySessions() {
         List<StudySessionRecord> records = sessionDao.findAllSessions();
+
+        if (records == null) {
+            throw new InvalidDataException("Request must contain a valid record");
+        }
 
         return records.stream()
                 .map(StudySessionConverter::fromRecordToStudySession)
