@@ -1,4 +1,4 @@
-package com.kenzie.appserver.service;
+package com.kenzie.appserver.controller;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,7 @@ import com.kenzie.appserver.controller.UserAsyncLogInController;
 import com.kenzie.appserver.controller.model.AddUserLoginResponse;
 import com.kenzie.appserver.controller.model.RegistrationStatus;
 import com.kenzie.appserver.controller.model.UserLoginRequest;
+import com.kenzie.appserver.service.UserLoginService;
 import com.kenzie.appserver.service.model.Member;
 import com.kenzie.appserver.service.model.MemberValidationStatus;
 import net.andreinc.mockneat.MockNeat;

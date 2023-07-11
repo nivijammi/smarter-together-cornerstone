@@ -1,0 +1,127 @@
+<html>
+<head>
+    <title>Smarter Together | Sessions</title>
+    <script rel="script" type="text/javascript" src="searchSessionsPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/search-sessions-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header>
+    <div class="header">
+        <div class="inner-header">
+            <div class="logo">
+                <div class="img-container"><img src="css/logo.png"></div>
+                <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
+            </div>
+
+            <ul class="navigation">
+                <a href="study-group.html"><li>Study Groups</li></a>
+                <a href="my-group.html"><li>My Groups</li></a>
+                <a href="create-session.html"><li>Edit Sessions</li></a>
+                <a href="notes.html"><li>My Notes</li></a>
+                <a href="my-account.html"><li>My Account</li></a>
+                <a href="dashboard.html"><li>Dashboard</li></a>
+                <a href="index.html"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+</header>
+
+<div class="body">
+    <div class="sidebar">
+        <div class="goal">
+            <h2>My Goal</h2>
+            <p id="goal">No goal set. Set a goal <a href="my-account.html">here</a>.</p>
+        </div>
+
+        <div class="topics">
+            <h2>My Topics</h2>
+            <p id="topics">No topics. Add a new topic <a href="my-account.html">here</a>.</p>
+        </div>
+
+        <div class="sessions">
+            <h2>Upcoming Sessions</h2>
+            <p id="sessions">No sessions.</p>
+        </div>
+
+        <div class="acheivements">
+            <h2>My Achievements</h2>
+            <p id="achievements">Coming Soon.</p>>
+        </div>
+
+        <div class="leaderboard">
+            <h2>Leaderboard</h2>
+            <ol id="leaderboard">
+                <li>Coming Soon.</li>
+            </ol>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <div class="search">
+
+            <h2>Search Sessions</h2>
+
+            <form>
+                <div class="search-type">
+                    <label for="search-topic">Topic</label>
+                    <input id="search-topic" type="radio" value="topic" name="search-type">
+                    <label for="search-id">Session Id</label>
+                    <input  id="search-id" type="radio" value="session-id" name="search-type">
+                    <label for="search-all">All</label>
+                    <input id="search-all" type="radio" value="all" name="search-type">
+                </div>
+
+                <input id="user-input" type="text" placeholder="Topic Name or Session Id" name="search-type">
+                <button id="submit">Search</button>
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="results-container">
+        <div class="results">
+            <h2>My Sessions</h2>
+
+            <div class="print" id="results">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    <div class="footer">
+        <div class="inner-footer">
+            <div class="logo-container">
+                <h1>Smarter<span>Together</span></h1>
+            </div>
+
+            <div class="footer-third">
+                <h1>Legal</h1>
+                <a>Terms & Conditions</a>
+                <a>Privacy Policy</a>
+                <a>Cookie Policy</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Learn More</h1>
+                <a>Community</a>
+                <a>Product Help</a>
+                <a>Contact Us</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Company</h1>
+                <a>Careers</a>
+                <a>Affiliates</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

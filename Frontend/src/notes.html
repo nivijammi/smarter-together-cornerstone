@@ -1,0 +1,112 @@
+<html>
+<head>
+    <title>Smarter Together | My Notes</title>
+    <script rel="script" type="text/javascript" src="notesPage.js"></script>
+    <link rel="stylesheet" type="text/css" href="./css/notes-style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js" charset="utf-8"></script>
+</head>
+<body>
+
+<header>
+    <div class="header">
+        <div class="inner-header">
+            <div class="logo">
+                <div class="img-container"><img src="css/logo.png"></div>
+                <a href="dashboard.html"><h1>Smarter<span>Together</span></h1></a>
+            </div>
+
+            <ul class="navigation">
+                <a href="study-group.html"><li>Study Groups</li></a>
+                <a href="search-sessions.html"><li>My Sessions</li></a>
+                <a href="create-session.html"><li>Edit Sessions</li></a>
+                <a href="my-group.html"><li>My Groups</li></a>
+                <a href="my-account.html"><li>My Account</li></a>
+                <a href="dashboard.html"><li>Dashboard</li></a>
+                <a href="index.html"><li>Logout</li></a>
+            </ul>
+        </div>
+    </div>
+</header>
+
+
+
+<div class="body">
+
+    <div class="notes-container">
+
+        <div class="create-note-container">
+            <h2>Create Note</h2>
+            <form>
+                <input id="notes-topic" type="text" placeholder="Topic Name">
+                <input id="notes" type="text" placeholder="Jot down notes here.">
+                <button id="create">Create</button>
+            </form>
+        </div>
+
+        <div class="delete-note-container">
+            <h2>Delete Note</h2>
+            <form>
+                <input id="notes-id" type="text" placeholder="Topic Name">
+                <button id="delete">Delete</button>
+            </form>
+        </div>
+
+        <div class="view-notes-container">
+            <div class="title">
+                <h2>View Notes</h2>
+            </div>
+
+            <div class="note">
+                <p id="results"></p>
+            </div>
+        </div>
+
+        <div class="update-notes-container">
+            <h2>Update Note</h2>
+            <form>
+                <input id="update-note-id" type="text" placeholder="Topic Name">
+                <input id="update-notes" type="text" placeholder="Jot down notes here.">
+                <button id="update">Update</button>
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+<footer>
+    <div class="footer">
+        <div class="inner-footer">
+            <div class="logo-container">
+                <h1>Smarter<span>Together</span></h1>
+            </div>
+
+            <div class="footer-third">
+                <h1>Legal</h1>
+                <a>Terms & Conditions</a>
+                <a>Privacy Policy</a>
+                <a>Cookie Policy</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Learn More</h1>
+                <a>Community</a>
+                <a>Product Help</a>
+                <a>Contact Us</a>
+            </div>
+
+            <div class="footer-third">
+                <h1>Company</h1>
+                <a>Careers</a>
+                <a>Affiliates</a>
+            </div>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
