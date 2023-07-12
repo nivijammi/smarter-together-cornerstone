@@ -208,19 +208,24 @@ class CreateSessionsPage extends BaseClass {
          }
 
          this.onLoad();
+         let form = document.getElementById('create-form');
+         form.reset();
     }
 
     async onSubmit(event) {
         // Prevent the form from refreshing the page
+        event.preventDefault();
 
         console.log("update");
 
         //Get
         let sessionId = document.getElementById('update').value;
-        let session = this.getBySessionId(sessionId);
+        let session = await this.lambda.getStudySessionBySessionId(sessionId, this.errorHandler);
+        console.log(session)
 
         if(session) {
             let sessionDuration = session.duration;
+            console.log(sessionDuration)
             let sessionDate = session.date;
             let sessionNotes = session.notes;
 
@@ -232,11 +237,13 @@ class CreateSessionsPage extends BaseClass {
 
             //entries
             let duration = document.getElementById('duration').value;
+            console.log(duration)
             let date = document.getElementById('date').value;
             let resources = document.getElementById('resources').value;
 
             if(duration == "" || duration == null) {
                 duration = sessionDuration;
+                console.log(duration)
             }
             if(date == "" || date == null) {
                 date = sessionDate;
@@ -246,14 +253,16 @@ class CreateSessionsPage extends BaseClass {
             }
 
             let createdSession = await this.lambda.addStudySession(userId, topicName, duration, date, resources, this.errorHandler);
-
             if(!createdSession) {
-                let errorMessage = document.getElementById("create-error");
+                let errorMessage = document.getElementById("update-error");
                 let errorHtml = '<p>Could not update session. Try again.</p>';
                 errorMessage.innerHTML = errorHtml;
             } else {
                 await this.lambda.deleteStudySessionBySessionId(sessionId);
             }
+
+            let form = document.getElementById('update-form');
+            form.reset();
         }
 
         this.onLoad();
@@ -265,7 +274,7 @@ class CreateSessionsPage extends BaseClass {
         console.log(sessionId);
         await this.lambda.deleteStudySessionBySessionId(sessionId);
 
-        this.onLoad();
+        location.reload();
     }
 }
 

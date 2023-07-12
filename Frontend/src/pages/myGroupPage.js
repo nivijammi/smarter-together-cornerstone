@@ -44,48 +44,57 @@ class MyGroupPage extends BaseClass {
 //                      <h3>Group Name</h3>
 //                      <h4>Group Topic</h4>
         let userId = localStorage.getItem("userId");
+
         let fullResults = document.getElementById('results');
         let addResults = document.getElementById('results-add');
         let removeResults = document.getElementById('results-remove');
         let partialResults = document.getElementById('group-name');
-        let groupId = document.getElementById('my-groups').value;
-        let group = await this.groupClient.getStudyGroupById(groupId, this.errorHandler);
         let fullHtml = "";
         let partialHtml = "";
 
-        if(group) {
-        console.log(group)
-        console.log(group.groupId);
-            fullHtml += `
-                <div class="results-content">
-                    <h3>${group.groupName}</h3>
-                    <h4>${group.discussionTopic}</h4>
-                    <p>Members:</p>
-                    <ul>
-            `
-            let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorHandler);
+        let groupId = document.getElementById('my-groups').value;
+        if(groupId) {
 
-            if(members) {
-                for(const member of members){
+            let group = await this.groupClient.getStudyGroupById(groupId, this.errorHandler);
+            let averageRating = await this.reviewClient.getAverageRatingById(group.groupId, this.errorHandler);
+            let rounded = parseFloat(averageRating).toFixed(2);
+
+
+            if(group) {
+            console.log(group)
+            console.log(group.groupId);
+                fullHtml += `
+                    <div class="results-content">
+                        <h3>${group.groupName}</h3>
+                        <h4>Studying ${group.discussionTopic}</h4>
+                        <p>Rating: ${averageRating} stars<p>
+                        <p>Members:</p>
+                        <ul>
+                `
+                let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorHandler);
+
+                if(members) {
+                    for(const member of members){
+                        fullHtml += `
+                                    <li>${member.memberId}</li>
+                        `
+                    }
+                } else {
                     fullHtml += `
-                                <li>${member.memberId}</li>
+                    <li>${userId}</li>
                     `
                 }
-            } else {
                 fullHtml += `
-                <li>${userId}</li>
+                        </ul>
+                    </div>
+                `
+
+                partialHtml += `
+                    <h3>${group.groupName}</h3>
+                    <h4>Studying ${group.discussionTopic}</h4>
                 `
             }
-            fullHtml += `
-                    </ul>
-                </div>
-            `
-
-            partialHtml += `
-                <h3>${group.groupName}</h3>
-                <h4>${group.discussionTopic}</h4>
-            `
-        } else {
+        }  else {
             fullHtml += `<p>No group</p>`
             partialHtml += `<p>No group</p>`
         }
@@ -121,17 +130,11 @@ class MyGroupPage extends BaseClass {
         console.log("load");
         let userId = localStorage.getItem("userId");
         let groups = await this.groupClient.getAllStudyGroups(this.errorHandler);
-
-//        try{
-//            groups = await this.groupClient.getAllStudyGroups(this.errorHandler);
-//            console.log(groups);
-//        } catch (error) {
-//            groups = null;
-//        }
+        console.log(groups)
 
 
         if(groups){
-        let dropDownHtml = "";
+            let dropDownHtml = "";
             //Groups dropdown
             let groupDropDown = document.getElementById('my-groups');
 
@@ -139,7 +142,7 @@ class MyGroupPage extends BaseClass {
             for(const group of groups) {
                 //get members from groups
                 let members = await this.groupClient.getStudyGroupMembers(group.groupId, this.errorCallback);
-
+                console.log(members)
                 if(members){
                     for(const member of members){
                         //grab memberId
@@ -152,6 +155,9 @@ class MyGroupPage extends BaseClass {
                 }
             }
 
+            if(dropDownHtml == "") {
+                dropDownHtml = `<option>`
+            }
             groupDropDown.innerHTML = dropDownHtml;
         }
         this.renderGroup();
@@ -189,7 +195,7 @@ class MyGroupPage extends BaseClass {
              let errorHtml = '<p>Could not create group. Try again.</p>';
              errorMessage.innerHTML = errorHtml;
          } else {
-             this.loadDropDowns();
+             location.reload();
          }
     }
 
@@ -202,7 +208,7 @@ class MyGroupPage extends BaseClass {
         console.log(groupId);
         await this.groupClient.deleteStudyGroup(groupId, this.errorHandler);
 
-        this.loadDropDowns();
+        location.reload();
     }
 
     async onAddMember(event) {
@@ -213,7 +219,8 @@ class MyGroupPage extends BaseClass {
         let memberId = document.getElementById('add-member').value;
         await this.groupClient.addMemberToStudyGroup(groupId, memberId, this.errorHandler);
 
-        this.loadDropDowns();
+
+        location.reload();
     }
 
     async onRemoveMember(event) {
@@ -224,7 +231,7 @@ class MyGroupPage extends BaseClass {
         let memberId = document.getElementById('remove-member').value;
         await this.groupClient.removeMemberFromStudyGroup(groupId, memberId, this.errorHandler);
 
-        this.loadDropDowns();
+        location.reload();
     }
 
     async onSubmit(event) {
@@ -265,7 +272,7 @@ class MyGroupPage extends BaseClass {
             let review = await this.reviewClient.submitReview(groupId, groupName, topic, rating, content, this.errorHandler);
             console.log(review);
         }
-        this.loadDropDowns();
+        location.reload();
     }
 
 }

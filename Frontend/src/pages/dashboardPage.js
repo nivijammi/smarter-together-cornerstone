@@ -78,21 +78,21 @@ class DashboardPage extends BaseClass {
 
             }
             sessionResults.innerHTML = sessionHtml;
-            console.log(sessionHtml);
+
         }
     }
 
     async allSessions() {
         let userId = localStorage.getItem("userId");
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
+
 
         if(sessions) {
             let sessionResults = document.getElementById('user-sessions');
             let sessionHtml = "";
 
             for(const session of sessions) {
-                console.log(sessionHtml);
+
                 sessionHtml += `
                     <div class="user-sessions">
                         <p>Subject: ${session.subject}
@@ -103,22 +103,22 @@ class DashboardPage extends BaseClass {
 
             }
             sessionResults.innerHTML = sessionHtml;
-            console.log(sessionHtml);
+
         }
     }
 
     async upcomingSessions() {
             let userId = localStorage.getItem("userId");
             let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-            console.log(sessions)
+
 
             if(sessions) {
                 let currentDate = new Date();
                 let currentYear = currentDate.getFullYear();
                 let currentMonth = currentDate.getMonth() + 1;
-                console.log(currentMonth);
+
                 let currentDay = currentDate.getDate();
-                console.log(currentDay);
+
 
                 let sessionResults = document.getElementById('upcoming-sessions');
                 let sessionHtml = "";
@@ -129,7 +129,7 @@ class DashboardPage extends BaseClass {
                     let month = sessionDate.substring(5, 7);
                     let day = sessionDate.substring(8);
 
-                console.log(sessionHtml);
+
 
                     if(year == currentYear){
                         if(month == currentMonth) {
@@ -146,13 +146,13 @@ class DashboardPage extends BaseClass {
                     }
                 }
                 sessionResults.innerHTML = sessionHtml;
-                console.log(sessionHtml);
+
             }
         }
 
     async renderResources() {
         let userId = localStorage.getItem("userId");
-        console.log(userId);
+
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
 
         let resources = document.getElementById("resource-list");
@@ -181,7 +181,7 @@ class DashboardPage extends BaseClass {
         //call getStudySessionsByUserId to get all their sessions.
         let userId = localStorage.getItem("userId");
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
+
 
         if(!sessions) {
             return 0;

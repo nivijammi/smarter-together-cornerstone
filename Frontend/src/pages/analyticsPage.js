@@ -65,18 +65,20 @@ class AnalyticsPage extends BaseClass {
         let totalHours = (totalMinutes / 60);
         let goal = localStorage.getItem("goal");
 
+        totalHours = (totalHours | 0);
+
         let hoursPrint = document.getElementById('total-hours');
         let goalPrint = document.getElementById('goal');
         let goalMetPrint = document.getElementById('goal-met');
 
-        let hourHtml = `<p>${totalHours}</p>`;
-        let goalHtml = `<p>${goal}</p>`;
+        let hourHtml = `<span>${totalHours}</span>`;
+        let goalHtml = `<span>${goal}</span>`;
         let goalMetHtml = "";
 
-        if((goal / totalHours) <= 1) {
-            goalMetHtml = `<p><b>has</b></p>`;
+        if((totalHours / goal) <= 1) {
+            goalMetHtml = `<span><b>has</b></span>`;
         } else {
-            goalMetHtml = `<p><b>has not</b></p>`;
+            goalMetHtml = `<span><b>has not</b></span>`;
         }
 
         hoursPrint.innerHTML = hourHtml;

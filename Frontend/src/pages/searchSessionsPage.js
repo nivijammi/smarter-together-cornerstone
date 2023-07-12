@@ -220,29 +220,6 @@ class SearchSessionsPage extends BaseClass {
 
         console.log("1");
 
-        // Get the values from the form inputs
-//        let searchType = "";
-//        if(document.getElementById('search-id').checked) {
-//            searchType = "groupId";
-//        } else if(document.getElementById('search-rating').checked) {
-//            searchType = "rating";
-//        } else if(document.getElementById('search-all').checked) {
-//            searchType = "all";
-//        }
-//
-//        let groupId = document.getElementById('group-id').value;
-//        let topicName = document.getElementById('topic-search').value;
-//        let rating = document.getElementById('rating').value;
-//
-//        if(searchType == "groupId") {
-//            this.getByGroupId(groupId);
-//        } else if(searchType == "rating") {
-//            this.getByRatings(topicName, rating);
-//        } else {
-//            this.getAllGroups();
-//        }
-
-
         let searchType = "";
 
         if(document.getElementById('search-topic').checked) {
@@ -266,6 +243,9 @@ class SearchSessionsPage extends BaseClass {
         } else if(searchType == "all"){
             this.getStudySessionsByUserId();
         }
+
+        let form = document.getElementById('form');
+        form.reset();
 
 
         console.log(searchType)

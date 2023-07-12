@@ -37,6 +37,8 @@ class NotesPage extends BaseClass {
 
         if(notes){
             if(notes[1] == null) {
+            console.log(notes.noteId)
+            console.log(notes[0].noteId)
                 noteHtml += `
                     <div>
                         <h3>${notes[0].noteId}</h3>
@@ -115,6 +117,8 @@ class NotesPage extends BaseClass {
         }
 
         this.dataStore.set("notes", allNotes);
+        let form = document.getElementById('create-form');
+        form.reset();
     }
 
     async onDelete(event) {
@@ -128,6 +132,8 @@ class NotesPage extends BaseClass {
 
         let notes = await this.client.deleteNote(noteId, this.errorHandler);
         this.dataStore.set("notes", null);
+        let form = document.getElementById('delete-form');
+        form.reset();
     }
 
     async onUpdate(event) {
@@ -183,6 +189,8 @@ class NotesPage extends BaseClass {
             }
 
             noteResults.innerHTML = noteHtml;
+            let form = document.getElementById('update-form');
+            form.reset();
     }
 }
 

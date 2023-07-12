@@ -366,6 +366,12 @@ select{
     margin: 10px 10px;
 }
 
+.results li{
+    font-size: 16;
+    font-family: 'Roboto Condensed', sans-serif;
+    margin: 10px 10px;
+}
+
 .results button{
     width: 100px;
     height: 35px;
