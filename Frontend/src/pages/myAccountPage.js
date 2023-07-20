@@ -9,7 +9,7 @@ import LambdaClient from "../api/LambdaClient";
 class MyAccountPage extends BaseClass {
     constructor() {
         super();
-        this.bindClassMethods(['topic', 'goal', 'onLoad', 'upcomingSessions', 'sidebar', 'getAllForUser', 'errorHandler'], this);
+        this.bindClassMethods(['topic', 'goal', 'onLoad', 'upcomingSessions', 'sidebar', 'errorHandler'], this);
         this.dataStore = new DataStore();
     }
 
@@ -38,15 +38,6 @@ class MyAccountPage extends BaseClass {
                 background: "linear-gradient(to right, rgb(255, 95, 109), rgb(255, 195, 113))"
             }
         }).showToast();
-    }
-
-    async getAllForUser() {
-        let userId = localStorage.getItem("userId");
-        console.log(userId);
-        let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
-        console.log(sessions);
-
-        return sessions;
     }
 
     async upcomingSessions() {
@@ -116,6 +107,12 @@ class MyAccountPage extends BaseClass {
     async onLoad(event) {
         this.sidebar();
         this.upcomingSessions();
+
+        let goalForm = document.getElementById('goal-form');
+        goalForm.reset();
+
+        let form = document.getElementById('topic-form');
+        form.reset();
     }
 
     async topic(event) {

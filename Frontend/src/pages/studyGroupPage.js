@@ -187,6 +187,7 @@ class StudyGroupPage extends BaseClass {
     }
 
     async getByRatings(topic, minRating) {
+
         let groupsByRating = await this.reviewClient.getGroupsWithDesiredAvgRatingByTopic(minRating, topic, this.errorHandler);
         console.log(groupsByRating);
         let index = 0;

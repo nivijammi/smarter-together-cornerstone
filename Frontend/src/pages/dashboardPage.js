@@ -181,19 +181,22 @@ class DashboardPage extends BaseClass {
         //call getStudySessionsByUserId to get all their sessions.
         let userId = localStorage.getItem("userId");
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
+        console.log(sessions)
 
+        let totalMinutes1 = 0;
+        let totalMinutes2 = 0;
+        let totalMinutes3 = 0;
+        let totalMinutes4 = 0;
 
-        if(!sessions) {
-            return 0;
-        } else {
+        if(sessions) {
             //date and grab current month and year.
             let currentYear = new Date().getFullYear();
             let currentMonth = new Date().getMonth() + 1;
 
-            let totalMinutes1 = 0;
-            let totalMinutes2 = 0;
-            let totalMinutes3 = 0;
-            let totalMinutes4 = 0;
+            totalMinutes1 = 0;
+            totalMinutes2 = 0;
+            totalMinutes3 = 0;
+            totalMinutes4 = 0;
             //get days of the week pertaining to the specific week ex. week 1 etc.
             for(const session of sessions){
                 let sessionDate = session.date;
@@ -218,6 +221,7 @@ class DashboardPage extends BaseClass {
                     }
                 }
             }
+        }
 
             let week1 = (totalMinutes1 / 60);
             let week2 = (totalMinutes2 / 60);
@@ -289,7 +293,7 @@ class DashboardPage extends BaseClass {
 
         Plotly.newPlot(graph, data, layout);
 
-        }
+
     }
 
     // Event Handlers --------------------------------------------------------------------------------------------------

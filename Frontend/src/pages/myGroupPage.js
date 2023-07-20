@@ -53,7 +53,8 @@ class MyGroupPage extends BaseClass {
         let partialHtml = "";
 
         let groupId = document.getElementById('my-groups').value;
-        if(groupId) {
+        console.log(groupId)
+        if(groupId != "Please select a group") {
 
             let group = await this.groupClient.getStudyGroupById(groupId, this.errorHandler);
             let averageRating = await this.reviewClient.getAverageRatingById(group.groupId, this.errorHandler);

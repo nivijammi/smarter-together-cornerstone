@@ -75,7 +75,7 @@ class AnalyticsPage extends BaseClass {
         let goalHtml = `<span>${goal}</span>`;
         let goalMetHtml = "";
 
-        if((totalHours / goal) <= 1) {
+        if((totalHours / (goal * 4)) >= 1) {
             goalMetHtml = `<span><b>has</b></span>`;
         } else {
             goalMetHtml = `<span><b>has not</b></span>`;
@@ -97,17 +97,20 @@ class AnalyticsPage extends BaseClass {
         let sessions = await this.lambda.getStudySessionsByUserId(userId, this.errorHandler);
         console.log(sessions);
 
-        if(!sessions) {
-            return 0;
-        } else {
+        let totalMinutes1 = 0;
+        let totalMinutes2 = 0;
+        let totalMinutes3 = 0;
+        let totalMinutes4 = 0;
+
+        if(sessions){
             //date and grab current month and year.
             let currentYear = new Date().getFullYear();
             let currentMonth = new Date().getMonth() + 1;
 
-            let totalMinutes1 = 0;
-            let totalMinutes2 = 0;
-            let totalMinutes3 = 0;
-            let totalMinutes4 = 0;
+            totalMinutes1 = 0;
+            totalMinutes2 = 0;
+            totalMinutes3 = 0;
+            totalMinutes4 = 0;
             //get days of the week pertaining to the specific week ex. week 1 etc.
             for(const session of sessions){
                 let sessionDate = session.date;
@@ -132,6 +135,7 @@ class AnalyticsPage extends BaseClass {
                     }
                 }
             }
+        }
 
             let week1 = (totalMinutes1 / 60);
             let week2 = (totalMinutes2 / 60);
@@ -192,7 +196,7 @@ class AnalyticsPage extends BaseClass {
 
         Plotly.newPlot(graph, data, layout);
 
-        }
+
     }
 
     // Event Handlers --------------------------------------------------------------------------------------------------

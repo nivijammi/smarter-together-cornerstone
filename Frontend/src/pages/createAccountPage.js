@@ -89,17 +89,21 @@ class CreateAccountPage extends BaseClass {
 //        const jsDate = zonedDateTime.toDate();
 
         let validEntries = this.emailPasswordValidation(email, pswd, retypePswd);
-        if(validEntries) {
-            console.log("2");
+        try{
+            if(validEntries) {
+                console.log("2");
 
-            let user = await this.loginClient.registerUser(email, pswd, this.errorHandler);
+                let user = await this.loginClient.registerUser(email, pswd, this.errorHandler);
 
-            if(user) {
-                let profile = await this.profileClient.addNewUser(firstName, lastName, email, pswd, this.errorHandler);
+                if(user) {
+                    let profile = await this.profileClient.addNewUser(firstName, lastName, email, pswd, this.errorHandler);
 
-                localStorage.setItem("userId", email);
-                window.location='my-account.html';
+                    localStorage.setItem("userId", email);
+                    window.location='my-account.html';
+                }
             }
+        } catch(error) {
+            document.getElementById("email-error").innerHTML = `<div><p>Email already exists!</p></div>`
         }
 
     }
